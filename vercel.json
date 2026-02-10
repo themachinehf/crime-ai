@@ -1,11 +1,7 @@
 {
-  "buildCommand": "echo 'Static site - no build needed'",
   "outputDirectory": "ui",
-  "routes": [
-    {"src": "/api/(.*)", "dest": "/api/$1"},
-    {"src": "/", "dest": "/ui/index.html"},
-    {"src": "/(.*\\.js)$", "dest": "/ui/$1"},
-    {"src": "/(.*\\.css)$", "dest": "/ui/$1"},
-    {"src": "/(.*)", "dest": "/ui/index.html"}
+  "rewrites": [
+    {"source": "/", "destination": "/ui/index.html"},
+    {"source": "/(.*)", "destination": "/ui/$1"}
   ]
 }
