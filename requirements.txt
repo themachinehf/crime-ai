@@ -1,10 +1,5 @@
 fastapi
 uvicorn
 pydantic
-python-telegram-bot
-tweepy
-nltk
-transformers
-torch
 requests
 python-dotenv
