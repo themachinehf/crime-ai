@@ -1,0 +1,24 @@
+{
+  "name": "crime-ai",
+  "version": "1.0.0",
+  "description": "Crime Prediction AI - 基于公开数据的威胁预测系统",
+  "main": "api/main.py",
+  "scripts": {
+    "start": "uvicorn api.main:app --host 0.0.0.0 --port 8000",
+    "dev": "uvicorn api.main:app --reload",
+    "monitor": "python monitors/social_monitor.py",
+    "analyze": "python analyzers/threat_analyzer.py"
+  },
+  "dependencies": [
+    "fastapi>=0.100.0",
+    "uvicorn[standard]>=0.23.0",
+    "pydantic>=2.0",
+    "python-telegram-bot>=20.0",
+    "tweepy>=4.14.0",
+    "nltk>=3.8.0",
+    "transformers>=4.30.0",
+    "torch>=2.0.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0"
+  ]
+}
