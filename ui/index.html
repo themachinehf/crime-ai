@@ -242,8 +242,23 @@
                         <img id="photoPreview" class="preview-img" alt="Your photo">
                     </div>
                     <div class="model-status" id="photoStatus">No photo uploaded</div>
+                    <button class="btn" style="margin-top:15px;width:100%;" onclick="checkCameraAndRegister()">
+                        📸 REGISTER CURRENT FACE
+                    </button>
                     <div style="margin-top:15px;font-size:11px;color:#888;">
-                        Tips: Upload a clear frontal photo for better recognition.
+                        Tips: Use a clear frontal photo or register from camera.
+                    </div>
+                    <div style="margin-top:10px;">
+                        <label style="font-size:11px;color:#888;">Or enter name:</label>
+                        <input type="text" id="manualName" placeholder="Enter name" 
+                               style="width:100%;padding:8px;background:#1a1a1a;border:1px solid #333;color:#f0f0f0;margin-top:5px;">
+                        <button class="btn" style="margin-top:10px;width:100%;" onclick="addManualEntry()">
+                            ADD TO WATCHLIST
+                        </button>
+                    </div>
+                    <div style="margin-top:15px;">
+                        <div style="font-size:11px;color:#888;margin-bottom:8px;">WATCHLIST:</div>
+                        <div id="watchlist" style="font-size:11px;color:#ffb000;">• USER: 660028</div>
                     </div>
                 </div>
             </div>
@@ -439,18 +454,67 @@
             img.src = URL.createObjectURL(file);
             img.style.display = 'block';
             
-            const uploadImg = await faceapi.bufferToImage(file);
-            const detection = await faceapi.detectSingleFace(uploadImg).withFaceLandmarks().withFaceDescriptor();
+            status.textContent = '⏳ Processing photo...';
+            status.style.color = '#ffb000';
+            log('Processing uploaded photo...');
             
-            if (detection) {
-                userDescriptor = detection.descriptor;
-                status.textContent = 'Photo registered! Recognition enabled.';
-                status.style.color = '#33ff33';
-                log('User photo registered for recognition', 'success');
-            } else {
-                status.textContent = 'No face detected in photo';
+            try {
+                const uploadImg = await faceapi.bufferToImage(file);
+                const detection = await faceapi.detectSingleFace(uploadImg).withFaceLandmarks().withFaceDescriptor();
+                
+                if (detection) {
+                    userDescriptor = detection.descriptor;
+                    status.textContent = '✅ Photo registered! You will be recognized as USER: 660028';
+                    status.style.color = '#33ff33';
+                    log('Photo registered successfully!', 'success');
+                } else {
+                    status.textContent = '❌ No face detected. Try another photo.';
+                    status.style.color = '#ff3333';
+                    log('No face detected in photo', 'danger');
+                }
+            } catch (err) {
+                status.textContent = '❌ Error: ' + err.message;
                 status.style.color = '#ff3333';
-                log('Failed to detect face in photo', 'danger');
+                log('Photo processing error: ' + err.message, 'danger');
+            }
+        }
+        
+        async function checkCameraAndRegister() {
+            if (!stream) {
+                log('Please enable camera first', 'danger');
+                return;
+            }
+            if (!modelsLoaded) {
+                log('Models still loading, please wait...', 'danger');
+                return;
+            }
+            log('Capturing face from camera...');
+            
+            try {
+                const detection = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
+                
+                if (detection) {
+                    userDescriptor = detection.descriptor;
+                    document.getElementById('photoStatus').textContent = '✅ Camera face registered!';
+                    document.getElementById('photoStatus').style.color = '#33ff33';
+                    log('Face from camera registered!', 'success');
+                } else {
+                    log('No face detected in camera', 'danger');
+                    document.getElementById('photoStatus').textContent = '❌ No face detected';
+                    document.getElementById('photoStatus').style.color = '#ff3333';
+                }
+            } catch (err) {
+                log('Camera capture error: ' + err.message, 'danger');
+            }
+        }
+        
+        function addManualEntry() {
+            const name = document.getElementById('manualName').value.trim();
+            if (name) {
+                const watchlist = document.getElementById('watchlist');
+                watchlist.innerHTML += '<br>• ' + name.toUpperCase();
+                document.getElementById('manualName').value = '';
+                log('Added to watchlist: ' + name, 'success');
             }
         }
         
