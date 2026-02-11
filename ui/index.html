@@ -3,585 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRIME AI | Threat Prediction System</title>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>CRIME AI</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --bg: #141414; --card-bg: #1a1a1a; --border: #2a2a2a;
-            --text: #f0f0f0; --text-dim: #888; --text-muted: #666;
-            --accent: #ffb000; --accent-dim: #996600;
-            --danger: #ff3333; --safe: #33ff33; --warning: #ffaa00;
-            --scan-line: rgba(255,176,0,0.4);
-        }
         body {
-            font-family: 'JetBrains Mono', monospace;
-            background: var(--bg); color: var(--text);
-            font-size: 14px; min-height: 100vh; overflow-x: hidden;
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #f0f0f0;
+            font-size: 14px;
+            padding: 20px;
         }
-        
-        /* THE MACHINE Terminal Style */
-        .terminal {
-            padding: 20px; max-width: 1400px; margin: 0 auto;
-            position: relative; z-index: 1;
-        }
-        .header {
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
             display: flex; justify-content: space-between; align-items: center;
-            padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
+            padding: 15px 0; border-bottom: 1px solid #333; margin-bottom: 20px;
         }
-        .logo {
-            font-family: 'VT323', monospace; font-size: 28px; letter-spacing: 6px;
-            color: var(--accent); text-transform: uppercase;
+        h1 { color: #ffb000; font-size: 24px; letter-spacing: 4px; }
+        .status { color: #33-size: 12ff33; fontpx; }
+        .clock { color: #ffb000; margin-left: 20px; }
+        .grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;
         }
-        .logo span { color: var(--text-dim); font-size: 14px; letter-spacing: 3px; }
-        .status {
-            display: flex; align-items: center; gap: 10px; font-size: 11px; letter-spacing: 2px;
-        }
-        .status-dot {
-            width: 8px; height: 8px; background: var(--safe); border-radius: 50%;
-            animation: pulse 2s ease infinite;
-        }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .clock { color: var(--accent); font-family: 'VT323', monospace; font-size: 20px; }
-        
-        /* Grid Layout */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
         .card {
-            background: var(--card-bg); border: 1px solid var(--border); padding: 16px;
+            background: #252525; border: 1px solid #333; padding: 15px;
         }
-        .card-header {
-            font-size: 10px; letter-spacing: 3px; color: var(--text-dim); margin-bottom: 12px;
-            text-transform: uppercase; display: flex; justify-content: space-between;
+        .card-title {
+            font-size: 10px; color: #888; letter-spacing: 2px; margin-bottom: 10px;
         }
-        .stat-value {
-            font-family: 'VT323', monospace; font-size: 36px; color: var(--accent);
-            margin-bottom: 4px;
-        }
-        .stat-label { font-size: 10px; color: var(--text-muted); letter-spacing: 2px; }
-        
-        /* Threat Gauge - Circular */
-        .gauge-container {
-            display: flex; flex-direction: column; align-items: center; padding: 20px 0;
-        }
+        .stat { font-size: 32px; color: #ffb000; }
         .gauge {
-            width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            position: relative; margin-bottom: 16px;
+            width: 100px; height: 100px; border-radius: 50%; border: 3px solid #33ff33;
+            display: flex; align-items: center; justify-content: center; margin: 10px auto;
+            font-size: 28px; color: #33ff33;
         }
-        .gauge::before {
-            content: ''; position: absolute; inset: 8px; border-radius: 50%;
-            border: 1px solid var(--border);
+        .chart {
+            display: flex; align-items: flex-end; gap: 2px; height: 80px;
         }
-        .gauge.low { border-color: var(--safe); box-shadow: 0 0 20px rgba(51,255,51,0.2); }
-        .gauge.elevated { border-color: var(--warning); box-shadow: 0 0 20px rgba(255,170,0,0.2); }
-        .gauge.high { border-color: var(--danger); box-shadow: 0 0 20px rgba(255,51,51,0.2); }
-        .gauge-value {
-            font-family: 'VT323', monospace; font-size: 42px;
+        .bar {
+            flex: 1; background: #ffb000; border-radius: 2px 2px 0 0;
         }
-        .gauge.low .gauge-value { color: var(--safe); }
-        .gauge.elevated .gauge-value { color: var(--warning); }
-        .gauge.high .gauge-value { color: var(--danger); }
-        .gauge-label { font-size: 10px; letter-spacing: 3px; color: var(--text-dim); }
-        
-        /* Chart Bars */
-        .chart { display: flex; align-items: flex-end; gap: 3px; height: 100px; padding-top: 10px; }
-        .chart-bar {
-            flex: 1; background: linear-gradient(180deg, var(--accent), var(--accent-dim));
-            border-radius: 2px 2px 0 0; min-height: 2px;
-        }
-        
-        /* Menu */
         .menu {
-            display: flex; gap: 4px; padding: 8px; background: var(--card-bg); border: 1px solid var(--border); margin-bottom: 20px;
+            display: flex; gap: 5px; margin-bottom: 20px;
         }
         .menu-item {
-            padding: 10px 20px; font-size: 11px; letter-spacing: 2px; cursor: pointer;
-            color: var(--text-dim); border: 1px solid transparent; text-transform: uppercase;
+            padding: 10px 20px; background: #252525; border: 1px solid #333;
+            cursor: pointer; font-size: 11px; letter-spacing: 2px;
         }
-        .menu-item:hover { color: var(--text); }
-        .menu-item.active { color: var(--accent); border-color: var(--accent); background: rgba(255,176,0,0.05); }
+        .menu-item:hover, .menu-item.active {
+            background: #333; border-color: #ffb000; color: #ffb000;
+        }
+        .cmd {
+            display: flex; align-items: center; gap: 10px;
+            background: #252525; border: 1px solid #333; padding: 12px; margin-bottom: 20px;
+        }
+        .cmd span { color: #ffb000; font-size: 18px; }
+        .cmd input {
+            flex: 1; background: none; border: none; color: #f0f0f0;
+            font-family: inherit; font-size: 14px; outline: none;
+        }
+        .terminal {
+            background: #252525; border: 1px solid #333; padding: 15px;
+            min-height: 100px; max-height: 200px; overflow-y: auto;
+        }
+        .line { margin-bottom: 4px; }
+        .line span { color: #888; margin-right: 8px; }
         
-        /* Command Bar */
-        .cmd-bar {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-            background: var(--card-bg); border: 1px solid var(--border); margin-bottom: 20px;
-        }
-        .cmd-prompt { color: var(--accent); font-size: 18px; }
-        .cmd-input {
-            flex: 1; background: transparent; border: none; color: var(--text);
-            font-family: inherit; font-size: 12px; outline: none; letter-spacing: 1px;
-        }
-        .cmd-hint { color: var(--text-muted); font-size: 10px; letter-spacing: 1px; }
-        
-        /* Terminal Output */
-        .terminal-box {
-            background: var(--card-bg); border: 1px solid var(--border); padding: 16px;
-            font-size: 12px; min-height: 100px; max-height: 180px; overflow-y: auto;
-        }
-        .term-line { margin-bottom: 4px; }
-        .term-line .prefix { color: var(--text-dim); margin-right: 8px; }
-        .term-line .text { color: var(--text); }
-        .term-line .dim { color: var(--text-muted); }
-        .term-line .highlight { color: var(--accent); }
-        .term-line .warning { color: var(--warning); }
-        .term-line .danger { color: var(--danger); }
-        
-        /* THE MACHINE Animations Layer */
-        .anim-layer {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            pointer-events: none; z-index: 1000; overflow: hidden;
-        }
-        
-        /* Face Recognition Frame - POI Style */
+        /* Animations */
         .face-frame {
-            position: absolute; width: 180px; height: 220px;
-            opacity: 0; transition: opacity 0.3s;
+            position: fixed; width: 150px; height: 180px;
+            border: 3px solid #ffb000; opacity: 0;
+            transition: opacity 0.3s; z-index: 1000;
+        }
+        .face-frame::before, .face-frame::after {
+            content: ''; position: absolute; width: 25px; height: 25px;
+            border: 3px solid #ffb000;
+        }
+        .face-frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+        .face-frame::after { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+        .face-frame .tag {
+            position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
+            background: #ffb000; color: #000; padding: 4px 10px;
+            font-size: 10px; letter-spacing: 2px;
         }
         .face-frame.active { opacity: 1; }
-        .face-frame .corner {
-            position: absolute; width: 30px; height: 30px; border-color: var(--accent);
-            border-style: solid; border-width: 0;
-        }
-        .face-frame .corner.tl { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; }
-        .face-frame .corner.tr { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; }
-        .face-frame .corner.bl { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; }
-        .face-frame .corner.br { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; }
-        .face-frame .id-tag {
-            position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); color: #000; padding: 4px 12px;
-            font-size: 10px; letter-spacing: 2px; font-weight: 700;
-            animation: idTagPulse 1s ease infinite;
-        }
-        @keyframes idTagPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.8; } }
         
-        /* Scanning Grid */
         .scan-grid {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: 
-                linear-gradient(90deg, transparent 98%, var(--accent) 98%, var(--accent) 99%, transparent 99%),
-                linear-gradient(0deg, transparent 98%, var(--accent) 98%, var(--accent) 99%, transparent 99%);
-            background-size: 80px 80px, 80px 80px;
-            opacity: 0; transition: opacity 0.5s; z-index: 999; pointer-events: none;
+            background: linear-gradient(90deg, transparent 99%, #ffb000 100%),
+                        linear-gradient(0deg, transparent 99%, #ffb000 100%);
+            background-size: 60px 60px; opacity: 0; pointer-events: none;
+            z-index: 999;
         }
-        .scan-grid.active { opacity: 0.4; animation: gridScan 8s linear infinite; }
-        @keyframes gridScan { 0% { transform: translate(0, 0); } 100% { transform: translate(80px, 80px); } }
+        .scan-grid.active { opacity: 0.3; animation: scan 10s linear infinite; }
+        @keyframes scan { from { transform: translate(0,0); } to { transform: translate(60px,60px); } }
         
-        /* Analysis Panel - Right Side */
-        .analysis-panel {
-            position: fixed; top: 60px; right: -400px; width: 360px;
-            background: rgba(20,20,20,0.98); border: 1px solid var(--accent);
-            z-index: 1001; transition: right 0.4s ease; padding: 20px;
-        }
-        .analysis-panel.active { right: 20px; }
-        .panel-title {
-            font-size: 12px; letter-spacing: 4px; color: var(--accent); margin-bottom: 16px;
-            padding-bottom: 12px; border-bottom: 1px solid var(--border);
-        }
-        .data-table { width: 100%; margin-bottom: 16px; }
-        .data-row {
-            display: flex; justify-content: space-between; padding: 8px 0;
-            border-bottom: 1px solid var(--border); font-size: 11px;
-        }
-        .data-key { color: var(--text-dim); }
-        .data-val { color: var(--accent); font-weight: 500; }
-        .match-score {
-            text-align: center; padding: 16px; background: rgba(255,176,0,0.1);
-            border: 1px solid var(--accent); margin-bottom: 16px;
-        }
-        .score-value { font-family: 'VT323', monospace; font-size: 48px; color: var(--accent); }
-        .score-label { font-size: 10px; letter-spacing: 3px; color: var(--text-dim); }
-        .classification {
-            text-align: center; padding: 12px; font-size: 14px; letter-spacing: 4px;
-            font-weight: 700; text-transform: uppercase;
-        }
-        .classification.relevant { color: var(--accent); border: 2px solid var(--accent); }
-        .classification.irrelevant { color: var(--text-muted); border: 2px solid var(--text-muted); }
-        
-        /* Loading Bar */
-        .load-bar {
-            height: 3px; background: var(--border); margin-top: 16px; overflow: hidden;
-        }
-        .load-fill {
-            height: 100%; background: var(--accent); width: 0%;
-            animation: loadAnim 3s ease forwards;
-        }
-        @keyframes loadAnim { 0% { width: 0%; } 100% { width: 100%; } }
-        
-        /* View Sections */
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-        
-        /* Threat List */
-        .threat-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid var(--border);
-        }
-        .threat-name { font-size: 12px; }
-        .threat-level {
-            font-size: 9px; padding: 4px 10px; letter-spacing: 1px; text-transform: uppercase;
-        }
-        .threat-level.high { background: rgba(255,51,51,0.15); color: var(--danger); border: 1px solid var(--danger); }
-        .threat-level.medium { background: rgba(255,170,0,0.15); color: var(--warning); border: 1px solid var(--warning); }
-        .threat-level.low { background: rgba(51,255,51,0.15); color: var(--safe); border: 1px solid var(--safe); }
-        
-        /* Sources */
-        .source-item {
-            display: flex; align-items: center; gap: 12px; padding: 12px;
-            background: var(--bg); border: 1px solid var(--border); margin-bottom: 8px;
-        }
-        .source-icon { font-size: 18px; }
-        .source-name { font-size: 11px; }
-        .source-status { font-size: 10px; color: var(--text-muted); }
-        
-        /* Hide by default */
-        .face-frame, .scan-grid, .analysis-panel { display: none; }
-        
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .terminal { padding: 12px; }
-            .header { flex-direction: column; gap: 12px; text-align: center; }
-            .logo { font-size: 22px; letter-spacing: 4px; }
-            .logo span { display: block; font-size: 11px; margin-top: 4px; }
-            .status { justify-content: center; }
-            .grid { grid-template-columns: 1fr; }
-            .analysis-panel { width: calc(100% - 40px); right: -100%; }
-            .face-frame { width: 140px; height: 180px; }
-            .face-frame .corner { width: 20px; height: 20px; }
-            .analysis-panel { top: 40px; }
-            .menu { flex-wrap: wrap; justify-content: center; }
-            .menu-item { padding: 8px 12px; font-size: 10px; }
-            .stat-value { font-size: 28px; }
-            .gauge { width: 100px; height: 100px; }
-            .gauge-value { font-size: 32px; }
-            .score-value { font-size: 36px; }
-        }
-        /* Multiple Face Frames */
-        .face-frame {
-            position: fixed; width: 160px; height: 200px;
-            opacity: 0; transition: opacity 0.3s, transform 0.5s;
-            z-index: 1000;
-        }
-        .face-frame.active { opacity: 1; }
-        .face-frame .corner {
-            position: absolute; width: 35px; height: 35px; border-color: var(--accent);
-            border-style: solid; border-width: 0;
-            box-shadow: 0 0 10px var(--accent);
-        }
-        .face-frame .corner.tl { top: 0; left: 0; border-top-width: 4px; border-left-width: 4px; }
-        .face-frame .corner.tr { top: 0; right: 0; border-top-width: 4px; border-right-width: 4px; }
-        .face-frame .corner.bl { bottom: 0; left: 0; border-bottom-width: 4px; border-left-width: 4px; }
-        .face-frame .corner.br { bottom: 0; right: 0; border-bottom-width: 4px; border-right-width: 4px; }
-        .face-frame .id-tag {
-            position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); color: #000; padding: 6px 14px;
-            font-size: 11px; letter-spacing: 2px; font-weight: 700;
-            animation: idPulse 0.5s ease infinite;
-            white-space: nowrap;
-        }
-        @keyframes idPulse { 0%,100% { opacity: 1; transform: translateX(-50%) scale(1); } 50% { opacity: 0.8; transform: translateX(-50%) scale(1.05); } }
-        
-        /* Target Lock Frame */
         .target-lock {
-            position: fixed; width: 200px; height: 250px;
-            border: 3px solid var(--danger);
-            box-shadow: 0 0 30px var(--danger), inset 0 0 30px rgba(255,51,51,0.3);
-            z-index: 1001; opacity: 0; transform: scale(0.8);
-            transition: all 0.3s;
+            position: fixed; width: 180px; height: 220px;
+            border: 4px solid #ff3333; opacity: 0; transform: scale(0.8);
+            transition: all 0.3s; z-index: 1001;
+        }
+        .target-lock::before, .target-lock::after {
+            content: ''; position: absolute; width: 30px; height: 30px;
+            border: 4px solid #ff3333;
+        }
+        .target-lock::before { top: -4px; left: -4px; border-right: none; border-bottom: none; }
+        .target-lock::after { bottom: -4px; right: -4px; border-left: none; border-top: none; }
+        .target-lock .label {
+            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+            background: #ff3333; color: #000; padding: 6px 15px;
+            font-size: 12px; letter-spacing: 2px; font-weight: bold;
         }
         .target-lock.active { opacity: 1; transform: scale(1); }
-        .target-lock .corner {
-            position: absolute; width: 40px; height: 40px; border-color: var(--danger);
-            border-style: solid; border-width: 0;
+        
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
         }
-        .target-lock .corner.tl { top: -3px; left: -3px; border-top-width: 5px; border-left-width: 5px; }
-        .target-lock .corner.tr { top: -3px; right: -3px; border-top-width: 5px; border-right-width: 5px; }
-        .target-lock .corner.bl { bottom: -3px; left: -3px; border-bottom-width: 5px; border-left-width: 5px; }
-        .target-lock .corner.br { bottom: -3px; right: -3px; border-bottom-width: 5px; border-right-width: 5px; }
-        .target-lock .lock-label {
-            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
-            background: var(--danger); color: #000; padding: 8px 20px;
-            font-size: 14px; letter-spacing: 3px; font-weight: 700;
-            animation: lockPulse 0.3s ease infinite;
-        }
-        @keyframes lockPulse { 0%,100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.1); } }
-    
-    <!-- Analysis Panel -->
-    <div class="analysis-panel" id="analysisPanel">
-        <div class="panel-title">Cross-Reference Analysis</div>
-        <div class="match-score">
-            <div class="score-value" id="matchScore">98.7%</div>
-            <div class="score-label">MATCH CONFIDENCE</div>
-        </div>
-        <div class="data-table">
-            <div class="data-row"><span class="data-key">NAME</span><span class="data-val" id="targetName">UNKNOWN</span></div>
-            <div class="data-row"><span class="data-key">DOB</span><span class="data-val" id="targetDOB">--/--/----</span></div>
-            <div class="data-row"><span class="data-key">HISTORY</span><span class="data-val" id="targetHistory">NONE</span></div>
-            <div class="data-row"><span class="data-key">THREAT</span><span class="data-val" id="targetThreat" style="color:var(--danger)">ELEVATED</span></div>
-            <div class="data-row"><span class="data-key">CONNECTIONS</span><span class="data-val" id="targetConnections">--</span></div>
-        </div>
-        <div class="classification relevant" id="classification">RELEVANT</div>
-        <div class="load-bar"><div class="load-fill"></div></div>
+    </style>
+</head>
+<body>
+    <!-- Animations -->
+    <div class="scan-grid" id="scanGrid"></div>
+    <div class="face-frame" id="faceFrame">
+        <div class="tag">IDENTIFYING</div>
     </div>
+    <div class="target-lock" id="targetLock"><div class="label">TARGET LOCK</div></div>
     
-    <!-- Target Lock Animation -->
-    <div class="target-lock" id="targetLock">
-        <div class="corner tl"></div>
-        <div class="corner tr"></div>
-        <div class="corner bl"></div>
-        <div class="corner br"></div>
-        <div class="lock-label">TARGET LOCK</div>
-    </div>
-    
-    <div class="terminal">
-        <header class="header">
-            <div class="logo">CRIME AI <span>| Threat Prediction System</span></div>
-            <div class="status">
-                <span class="status-dot"></span>
-                <span>MONITORING</span>
-                <span class="clock" id="clock">--:--:--</span>
-            </div>
+    <div class="container">
+        <header>
+            <h1>CRIME AI</h1>
+            <div><span class="status">●</span> MONITORING <span class="clock" id="clock">--:--:--</span></div>
         </header>
         
         <nav class="menu">
-            <span class="menu-item active" data-view="overview">Overview</span>
-            <span class="menu-item" data-view="threats">Threats</span>
-            <span class="menu-item" data-view="sources">Sources</span>
-            <span class="menu-item" data-view="settings">Settings</span>
+            <div class="menu-item active" onclick="showView('overview')">OVERVIEW</div>
+            <div class="menu-item" onclick="showView('threats')">THREATS</div>
+            <div class="menu-item" onclick="showView('sources')">SOURCES</div>
         </nav>
         
-        <div class="view-section active" id="view-overview">
+        <div id="view-overview" class="view">
             <div class="grid">
                 <div class="card">
-                    <div class="card-header">Statistics <span style="color:var(--safe)">LIVE</span></div>
-                    <div class="stat-value" id="totalScanned">12,847</div>
-                    <div class="stat-label">Subjects Scanned</div>
+                    <div class="card-title">STATISTICS</div>
+                    <div class="stat" id="scanned">--</div>
+                    <div style="color:#888;font-size:10px;margin-top:5px;">SUBJECTS SCANNED</div>
                 </div>
                 <div class="card">
-                    <div class="card-header">High Risk <span style="color:var(--danger)">DETECTED</span></div>
-                    <div class="stat-value" id="highRisk" style="color:var(--danger)">3</div>
-                    <div class="stat-label">Active Threats</div>
+                    <div class="card-title">HIGH RISK</div>
+                    <div class="stat" style="color:#ff3333" id="highRisk">0</div>
+                    <div style="color:#888;font-size:10px;margin-top:5px;">ACTIVE THREATS</div>
                 </div>
                 <div class="card">
-                    <div class="card-header">Threat Level <span id="threatBadge">LOW</span></div>
-                    <div class="gauge-container">
-                        <div class="gauge low" id="gauge"><span class="gauge-value" id="gaugeValue">0%</span></div>
-                        <div class="gauge-label" id="gaugeLabel">NO SIGNIFICANT THREATS</div>
-                    </div>
+                    <div class="card-title">THREAT LEVEL</div>
+                    <div class="gauge" id="gauge">0%</div>
+                    <div style="text-align:center;color:#888;font-size:10px;" id="gaugeLabel">NO THREATS</div>
                 </div>
             </div>
-            
             <div class="grid">
                 <div class="card">
-                    <div class="card-header">24h Trend</div>
-                    <div class="chart" id="trendChart"></div>
+                    <div class="card-title">24H TREND</div>
+                    <div class="chart" id="chart"></div>
                 </div>
                 <div class="card">
-                    <div class="card-header">Prediction</div>
-                    <div class="stat-value" id="prediction">LOW</div>
-                    <div class="stat-label">7-Day Forecast</div>
-                    <div style="font-size: 10px; color: var(--text-dim); margin-top: 8px;">
-                        Confidence: <span style="color: var(--accent);" id="confidence">85%</span>
-                    </div>
+                    <div class="card-title">PREDICTION</div>
+                    <div class="stat" id="prediction">LOW</div>
+                    <div style="color:#888;font-size:10px;margin-top:5px;">7-DAY FORECAST</div>
                 </div>
                 <div class="card">
-                    <div class="card-header">Analysis</div>
-                    <div style="font-size: 12px; line-height: 1.6; color: var(--text);" id="analysisText">
-                        System monitoring active. No imminent threats identified.
-                    </div>
+                    <div class="card-title">ANALYSIS</div>
+                    <div style="font-size:12px;line-height:1.6;">System monitoring active. No imminent threats identified.</div>
                 </div>
             </div>
         </div>
         
-        <div class="view-section" id="view-threats">
+        <div id="view-threats" class="view" style="display:none">
             <div class="card">
-                <div class="card-header">Active Threats <span id="threatCount">3 DETECTED</span></div>
-                <div id="threatsList">
-                    <div class="threat-item">
-                        <span class="threat-name">Subject: JOHN DOE</span>
-                        <span class="threat-level high">HIGH</span>
-                    </div>
-                    <div class="threat-item">
-                        <span class="threat-name">Subject: JANE SMITH</span>
-                        <span class="threat-level medium">MEDIUM</span>
-                    </div>
-                    <div class="threat-item">
-                        <span class="threat-name">Subject: UNKNOWN</span>
-                        <span class="threat-level low">LOW</span>
-                    </div>
-                </div>
+                <div class="card-title">ACTIVE THREATS</div>
+                <div class="line"><span>Subject: JOHN DOE</span> <span style="color:#ff3333;margin-left:20px;">HIGH</span></div>
+                <div class="line"><span>Subject: JANE SMITH</span> <span style="color:#ffaa00;margin-left:20px;">MEDIUM</span></div>
+                <div class="line"><span>Subject: UNKNOWN</span> <span style="color:#33ff33;margin-left:20px;">LOW</span></div>
             </div>
         </div>
         
-        <div class="view-section" id="view-sources">
+        <div id="view-sources" class="view" style="display:none">
             <div class="card">
-                <div class="card-header">Data Sources</div>
-                <div class="source-item">
-                    <span class="source-icon">🐦</span>
-                    <div><div class="source-name">Twitter/X</div><div class="source-status">Monitoring active</div></div>
-                </div>
-                <div class="source-item">
-                    <span class="source-icon">📰</span>
-                    <div><div class="source-name">News Feed</div><div class="source-status">Connected</div></div>
-                </div>
-                <div class="source-item">
-                    <span class="source-icon">💬</span>
-                    <div><div class="source-name">Reddit</div><div class="source-status">Scanning</div></div>
-                </div>
+                <div class="card-title">DATA SOURCES</div>
+                <div class="line">🐦 Twitter/X - Monitoring</div>
+                <div class="line">📰 News Feed - Connected</div>
+                <div class="line">💬 Reddit - Active</div>
             </div>
         </div>
         
-        <div class="view-section" id="view-settings">
-            <div class="card">
-                <div class="card-header">Configuration</div>
-                <div style="font-size: 11px; color: var(--text-dim);">
-                    Notifications: <span style="color: var(--accent);">ENABLED</span>
-                </div>
-            </div>
+        <div class="cmd">
+            <span>></span>
+            <input type="text" id="cmd" placeholder="Type command..." onkeypress="if(event.key==='Enter')runCmd(this.value)">
         </div>
         
-        <div class="cmd-bar">
-            <span class="cmd-prompt">></span>
-            <input type="text" class="cmd-input" id="cmdInput" placeholder="Enter command..." autocomplete="off">
-            <span class="cmd-hint">TYPE 'HELP'</span>
-        </div>
-        
-        <div class="terminal-box" id="terminal">
-            <div class="term-line"><span class="prefix">></span> <span class="text">System initialized</span></div>
-            <div class="term-line"><span class="prefix">></span> <span class="dim">Threat monitoring active</span></div>
+        <div class="terminal" id="term">
+            <div class="line"><span>></span> System initialized</div>
+            <div class="line"><span>></span> Threat monitoring active</div>
         </div>
     </div>
     
     <script>
-        // THE MACHINE Animations - POI Style Enhanced
+        function log(msg) {
+            const t = document.getElementById('term');
+            t.innerHTML += '<div class="line"><span>></span> ' + msg + '</div>';
+            t.scrollTop = t.scrollHeight;
+        }
         
-        // Start scanning immediately
+        function runCmd(c) {
+            log(c);
+            c = c.toLowerCase().trim();
+            if (c === 'help') log('  HELP | SCAN | STATUS | CLEAR');
+            else if (c === 'scan') { log('INITIATING SCAN...'); startScan(); }
+            else if (c === 'status') log('System ONLINE');
+            else if (c === 'clear') document.getElementById('term').innerHTML = '';
+            else if (c) log('Unknown: ' + c);
+        }
+        
+        function showView(v) {
+            document.querySelectorAll('.view').forEach(x => x.style.display = 'none');
+            document.getElementById('view-' + v).style.display = 'block';
+            document.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
         function startScan() {
             document.getElementById('scanGrid').classList.add('active');
             document.getElementById('faceFrame').classList.add('active');
-            
-            // Move face frame randomly
-            setInterval(function() {
-                const frame = document.getElementById('faceFrame');
-                const x = 5 + Math.random() * 70;
-                const y = 5 + Math.random() * 60;
-                frame.style.left = x + '%';
-                frame.style.top = y + '%';
+            setInterval(() => {
+                const f = document.getElementById('faceFrame');
+                f.style.left = (5 + Math.random() * 70) + '%';
+                f.style.top = (5 + Math.random() * 60) + '%';
             }, 2000);
         }
         
-        // Target lock animation
-        function triggerTargetLock() {
-            const lock = document.getElementById('targetLock');
-            lock.classList.add('active');
-            
-            // Random position
-            const x = 20 + Math.random() * 40;
-            const y = 20 + Math.random() * 40;
-            lock.style.left = x + '%';
-            lock.style.top = y + '%';
-            
-            setTimeout(function() {
-                lock.classList.remove('active');
-            }, 4000);
-        }
-        
-        function showAnalysis() {
-            const panel = document.getElementById('analysisPanel');
-            panel.classList.add('active');
-            
-            // Randomize data
-            const names = ['JOHN DOE', 'JANE SMITH', 'MIKE WILSON', 'SARAH CONNOR'];
-            document.getElementById('targetName').textContent = names[Math.floor(Math.random() * names.length)];
-            document.getElementById('matchScore').textContent = (85 + Math.random() * 15).toFixed(1) + '%';
-            
-            setTimeout(function() {
-                panel.classList.remove('active');
-            }, 5000);
-        }
-        
-        function initCharts() {
-            const chart = document.getElementById('trendChart');
-            let html = '';
-            for (let i = 0; i < 24; i++) {
-                const h = 20 + Math.floor(Math.random() * 60);
-                html += '<div class="chart-bar" style="height:' + h + '%"></div>';
-            }
-            chart.innerHTML = html;
+        function triggerLock() {
+            const l = document.getElementById('targetLock');
+            l.classList.add('active');
+            l.style.left = (20 + Math.random() * 40) + '%';
+            l.style.top = (20 + Math.random() * 40) + '%';
+            setTimeout(() => l.classList.remove('active'), 4000);
         }
         
         function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').textContent = 
-                now.toLocaleTimeString('en-US', {hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'});
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour12:false});
         }
         
-        function addLine(text, className) {
-            className = className || 'text';
-            const terminal = document.getElementById('terminal');
-            const line = document.createElement('div');
-            line.className = 'term-line';
-            line.innerHTML = '<span class="prefix">></span> <span class="' + className + '">' + text + '</span>';
-            terminal.appendChild(line);
-            terminal.scrollTop = terminal.scrollHeight;
+        function initChart() {
+            let h = '';
+            for(let i=0;i<24;i++) h += '<div class="bar" style="height:'+(20+Math.random()*60)+'%"></div>';
+            document.getElementById('chart').innerHTML = h;
         }
         
-        function executeCommand(cmd) {
-            const c = cmd.toLowerCase().trim();
-            addLine(cmd, 'text');
-            if (c === 'help') {
-                addLine('  HELP - Commands', 'dim');
-                addLine('  SCAN - Run analysis', 'warning');
-                addLine('  STATUS - System status', 'dim');
-                addLine('  CLEAR - Clear terminal', 'dim');
-            } else if (c === 'scan') {
-                showAnalysis();
-                addLine('INITIATING SCAN...', 'warning');
-                startScan();
-                setTimeout(function() { addLine('Scan complete.', 'text'); }, 3000);
-            } else if (c === 'status') {
-                addLine('System ONLINE | Threat Level: ' + document.getElementById('gaugeValue').textContent, 'text');
-            } else if (c === 'clear') {
-                document.getElementById('terminal').innerHTML = '';
-                addLine('Console cleared', 'text');
-            } else if (c === '') {
-                return;
-            } else {
-                addLine('Unknown command: ' + cmd, 'dim');
-            }
+        function updateStats() {
+            document.getElementById('scanned').textContent = Math.floor(Math.random()*50000+10000).toLocaleString();
+            document.getElementById('highRisk').textContent = Math.floor(Math.random()*5);
         }
         
-        function initMenu() {
-            document.querySelectorAll('.menu-item').forEach(function(item) {
-                item.addEventListener('click', function() {
-                    document.querySelectorAll('.menu-item').forEach(function(m) { m.classList.remove('active'); });
-                    item.classList.add('active');
-                    document.querySelectorAll('.view-section').forEach(function(v) { v.classList.remove('active'); });
-                    document.getElementById('view-' + item.dataset.view).classList.add('active');
-                });
-            });
-        }
+        setInterval(updateClock,1000);
+        setInterval(triggerLock,8000);
+        setInterval(updateStats,30000);
         
-        document.getElementById('cmdInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                executeCommand(this.value);
-                this.value = '';
-            }
-        });
-        
-        // Auto animation cycles
-        setInterval(function() {
-            if (Math.random() > 0.5) triggerTargetLock();
-        }, 8000);
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            initCharts();
+        document.addEventListener('DOMContentLoaded', () => {
+            initChart();
             updateClock();
-            setInterval(updateClock, 1000);
-            initMenu();
-            // Start immediately
-            startScan();
-            setTimeout(showAnalysis, 3000);
-            setTimeout(function() { triggerTargetLock(); }, 6000);
+            updateStats();
+            setTimeout(startScan,1000);
+            setTimeout(triggerLock,5000);
         });
     </script>
 </body>
