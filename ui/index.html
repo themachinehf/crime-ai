@@ -8,21 +8,22 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg: #0a0a0a; --card-bg: #0d0d0d; --border: #1a1a1a;
-            --text: #e8e8e8; --text-dim: #666; --text-muted: #444;
+            --bg: #141414; --card-bg: #1a1a1a; --border: #2a2a2a;
+            --text: #f0f0f0; --text-dim: #888; --text-muted: #666;
             --accent: #ffb000; --accent-dim: #996600;
             --danger: #ff3333; --safe: #33ff33; --warning: #ffaa00;
-            --scan-line: rgba(255,176,0,0.3);
+            --scan-line: rgba(255,176,0,0.4);
         }
         body {
             font-family: 'JetBrains Mono', monospace;
             background: var(--bg); color: var(--text);
-            font-size: 13px; min-height: 100vh; overflow-x: hidden;
+            font-size: 14px; min-height: 100vh; overflow-x: hidden;
         }
         
         /* THE MACHINE Terminal Style */
         .terminal {
             padding: 20px; max-width: 1400px; margin: 0 auto;
+            position: relative; z-index: 1;
         }
         .header {
             display: flex; justify-content: space-between; align-items: center;
@@ -155,20 +156,20 @@
         
         /* Scanning Grid */
         .scan-grid {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: 
-                linear-gradient(90deg, transparent 49%, var(--scan-line) 50%, transparent 51%),
-                linear-gradient(0deg, transparent 49%, var(--scan-line) 50%, transparent 51%);
-            background-size: 100px 100px;
-            opacity: 0; transition: opacity 0.5s;
+                linear-gradient(90deg, transparent 98%, var(--accent) 98%, var(--accent) 99%, transparent 99%),
+                linear-gradient(0deg, transparent 98%, var(--accent) 98%, var(--accent) 99%, transparent 99%);
+            background-size: 80px 80px, 80px 80px;
+            opacity: 0; transition: opacity 0.5s; z-index: 999; pointer-events: none;
         }
-        .scan-grid.active { opacity: 0.3; animation: gridMove 20s linear infinite; }
-        @keyframes gridMove { 0% { transform: translate(0,0); } 100% { transform: translate(100px,100px); } }
+        .scan-grid.active { opacity: 0.4; animation: gridScan 8s linear infinite; }
+        @keyframes gridScan { 0% { transform: translate(0, 0); } 100% { transform: translate(80px, 80px); } }
         
         /* Analysis Panel - Right Side */
         .analysis-panel {
             position: fixed; top: 60px; right: -400px; width: 360px;
-            background: rgba(10,10,10,0.95); border: 1px solid var(--accent);
+            background: rgba(20,20,20,0.98); border: 1px solid var(--accent);
             z-index: 1001; transition: right 0.4s ease; padding: 20px;
         }
         .analysis-panel.active { right: 20px; }
@@ -254,25 +255,6 @@
             .gauge-value { font-size: 32px; }
             .score-value { font-size: 36px; }
         }
-        
-        /* Enhanced Scan Grid - More Visible */
-        .scan-grid {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: 
-                linear-gradient(90deg, transparent 98%, var(--accent) 98%, var(--accent) 99%, transparent 99%),
-                linear-gradient(0deg, transparent 98%, var(--accent) 98%, var(--accent) 99%, transparent 99%);
-            background-size: 80px 80px, 80px 80px;
-            opacity: 0; transition: opacity 0.5s; z-index: 999;
-        }
-        .scan-grid.active { 
-            opacity: 0.4; 
-            animation: gridScan 8s linear infinite; 
-        }
-        @keyframes gridScan { 
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(80px, 80px); }
-        }
-        
         /* Multiple Face Frames */
         .face-frame {
             position: fixed; width: 160px; height: 200px;
