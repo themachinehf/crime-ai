@@ -94,34 +94,94 @@
             background: rgba(0,0,0,0.9); border: 1px solid var(--warning);
             padding: 16px; min-width: 250px;
         }
-        .ref-title {
-            color: var(--warning); font-size: 11px; letter-spacing: 2px; margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-        .ref-item {
-            display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-            font-size: 10px;
-        }
-        .ref-icon { width: 24px; height: 24px; background: var(--border); display: flex; align-items: center; justify-content: center; }
-        .ref-status { width: 8px; height: 8px; border-radius: 50%; background: var(--safe); animation: statusBlink 1s infinite; }
         @keyframes statusBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        /* Analysis Progress */
-        .analysis-progress {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 1002; text-align: center;
+        
+        /* THE MACHINE Enhanced Animations - POI Style */
+        .scan-frame {
+            position: fixed; border: 2px solid var(--accent);
+            box-shadow: 0 0 20px var(--accent), inset 0 0 20px rgba(255,149,0,0.2);
+            z-index: 1001; pointer-events: none; opacity: 0; transition: opacity 0.3s;
         }
-        .progress-bar {
-            width: 300px; height: 4px; background: var(--border); margin-bottom: 8px;
+        .scan-frame.active { opacity: 1; }
+        .scan-frame::before, .scan-frame::after {
+            content: ''; position: absolute; width: 25px; height: 25px;
+            border: 3px solid var(--accent);
         }
-        .progress-fill {
-            height: 100%; background: var(--accent); width: 0%;
-            animation: progressFill 2s ease forwards;
+        .scan-frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+        .scan-frame::after { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+        
+        /* Target Lock - Red Alert */
+        .target-lock {
+            position: fixed; border: 3px solid var(--danger);
+            box-shadow: 0 0 40px var(--danger), inset 0 0 40px rgba(255,59,48,0.4);
+            z-index: 1002; pointer-events: none;
+            opacity: 0; transform: scale(0.8); transition: all 0.3s;
         }
-        @keyframes progressFill { to { width: 100%; } }
-        .progress-text { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; }
-        /* Hide animations initially */
-        .face-frame, .data-match, .cross-ref, .analysis-progress { display: none; }
-        .face-frame.active, .data-match.active, .cross-ref.active, .analysis-progress.active { display: block; }
+        .target-lock.active { opacity: 1; transform: scale(1); }
+        .target-lock::before, .target-lock::after {
+            content: ''; position: absolute; width: 35px; height: 35px;
+            border: 4px solid var(--danger);
+        }
+        .target-lock::before { top: -4px; left: -4px; border-right: none; border-bottom: none; }
+        .target-lock::after { bottom: -4px; right: -4px; border-left: none; border-top: none; }
+        .target-label {
+            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+            background: var(--danger); color: #000; padding: 5px 16px;
+            font-size: 12px; font-weight: 700; letter-spacing: 3px;
+            animation: lockPulse 0.3s ease infinite;
+        }
+        @keyframes lockPulse { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.15); } }
+        
+        /* Network Nodes */
+        .network-node {
+            position: fixed; width: 10px; height: 10px; border-radius: 50%;
+            background: var(--accent); box-shadow: 0 0 15px var(--accent);
+            z-index: 998; pointer-events: none; opacity: 0;
+        }
+        .network-line {
+            position: fixed; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            z-index: 997; pointer-events: none; opacity: 0;
+        }
+        
+        /* Data Flood Effect */
+        .data-flood {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none; z-index: 996;
+            background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255,149,0,0.04) 1px, rgba(255,149,0,0.04) 2px);
+        }
+        
+        /* Enhanced Data Panel */
+        .data-panel {
+            position: fixed; top: 50px; right: 20px; z-index: 1003;
+            background: rgba(0,0,0,0.94); border: 1px solid var(--accent);
+            padding: 20px; min-width: 340px; font-size: 11px;
+        }
+        .panel-header {
+            color: var(--accent); font-size: 13px; letter-spacing: 4px;
+            margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
+            text-transform: uppercase; font-weight: 700;
+        }
+        .data-row {
+            display: flex; justify-content: space-between; margin-bottom: 12px;
+            opacity: 0; transform: translateX(30px);
+        }
+        .data-row.active { animation: dataSlide 0.4s ease forwards; }
+        .data-key { color: var(--text-dim); letter-spacing: 1px; }
+        .data-val { color: var(--accent); font-weight: 700; }
+        .data-match-line {
+            margin: 16px 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+        .match-result {
+            text-align: center; padding: 14px; margin-top: 18px;
+            background: rgba(255,59,48,0.15); border: 1px solid var(--danger);
+            color: var(--danger); font-size: 13px; letter-spacing: 3px;
+            opacity: 0; animation: resultFade 0.5s ease 2.5s forwards;
+        }
+        @keyframes resultFade { to { opacity: 1; } }
+        
+        /* Hide elements */
+        .scan-frame, .target-lock, .network-node, .network-line, .data-flood, .data-panel { display: none; }
+        .scan-frame.active, .target-lock.active, .network-node.active, .network-line.active, .data-flood.active, .data-panel.active { display: block; }
         
         .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
         header {
@@ -187,23 +247,43 @@
     </style>
 </head>
 <body>
-    <!-- POI THE MACHINE Effects -->
+    <!-- POI THE MACHINE Enhanced Effects -->
+    <div class="data-flood" id="dataFlood"></div>
     <div class="scan-overlay"></div>
     <div class="scan-line"></div>
     
-    <div class="face-frame" id="faceFrame">
-        <div class="face-id">ANALYZING</div>
+    <!-- Scanning Frames - Multiple targets -->
+    <div class="scan-frame scan1" id="scan1" style="width:180px;height:220px;"></div>
+    <div class="scan-frame scan2" id="scan2" style="width:150px;height:180px;"></div>
+    <div class="scan-frame scan3" id="scan3" style="width:200px;height:200px;"></div>
+    
+    <!-- Target Lock - Found suspect -->
+    <div class="target-lock" id="targetLock">
+        <div class="target-label">TARGET LOCKED</div>
     </div>
     
-    <div class="data-match" id="dataMatch">
-        <div class="match-title">Cross-Reference</div>
-        <div class="match-item"><span class="match-label">Social Media</span><span class="match-value">MATCHED</span></div>
-        <div class="match-item"><span class="match-label">Criminal Records</span><span class="match-value">NONE</span></div>
-        <div class="match-item"><span class="match-label">Behavioral Pattern</span><span class="match-value">ELEVATED</span></div>
-        <div class="match-item"><span class="match-label">Network</span><span class="match-value">CONNECTED</span></div>
-        <div class="match-complete">IDENTIFICATION COMPLETE</div>
+    <!-- Network Nodes -->
+    <div class="network-node" id="node1" style="top:20%;left:10%;"></div>
+    <div class="network-node" id="node2" style="top:40%;left:80%;"></div>
+    <div class="network-node" id="node3" style="top:70%;left:30%;"></div>
+    <div class="network-node" id="node4" style="top:30%;left:50%;"></div>
+    <div class="network-node" id="node5" style="top:60%;left:70%;"></div>
+    
+    <!-- Enhanced Data Panel -->
+    <div class="data-panel" id="dataPanel">
+        <div class="panel-header">Cross-Reference Analysis</div>
+        <div class="data-row"><span class="data-key">FACIAL MATCH</span><span class="data-val">98.7%</span></div>
+        <div class="data-row"><span class="data-key">CRIMINAL HISTORY</span><span class="data-val">NONE</span></div>
+        <div class="data-row"><span class="data-key">BEHAVIORAL</span><span class="data-val">ELEVATED RISK</span></div>
+        <div class="data-row"><span class="data-key">SOCIAL NETWORK</span><span class="data-val">12 CONNECTIONS</span></div>
+        <div class="data-row"><span class="data-key">LOCATION</span><span class="data-val">UNKNOWN</span></div>
+        <div class="data-row"><span class="data-key">LAST SEEN</span><span class="data-val">24H AGO</span></div>
+        <div class="data-match-line"></div>
+        <div class="data-row"><span class="data-key">THREAT LEVEL</span><span class="data-val" style="color:var(--danger)">HIGH</span></div>
+        <div class="match-result">⚠ TARGET IDENTIFIED</div>
     </div>
     
+    <!-- Data Source Panel -->
     <div class="cross-ref" id="crossRef">
         <div class="ref-title">Data Sources</div>
         <div class="ref-item"><div class="ref-icon">🐦</div><div><div style="color:var(--text);">Twitter/X</div><div style="color:var(--safe);font-size:9px;">● Active</div></div></div>
@@ -355,22 +435,96 @@
     </div>
     
     <script>
-        // THE MACHINE Animations
-        function showFaceRecognition() {
-            const frame = document.getElementById('faceFrame');
-            frame.classList.add('active');
-            setInterval(function() {
-                const x = 20 + Math.random() * 60;
-                const y = 10 + Math.random() * 80;
-                frame.style.left = x + '%';
-                frame.style.top = y + '%';
-            }, 3000);
+        // THE MACHINE Enhanced Animations - POI Style
+        
+        // Multiple scanning frames moving around
+        function startScanning() {
+            document.getElementById('dataFlood').classList.add('active');
+            const frames = ['scan1', 'scan2', 'scan3'];
+            const targets = [];
+            
+            frames.forEach(function(id, i) {
+                const frame = document.getElementById(id);
+                frame.classList.add('active');
+                animateFrame(frame, i * 1200);
+            });
+            
+            // Start network nodes
+            setTimeout(startNetworkNodes, 2000);
         }
         
-        function showDataMatch() {
-            const match = document.getElementById('dataMatch');
-            match.classList.add('active');
-            setTimeout(function() { match.classList.remove('active'); }, 5000);
+        function animateFrame(frame, delay) {
+            function move() {
+                const x = 5 + Math.random() * 85;
+                const y = 5 + Math.random() * 85;
+                frame.style.left = x + '%';
+                frame.style.top = y + '%';
+            }
+            setTimeout(function() {
+                move();
+                setInterval(move, 2000 + Math.random() * 2000);
+            }, delay);
+        }
+        
+        function startNetworkNodes() {
+            const nodes = ['node1', 'node2', 'node3', 'node4', 'node5'];
+            nodes.forEach(function(id, i) {
+                const node = document.getElementById(id);
+                node.classList.add('active');
+                animateNode(node, i * 400);
+            });
+        }
+        
+        function animateNode(node, delay) {
+            function pulse() {
+                node.style.transform = 'scale(1.5)';
+                node.style.opacity = '1';
+                setTimeout(function() {
+                    node.style.transform = 'scale(1)';
+                    node.style.opacity = '0.6';
+                }, 300);
+            }
+            setTimeout(function() {
+                pulse();
+                setInterval(pulse, 1500 + Math.random() * 1000);
+            }, delay);
+        }
+        
+        // Target lock animation
+        function triggerTargetLock() {
+            const lock = document.getElementById('targetLock');
+            lock.classList.add('active');
+            
+            // Position at random location
+            const x = 20 + Math.random() * 50;
+            const y = 20 + Math.random() * 50;
+            lock.style.left = x + '%';
+            lock.style.top = y + '%';
+            
+            setTimeout(function() {
+                lock.classList.remove('active');
+            }, 4000);
+        }
+        
+        // Data panel pop-up
+        function showDataPanel() {
+            const panel = document.getElementById('dataPanel');
+            panel.classList.add('active');
+            
+            // Animate rows
+            const rows = panel.querySelectorAll('.data-row');
+            rows.forEach(function(row, i) {
+                setTimeout(function() {
+                    row.classList.add('active');
+                }, i * 200);
+            });
+            
+            setTimeout(function() {
+                panel.classList.remove('active');
+                rows.forEach(function(row) {
+                    row.classList.remove('active');
+                });
+            }, 6000);
         }
         
         function showAnalysisProgress() {
@@ -379,16 +533,20 @@
             setTimeout(function() { prog.classList.remove('active'); }, 2500);
         }
         
-        // Random animations
+        // Random animation cycles
         setInterval(function() {
-            if (Math.random() > 0.7) showDataMatch();
-        }, 8000);
+            if (Math.random() > 0.6) {
+                triggerTargetLock();
+                setTimeout(showDataPanel, 1500);
+            }
+        }, 10000);
         
         // Main
         document.addEventListener('DOMContentLoaded', function() {
             init();
-            showFaceRecognition();
-            setTimeout(showDataMatch, 2000);
+            startScanning();
+            setTimeout(showDataPanel, 3000);
+            setTimeout(triggerTargetLock, 8000);
         });
         
         function init() {
