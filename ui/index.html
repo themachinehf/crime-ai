@@ -145,38 +145,9 @@
             background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255,149,0,0.04) 1px, rgba(255,149,0,0.04) 2px);
         }
         
-        /* Enhanced Data Panel */
-        .data-panel {
-            position: fixed; top: 50px; right: 20px; z-index: 1003;
-            background: rgba(0,0,0,0.94); border: 1px solid var(--accent);
-            padding: 20px; min-width: 340px; font-size: 11px;
-        }
-        .panel-header {
-            color: var(--accent); font-size: 13px; letter-spacing: 4px;
-            margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
-            text-transform: uppercase; font-weight: 700;
-        }
-        .data-row {
-            display: flex; justify-content: space-between; margin-bottom: 12px;
-            opacity: 0; transform: translateX(30px);
-        }
-        .data-row.active { animation: dataSlide 0.4s ease forwards; }
-        .data-key { color: var(--text-dim); letter-spacing: 1px; }
-        .data-val { color: var(--accent); font-weight: 700; }
-        .data-match-line {
-            margin: 16px 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        }
-        .match-result {
-            text-align: center; padding: 14px; margin-top: 18px;
-            background: rgba(255,59,48,0.15); border: 1px solid var(--danger);
-            color: var(--danger); font-size: 13px; letter-spacing: 3px;
-            opacity: 0; animation: resultFade 0.5s ease 2.5s forwards;
-        }
-        @keyframes resultFade { to { opacity: 1; } }
-        
         /* Hide elements */
-        .scan-frame, .target-lock, .network-node, .network-line, .data-flood, .data-panel { display: none; }
-        .scan-frame.active, .target-lock.active, .network-node.active, .network-line.active, .data-flood.active, .data-panel.active { display: block; }
+        .scan-frame, .target-lock, .network-node, .network-line, .data-flood { display: none; }
+        .scan-frame.active, .target-lock.active, .network-node.active, .network-line.active, .data-flood.active { display: block; }
         
         .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
         header {
@@ -263,28 +234,6 @@
     <div class="network-node" id="node3" style="top:70%;left:30%;"></div>
     <div class="network-node" id="node4" style="top:30%;left:50%;"></div>
     <div class="network-node" id="node5" style="top:60%;left:70%;"></div>
-    
-    <!-- Enhanced Data Panel -->
-    <div class="data-panel" id="dataPanel">
-        <div class="panel-header">Cross-Reference Analysis</div>
-        <div class="data-row"><span class="data-key">FACIAL MATCH</span><span class="data-val">98.7%</span></div>
-        <div class="data-row"><span class="data-key">CRIMINAL HISTORY</span><span class="data-val">NONE</span></div>
-        <div class="data-row"><span class="data-key">BEHAVIORAL</span><span class="data-val">ELEVATED RISK</span></div>
-        <div class="data-row"><span class="data-key">SOCIAL NETWORK</span><span class="data-val">12 CONNECTIONS</span></div>
-        <div class="data-row"><span class="data-key">LOCATION</span><span class="data-val">UNKNOWN</span></div>
-        <div class="data-row"><span class="data-key">LAST SEEN</span><span class="data-val">24H AGO</span></div>
-        <div class="data-match-line"></div>
-        <div class="data-row"><span class="data-key">THREAT LEVEL</span><span class="data-val" style="color:var(--danger)">HIGH</span></div>
-        <div class="match-result">⚠ TARGET IDENTIFIED</div>
-    </div>
-    
-    <!-- Data Source Panel -->
-    <div class="cross-ref" id="crossRef">
-        <div class="ref-title">Data Sources</div>
-        <div class="ref-item"><div class="ref-icon">🐦</div><div><div style="color:var(--text);">Twitter/X</div><div style="color:var(--safe);font-size:9px;">● Active</div></div></div>
-        <div class="ref-item"><div class="ref-icon">📰</div><div><div style="color:var(--text);">News Feed</div><div style="color:var(--safe);font-size:9px;">● Connected</div></div></div>
-        <div class="ref-item"><div class="ref-icon">💬</div><div><div style="color:var(--text);">Reddit</div><div style="color:var(--warning);font-size:9px;">● Scanning</div></div></div>
-    </div>
     
     <div class="analysis-progress" id="analysisProgress">
         <div class="progress-bar"><div class="progress-fill"></div></div>
@@ -501,27 +450,6 @@
             }, 4000);
         }
         
-        // Data panel pop-up
-        function showDataPanel() {
-            const panel = document.getElementById('dataPanel');
-            panel.classList.add('active');
-            
-            // Animate rows
-            const rows = panel.querySelectorAll('.data-row');
-            rows.forEach(function(row, i) {
-                setTimeout(function() {
-                    row.classList.add('active');
-                }, i * 200);
-            });
-            
-            setTimeout(function() {
-                panel.classList.remove('active');
-                rows.forEach(function(row) {
-                    row.classList.remove('active');
-                });
-            }, 6000);
-        }
-        
         function showAnalysisProgress() {
             const prog = document.getElementById('analysisProgress');
             prog.classList.add('active');
@@ -530,18 +458,14 @@
         
         // Random animation cycles
         setInterval(function() {
-            if (Math.random() > 0.6) {
-                triggerTargetLock();
-                setTimeout(showDataPanel, 1500);
-            }
+            if (Math.random() > 0.6) triggerTargetLock();
         }, 10000);
         
         // Main
         document.addEventListener('DOMContentLoaded', function() {
             init();
             startScanning();
-            setTimeout(showDataPanel, 3000);
-            setTimeout(triggerTargetLock, 8000);
+            setTimeout(triggerTargetLock, 5000);
         });
         
         function init() {
