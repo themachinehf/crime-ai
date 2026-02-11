@@ -2,7 +2,6 @@
   "outputDirectory": "ui",
   "buildCommand": "echo 'Static site'",
   "framework": null,
-  "functions": null,
   "rewrites": [
     {"source": "/(.*)", "destination": "/$1"}
   ]
