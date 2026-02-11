@@ -234,20 +234,94 @@
         
         /* Hide by default */
         .face-frame, .scan-grid, .analysis-panel { display: none; }
-    </style>
-</head>
-<body>
-    <!-- THE MACHINE Animations -->
-    <div class="anim-layer">
-        <div class="scan-grid" id="scanGrid"></div>
-        <div class="face-frame" id="faceFrame">
-            <div class="corner tl"></div>
-            <div class="corner tr"></div>
-            <div class="corner bl"></div>
-            <div class="corner br"></div>
-            <div class="id-tag">IDENTIFYING</div>
-        </div>
-    </div>
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .terminal { padding: 12px; }
+            .header { flex-direction: column; gap: 12px; text-align: center; }
+            .logo { font-size: 22px; letter-spacing: 4px; }
+            .logo span { display: block; font-size: 11px; margin-top: 4px; }
+            .status { justify-content: center; }
+            .grid { grid-template-columns: 1fr; }
+            .analysis-panel { width: calc(100% - 40px); right: -100%; }
+            .face-frame { width: 140px; height: 180px; }
+            .face-frame .corner { width: 20px; height: 20px; }
+            .analysis-panel { top: 40px; }
+            .menu { flex-wrap: wrap; justify-content: center; }
+            .menu-item { padding: 8px 12px; font-size: 10px; }
+            .stat-value { font-size: 28px; }
+            .gauge { width: 100px; height: 100px; }
+            .gauge-value { font-size: 32px; }
+            .score-value { font-size: 36px; }
+        }
+        
+        /* Enhanced Scan Grid - More Visible */
+        .scan-grid {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                linear-gradient(90deg, transparent 98%, var(--accent) 98%, var(--accent) 99%, transparent 99%),
+                linear-gradient(0deg, transparent 98%, var(--accent) 98%, var(--accent) 99%, transparent 99%);
+            background-size: 80px 80px, 80px 80px;
+            opacity: 0; transition: opacity 0.5s; z-index: 999;
+        }
+        .scan-grid.active { 
+            opacity: 0.4; 
+            animation: gridScan 8s linear infinite; 
+        }
+        @keyframes gridScan { 
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(80px, 80px); }
+        }
+        
+        /* Multiple Face Frames */
+        .face-frame {
+            position: fixed; width: 160px; height: 200px;
+            opacity: 0; transition: opacity 0.3s, transform 0.5s;
+            z-index: 1000;
+        }
+        .face-frame.active { opacity: 1; }
+        .face-frame .corner {
+            position: absolute; width: 35px; height: 35px; border-color: var(--accent);
+            border-style: solid; border-width: 0;
+            box-shadow: 0 0 10px var(--accent);
+        }
+        .face-frame .corner.tl { top: 0; left: 0; border-top-width: 4px; border-left-width: 4px; }
+        .face-frame .corner.tr { top: 0; right: 0; border-top-width: 4px; border-right-width: 4px; }
+        .face-frame .corner.bl { bottom: 0; left: 0; border-bottom-width: 4px; border-left-width: 4px; }
+        .face-frame .corner.br { bottom: 0; right: 0; border-bottom-width: 4px; border-right-width: 4px; }
+        .face-frame .id-tag {
+            position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); color: #000; padding: 6px 14px;
+            font-size: 11px; letter-spacing: 2px; font-weight: 700;
+            animation: idPulse 0.5s ease infinite;
+            white-space: nowrap;
+        }
+        @keyframes idPulse { 0%,100% { opacity: 1; transform: translateX(-50%) scale(1); } 50% { opacity: 0.8; transform: translateX(-50%) scale(1.05); } }
+        
+        /* Target Lock Frame */
+        .target-lock {
+            position: fixed; width: 200px; height: 250px;
+            border: 3px solid var(--danger);
+            box-shadow: 0 0 30px var(--danger), inset 0 0 30px rgba(255,51,51,0.3);
+            z-index: 1001; opacity: 0; transform: scale(0.8);
+            transition: all 0.3s;
+        }
+        .target-lock.active { opacity: 1; transform: scale(1); }
+        .target-lock .corner {
+            position: absolute; width: 40px; height: 40px; border-color: var(--danger);
+            border-style: solid; border-width: 0;
+        }
+        .target-lock .corner.tl { top: -3px; left: -3px; border-top-width: 5px; border-left-width: 5px; }
+        .target-lock .corner.tr { top: -3px; right: -3px; border-top-width: 5px; border-right-width: 5px; }
+        .target-lock .corner.bl { bottom: -3px; left: -3px; border-bottom-width: 5px; border-left-width: 5px; }
+        .target-lock .corner.br { bottom: -3px; right: -3px; border-bottom-width: 5px; border-right-width: 5px; }
+        .target-lock .lock-label {
+            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            background: var(--danger); color: #000; padding: 8px 20px;
+            font-size: 14px; letter-spacing: 3px; font-weight: 700;
+            animation: lockPulse 0.3s ease infinite;
+        }
+        @keyframes lockPulse { 0%,100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.1); } }
     
     <!-- Analysis Panel -->
     <div class="analysis-panel" id="analysisPanel">
@@ -265,6 +339,15 @@
         </div>
         <div class="classification relevant" id="classification">RELEVANT</div>
         <div class="load-bar"><div class="load-fill"></div></div>
+    </div>
+    
+    <!-- Target Lock Animation -->
+    <div class="target-lock" id="targetLock">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        <div class="lock-label">TARGET LOCK</div>
     </div>
     
     <div class="terminal">
@@ -387,7 +470,9 @@
     </div>
     
     <script>
-        // THE MACHINE Animations - POI Style
+        // THE MACHINE Animations - POI Style Enhanced
+        
+        // Start scanning immediately
         function startScan() {
             document.getElementById('scanGrid').classList.add('active');
             document.getElementById('faceFrame').classList.add('active');
@@ -395,11 +480,27 @@
             // Move face frame randomly
             setInterval(function() {
                 const frame = document.getElementById('faceFrame');
-                const x = 10 + Math.random() * 60;
-                const y = 10 + Math.random() * 50;
+                const x = 5 + Math.random() * 70;
+                const y = 5 + Math.random() * 60;
                 frame.style.left = x + '%';
                 frame.style.top = y + '%';
-            }, 3000);
+            }, 2000);
+        }
+        
+        // Target lock animation
+        function triggerTargetLock() {
+            const lock = document.getElementById('targetLock');
+            lock.classList.add('active');
+            
+            // Random position
+            const x = 20 + Math.random() * 40;
+            const y = 20 + Math.random() * 40;
+            lock.style.left = x + '%';
+            lock.style.top = y + '%';
+            
+            setTimeout(function() {
+                lock.classList.remove('active');
+            }, 4000);
         }
         
         function showAnalysis() {
@@ -485,13 +586,20 @@
             }
         });
         
+        // Auto animation cycles
+        setInterval(function() {
+            if (Math.random() > 0.5) triggerTargetLock();
+        }, 8000);
+        
         document.addEventListener('DOMContentLoaded', function() {
             initCharts();
             updateClock();
             setInterval(updateClock, 1000);
             initMenu();
-            setTimeout(startScan, 2000);
-            setTimeout(function() { showAnalysis(); }, 5000);
+            // Start immediately
+            startScan();
+            setTimeout(showAnalysis, 3000);
+            setTimeout(function() { triggerTargetLock(); }, 6000);
         });
     </script>
 </body>
