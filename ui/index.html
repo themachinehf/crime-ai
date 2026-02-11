@@ -8,8 +8,8 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg: #0a0a0a; --card-bg: #111111; --card-hover: #1a1a1a;
-            --border: #2a2a2a; --border-light: #3a3a3a;
+            --bg: #0a0a0a; --card-bg: #111111;
+            --border: #2a2a2a;
             --text: #e0e0e0; --text-dim: #888; --text-muted: #555;
             --accent: #ff9500; --accent-dim: #cc7700;
             --danger: #ff3b30; --safe: #34c759; --warning: #ff9500;
@@ -18,7 +18,111 @@
             font-family: 'JetBrains Mono', monospace;
             background: var(--bg); color: var(--text);
             font-size: 13px; line-height: 1.5; min-height: 100vh;
+            overflow-x: hidden;
         }
+        /* Scan Lines */
+        .scan-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none; z-index: 999;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+        }
+        .scan-line {
+            position: fixed; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: scan 4s linear infinite; z-index: 1000; pointer-events: none;
+        }
+        @keyframes scan {
+            0% { top: -2px; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100vh; opacity: 0; }
+        }
+        /* Face Recognition Frame */
+        .face-frame {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 200px; height: 250px; border: 2px solid var(--accent);
+            box-shadow: 0 0 20px var(--accent), inset 0 0 20px rgba(255,149,0,0.3);
+            z-index: 1001; pointer-events: none;
+        }
+        .face-frame::before, .face-frame::after {
+            content: ''; position: absolute; width: 20px; height: 20px;
+            border: 3px solid var(--accent);
+        }
+        .face-frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+        .face-frame::after { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+        .face-id {
+            position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); color: #000; padding: 4px 12px;
+            font-size: 10px; font-weight: 700; letter-spacing: 2px;
+            animation: idPulse 1s ease-in-out infinite;
+        }
+        @keyframes idPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        /* Data Match Animation */
+        .data-match {
+            position: fixed; top: 20px; right: 20px; z-index: 1002;
+            background: rgba(0,0,0,0.9); border: 1px solid var(--accent);
+            padding: 16px; min-width: 280px;
+        }
+        .match-title {
+            color: var(--accent); font-size: 11px; letter-spacing: 2px; margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .match-item {
+            display: flex; justify-content: space-between; margin-bottom: 8px;
+            font-size: 11px; opacity: 0;
+            animation: matchSlide 0.3s ease forwards;
+        }
+        .match-item:nth-child(1) { animation-delay: 0.2s; }
+        .match-item:nth-child(2) { animation-delay: 0.5s; }
+        .match-item:nth-child(3) { animation-delay: 0.8s; }
+        .match-item:nth-child(4) { animation-delay: 1.1s; }
+        @keyframes matchSlide {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .match-label { color: var(--text-dim); }
+        .match-value { color: var(--accent); font-weight: 700; }
+        .match-complete {
+            margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+            text-align: center; color: var(--safe); font-size: 12px;
+            animation: completeFade 0.5s ease 1.5s forwards; opacity: 0;
+        }
+        @keyframes completeFade { to { opacity: 1; } }
+        /* Cross Reference */
+        .cross-ref {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1002;
+            background: rgba(0,0,0,0.9); border: 1px solid var(--warning);
+            padding: 16px; min-width: 250px;
+        }
+        .ref-title {
+            color: var(--warning); font-size: 11px; letter-spacing: 2px; margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .ref-item {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+            font-size: 10px;
+        }
+        .ref-icon { width: 24px; height: 24px; background: var(--border); display: flex; align-items: center; justify-content: center; }
+        .ref-status { width: 8px; height: 8px; border-radius: 50%; background: var(--safe); animation: statusBlink 1s infinite; }
+        @keyframes statusBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        /* Analysis Progress */
+        .analysis-progress {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 1002; text-align: center;
+        }
+        .progress-bar {
+            width: 300px; height: 4px; background: var(--border); margin-bottom: 8px;
+        }
+        .progress-fill {
+            height: 100%; background: var(--accent); width: 0%;
+            animation: progressFill 2s ease forwards;
+        }
+        @keyframes progressFill { to { width: 100%; } }
+        .progress-text { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; }
+        /* Hide animations initially */
+        .face-frame, .data-match, .cross-ref, .analysis-progress { display: none; }
+        .face-frame.active, .data-match.active, .cross-ref.active, .analysis-progress.active { display: block; }
+        
         .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
         header {
             display: flex; justify-content: space-between; align-items: flex-start;
@@ -26,30 +130,16 @@
         }
         h1 { font-size: 28px; font-weight: 700; letter-spacing: 4px; color: var(--accent); margin-bottom: 4px; }
         .subtitle { color: var(--text-dim); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
-        .status-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 16px; background: var(--card-bg); border: 1px solid var(--border);
-            font-size: 11px; letter-spacing: 1px;
-        }
-        .status-dot {
-            width: 8px; height: 8px; border-radius: 50%; background: var(--safe);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } }
+        .status-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--card-bg); border: 1px solid var(--border); font-size: 11px; letter-spacing: 1px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--safe); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
         .system-time { color: var(--text-dim); font-size: 12px; margin-top: 12px; font-weight: 500; }
         .main-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 24px; }
-        .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; } .col-12 { grid-column: span 12; }
+        .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; }
         @media (max-width: 1200px) { .col-4, .col-6 { grid-column: span 6; } }
         @media (max-width: 768px) { .col-4, .col-6 { grid-column: span 12; } }
-        .card {
-            background: var(--card-bg); border: 1px solid var(--border);
-            padding: 20px; transition: all 0.3s ease;
-        }
-        .card:hover { border-color: var(--border-light); }
-        .card-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
-        }
+        .card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
         .card-title { font-size: 11px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; font-weight: 500; }
         .card-badge { font-size: 10px; padding: 4px 10px; background: var(--border); letter-spacing: 1px; }
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -58,36 +148,20 @@
         .stat-value { font-size: 28px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
         .stat-label { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; }
         .threat-level { display: flex; flex-direction: column; align-items: center; padding: 24px; }
-        .threat-gauge {
-            width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--border);
-            display: flex; align-items: center; justify-content: center; margin-bottom: 20px; position: relative; background: var(--bg);
-        }
+        .threat-gauge { width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; position: relative; background: var(--bg); }
         .threat-gauge::before { content: ''; position: absolute; inset: 8px; border-radius: 50%; border: 2px solid var(--border); }
         .threat-gauge.level-1 { border-color: var(--safe); box-shadow: 0 0 30px rgba(52,199,89,0.3); }
         .threat-gauge.level-2 { border-color: var(--warning); box-shadow: 0 0 30px rgba(255,149,0,0.3); }
         .threat-gauge.level-3 { border-color: var(--danger); box-shadow: 0 0 40px rgba(255,59,48,0.3); }
         .threat-percent { font-size: 42px; font-weight: 700; }
         .threat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; font-weight: 500; }
-        .menu-bar {
-            display: flex; gap: 4px; padding: 8px; background: var(--card-bg);
-            border: 1px solid var(--border); margin-bottom: 24px; flex-wrap: wrap;
-        }
-        .menu-item {
-            padding: 10px 20px; color: var(--text-dim); font-size: 11px;
-            letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease;
-            border: 1px solid transparent; text-transform: uppercase; font-weight: 500;
-        }
+        .menu-bar { display: flex; gap: 4px; padding: 8px; background: var(--card-bg); border: 1px solid var(--border); margin-bottom: 24px; flex-wrap: wrap; }
+        .menu-item { padding: 10px 20px; color: var(--text-dim); font-size: 11px; letter-spacing: 1px; cursor: pointer; border: 1px solid transparent; text-transform: uppercase; font-weight: 500; }
         .menu-item:hover { color: var(--text); background: var(--card-hover); }
         .menu-item.active { color: var(--accent); background: rgba(255,149,0,0.1); border-color: var(--accent); }
-        .command-bar {
-            display: flex; align-items: center; gap: 12px; padding: 14px 18px;
-            background: var(--card-bg); border: 1px solid var(--border); margin-bottom: 24px;
-        }
+        .command-bar { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--card-bg); border: 1px solid var(--border); margin-bottom: 24px; }
         .cmd-prompt { color: var(--accent); font-size: 16px; font-weight: 700; }
-        .cmd-input {
-            flex: 1; background: transparent; border: none; color: var(--text);
-            font-family: inherit; font-size: 13px; outline: none; letter-spacing: 1px;
-        }
+        .cmd-input { flex: 1; background: transparent; border: none; color: var(--text); font-family: inherit; font-size: 13px; outline: none; letter-spacing: 1px; }
         .cmd-input::placeholder { color: var(--text-muted); }
         .cmd-hint { color: var(--text-muted); font-size: 10px; letter-spacing: 1px; }
         .terminal-output { font-size: 12px; min-height: 120px; max-height: 200px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; }
@@ -95,18 +169,11 @@
         .terminal-line .prefix { color: var(--text-dim); margin-right: 8px; }
         .terminal-line .text { color: var(--text); }
         .terminal-line .highlight { color: var(--accent); }
-        .terminal-line .danger { color: var(--danger); }
-        .terminal-line .warning { color: var(--warning); }
         .terminal-line .dim { color: var(--text-muted); }
         .threats-list { max-height: 300px; overflow-y: auto; }
-        .threat-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 0; border-bottom: 1px solid var(--border);
-        }
+        .threat-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
         .threat-source { font-size: 12px; color: var(--text); flex: 1; }
-        .threat-level-tag {
-            font-size: 9px; padding: 4px 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-left: 16px;
-        }
+        .threat-level-tag { font-size: 9px; padding: 4px 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-left: 16px; }
         .threat-level-tag.high { background: rgba(255,59,48,0.15); color: var(--danger); border: 1px solid var(--danger); }
         .threat-level-tag.medium { background: rgba(255,149,0,0.15); color: var(--warning); border: 1px solid var(--warning); }
         .threat-level-tag.low { background: rgba(52,199,89,0.15); color: var(--safe); border: 1px solid var(--safe); }
@@ -120,6 +187,35 @@
     </style>
 </head>
 <body>
+    <!-- POI THE MACHINE Effects -->
+    <div class="scan-overlay"></div>
+    <div class="scan-line"></div>
+    
+    <div class="face-frame" id="faceFrame">
+        <div class="face-id">ANALYZING</div>
+    </div>
+    
+    <div class="data-match" id="dataMatch">
+        <div class="match-title">Cross-Reference</div>
+        <div class="match-item"><span class="match-label">Social Media</span><span class="match-value">MATCHED</span></div>
+        <div class="match-item"><span class="match-label">Criminal Records</span><span class="match-value">NONE</span></div>
+        <div class="match-item"><span class="match-label">Behavioral Pattern</span><span class="match-value">ELEVATED</span></div>
+        <div class="match-item"><span class="match-label">Network</span><span class="match-value">CONNECTED</span></div>
+        <div class="match-complete">IDENTIFICATION COMPLETE</div>
+    </div>
+    
+    <div class="cross-ref" id="crossRef">
+        <div class="ref-title">Data Sources</div>
+        <div class="ref-item"><div class="ref-icon">🐦</div><div><div style="color:var(--text);">Twitter/X</div><div style="color:var(--safe);font-size:9px;">● Active</div></div></div>
+        <div class="ref-item"><div class="ref-icon">📰</div><div><div style="color:var(--text);">News Feed</div><div style="color:var(--safe);font-size:9px;">● Connected</div></div></div>
+        <div class="ref-item"><div class="ref-icon">💬</div><div><div style="color:var(--text);">Reddit</div><div style="color:var(--warning);font-size:9px;">● Scanning</div></div></div>
+    </div>
+    
+    <div class="analysis-progress" id="analysisProgress">
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <div class="progress-text">ANALYZING PATTERN...</div>
+    </div>
+    
     <div class="container">
         <header>
             <div class="header-left">
@@ -128,27 +224,28 @@
             </div>
             <div class="header-right">
                 <div class="status-badge"><span class="status-dot"></span><span>MONITORING</span></div>
-                <p class="system-time" id="systemTime">--:--:-- EST</p>
+                <p class="system-time" id="systemTime">--:-- -- EST</p>
             </div>
         </header>
+        
         <nav class="menu-bar">
             <span class="menu-item active" data-view="overview">Overview</span>
             <span class="menu-item" data-view="threats">Threats</span>
             <span class="menu-item" data-view="predictions">Predictions</span>
             <span class="menu-item" data-view="analysis">Analysis</span>
-            <span class="menu-item" data-view="history">History</span>
             <span class="menu-item" data-view="sources">Sources</span>
             <span class="menu-item" data-view="settings">Settings</span>
         </nav>
+        
         <div class="view-section active" id="view-overview">
             <div class="main-grid">
                 <div class="col-4 card">
                     <div class="card-header"><span class="card-title">Statistics</span><span class="card-badge">LIVE</span></div>
                     <div class="stats-grid">
                         <div class="stat-item"><div class="stat-value" id="totalScanned">--</div><div class="stat-label">Scanned</div></div>
-                        <div class="stat-item"><div class="stat-value" id="highRisk" style="color: var(--danger)">0</div><div class="stat-label">High Risk</div></div>
-                        <div class="stat-item"><div class="stat-value" id="mediumRisk" style="color: var(--warning)">0</div><div class="stat-label">Medium</div></div>
-                        <div class="stat-item"><div class="stat-value" id="predictionScore" style="color: var(--safe)">0%</div><div class="stat-label">Risk Score</div></div>
+                        <div class="stat-item"><div class="stat-value" id="highRisk" style="color:var(--danger)">0</div><div class="stat-label">High Risk</div></div>
+                        <div class="stat-item"><div class="stat-value" id="mediumRisk" style="color:var(--warning)">0</div><div class="stat-label">Medium</div></div>
+                        <div class="stat-item"><div class="stat-value" id="predictionScore" style="color:var(--safe)">0%</div><div class="stat-label">Risk Score</div></div>
                     </div>
                 </div>
                 <div class="col-4 card">
@@ -160,9 +257,7 @@
                 </div>
                 <div class="col-4 card">
                     <div class="card-header"><span class="card-title">24h Trend</span><span class="card-badge">CHART</span></div>
-                    <div id="trendChart" style="height:180px;display:flex;align-items:end;gap:2px;padding:20px 10px 0;">
-                        <!-- Bars will be inserted here -->
-                    </div>
+                    <div id="trendChart" style="height:180px;display:flex;align-items:end;gap:2px;padding:20px 10px 0;"></div>
                 </div>
             </div>
             <div class="card" style="margin-bottom:24px;">
@@ -175,6 +270,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="view-section" id="view-threats">
             <div class="card">
                 <div class="card-header"><span class="card-title">Recent Threats</span><span class="card-badge" id="threatsCount">0 DETECTED</span></div>
@@ -183,13 +279,12 @@
                 </div>
             </div>
         </div>
+        
         <div class="view-section" id="view-predictions">
             <div class="main-grid">
                 <div class="col-6 card">
                     <div class="card-header"><span class="card-title">Risk Forecast</span><span class="card-badge">7 DAY</span></div>
-                    <div id="forecastChart" style="height:200px;display:flex;align-items:end;gap:4px;padding:20px;">
-                        <!-- Forecast bars -->
-                    </div>
+                    <div id="forecastChart" style="height:200px;display:flex;align-items:end;gap:4px;padding:20px;"></div>
                 </div>
                 <div class="col-6 card">
                     <div class="card-header"><span class="card-title">Prediction Details</span><span class="card-badge">ANALYSIS</span></div>
@@ -197,6 +292,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="view-section" id="view-analysis">
             <div class="card">
                 <div class="card-header"><span class="card-title">Deep Analysis</span><span class="card-badge">AI</span></div>
@@ -212,51 +308,43 @@
                 </div>
             </div>
         </div>
-        <div class="view-section" id="view-history">
-            <div class="card">
-                <div class="card-header"><span class="card-title">Historical Data</span><span class="card-badge">ARCHIVE</span></div>
-                <div id="historyChart" style="height:250px;display:flex;align-items:end;gap:2px;padding:20px 10px 0;">
-                    <!-- History bars -->
-                </div>
-            </div>
-        </div>
+        
         <div class="view-section" id="view-sources">
             <div class="card">
                 <div class="card-header"><span class="card-title">Data Sources</span><span class="card-badge" id="sourcesCount">3 ACTIVE</span></div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--border));">
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--border);">
                         <div style="font-size:18px;">🐦</div><div><div style="font-size:11px;">Twitter/X</div><div style="font-size:10px;color:var(--text-dim);">Monitoring</div></div>
                     </div>
-                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:1px solid:var(--border));">
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--border);">
                         <div style="font-size:18px;">📰</div><div><div style="font-size:11px;">News API</div><div style="font-size:10px;color:var(--text-dim);">Connected</div></div>
                     </div>
-                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:1px solid:var(--border));">
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:1px solid var(--border);">
                         <div style="font-size:18px;">💬</div><div><div style="font-size:11px;">Reddit</div><div style="font-size:10px;color:var(--text-dim);">Active</div></div>
                     </div>
                 </div>
             </div>
         </div>
+        
         <div class="view-section" id="view-settings">
             <div class="card">
                 <div class="card-header"><span class="card-title">Configuration</span><span class="card-badge">SETTINGS</span></div>
                 <div style="margin-bottom:24px;">
                     <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">NOTIFICATIONS</div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border:1px solid:var(--border));margin-bottom:8px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border:1px solid var(--border);margin-bottom:8px;">
                         <span style="font-size:12px;">High Risk Alerts</span>
-                        <div style="width:44px;height:24px;background:var(--accent);border-radius:12px;position:relative;cursor:pointer;" onclick="this.style.background=this.style.background==='var(--accent)'?'var(--border)':'var(--accent)'"><div style="width:18px;height:18px;background:white;border-radius:50%;position:absolute;top:3px;left:23px;transition:all 0.3s;"></div></div>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border:1px solid:var(--border));">
-                        <span style="font-size:12px;">Daily Reports</span>
-                        <div style="width:44px;height:24px;background:var(--accent);border-radius:12px;position:relative;cursor:pointer;" onclick="this.style.background=this.style.background==='var(--accent)'?'var(--border)':'var(--accent)'"><div style="width:18px;height:18px;background:white;border-radius:50%;position:absolute;top:3px;left:23px;transition:all 0.3s;"></div></div>
+                        <div style="width:44px;height:24px;background:var(--accent);border-radius:12px;position:relative;cursor:pointer;"><div style="width:18px;height:18px;background:white;border-radius:50%;position:absolute;top:3px;left:23px;transition:all 0.3s;"></div></div>
                     </div>
                 </div>
             </div>
         </div>
+        
         <div class="command-bar">
             <span class="cmd-prompt">></span>
             <input type="text" class="cmd-input" id="cmdInput" placeholder="Enter command..." autocomplete="off">
             <span class="cmd-hint">TYPE 'HELP'</span>
         </div>
+        
         <div class="card">
             <div class="card-header"><span class="card-title">Terminal</span><span class="card-badge">OUTPUT</span></div>
             <div class="terminal-output" id="terminalOutput">
@@ -265,12 +353,42 @@
             </div>
         </div>
     </div>
+    
     <script>
-        const API_URL = '/';
-        let currentView = 'overview';
+        // THE MACHINE Animations
+        function showFaceRecognition() {
+            const frame = document.getElementById('faceFrame');
+            frame.classList.add('active');
+            setInterval(function() {
+                const x = 20 + Math.random() * 60;
+                const y = 10 + Math.random() * 80;
+                frame.style.left = x + '%';
+                frame.style.top = y + '%';
+            }, 3000);
+        }
         
-        document.addEventListener('DOMContentLoaded', () => {
+        function showDataMatch() {
+            const match = document.getElementById('dataMatch');
+            match.classList.add('active');
+            setTimeout(function() { match.classList.remove('active'); }, 5000);
+        }
+        
+        function showAnalysisProgress() {
+            const prog = document.getElementById('analysisProgress');
+            prog.classList.add('active');
+            setTimeout(function() { prog.classList.remove('active'); }, 2500);
+        }
+        
+        // Random animations
+        setInterval(function() {
+            if (Math.random() > 0.7) showDataMatch();
+        }, 8000);
+        
+        // Main
+        document.addEventListener('DOMContentLoaded', function() {
             init();
+            showFaceRecognition();
+            setTimeout(showDataMatch, 2000);
         });
         
         function init() {
@@ -292,60 +410,44 @@
         }
         
         function initCharts() {
-            // Simple bar charts instead of Chart.js
             const trendEl = document.getElementById('trendChart');
             const forecastEl = document.getElementById('forecastChart');
-            const historyEl = document.getElementById('historyChart');
-            
             if (trendEl) {
                 let html = '';
                 for (let i = 0; i < 24; i++) {
                     const h = Math.floor(Math.random() * 80 + 10);
-                    html += `<div style="flex:1;background:linear-gradient(180deg,var(--accent),var(--accent-dim));border-radius:2px;height:${h}%;min-height:2px;"></div>`;
+                    html += '<div style="flex:1;background:linear-gradient(180deg,var(--accent),var(--accent-dim));border-radius:2px;height:' + h + '%;min-height:2px;"></div>';
                 }
                 trendEl.innerHTML = html;
             }
-            
             if (forecastEl) {
                 let html = '';
                 for (let i = 0; i < 8; i++) {
                     const h = Math.floor(Math.random() * 60 + 20);
                     const color = h > 60 ? 'var(--danger)' : h > 40 ? 'var(--warning)' : 'var(--safe)';
-                    html += `<div style="flex:1;background:linear-gradient(180deg,${color},rgba(255,255,255,0.1));border-radius:2px 2px 0 0;height:${h}%;"></div>`;
+                    html += '<div style="flex:1;background:linear-gradient(180deg,' + color + ',rgba(255,255,255,0.1));border-radius:2px 2px 0 0;height:' + h + '%;"></div>';
                 }
                 forecastEl.innerHTML = html;
-            }
-            
-            if (historyEl) {
-                let html = '';
-                for (let i = 0; i < 30; i++) {
-                    const h = Math.floor(Math.random() * 70 + 10);
-                    html += `<div style="flex:1;background:var(--accent);border-radius:2px;height:${h}%;min-height:2px;"></div>`;
-                }
-                historyEl.innerHTML = html;
             }
         }
         
         function initMenu() {
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(function(item) {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.menu-item').forEach(function(m) { m.classList.remove('active'); });
                     item.classList.add('active');
                     currentView = item.dataset.view;
-                    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                    document.querySelectorAll('.view-section').forEach(function(v) { v.classList.remove('active'); });
                     document.getElementById('view-' + currentView).classList.add('active');
-                    addLine(document.getElementById('terminalOutput'), '>', 'Switched to ' + currentView.toUpperCase(), 'highlight');
-                    if (currentView === 'analysis') document.getElementById('patternScore').textContent = (Math.random()*30+60).toFixed(0)+'%';
-                    if (currentView === 'predictions') {
-                        document.getElementById('predictionDetails').innerHTML = '<p>24h: '+(Math.random()*30+10).toFixed(0)+'% risk</p><p>7d: '+(Math.random()*50+20).toFixed(0)+'% risk</p>';
-                    }
+                    showAnalysisProgress();
+                    addLine(document.getElementById('terminalOutput'), '>', 'ANALYZING ' + currentView.toUpperCase(), 'highlight');
                 });
             });
         }
         
         function initCommand() {
             const input = document.getElementById('cmdInput');
-            input.addEventListener('keypress', e => {
+            input.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     executeCommand(input.value);
                     input.value = '';
@@ -357,65 +459,52 @@
             const terminal = document.getElementById('terminalOutput');
             addLine(terminal, '>', cmd, 'text');
             const cmdLower = cmd.toLowerCase().trim();
-            
             switch(cmdLower) {
                 case 'help':
-                    addLine(terminal, ' ', '  HELP - Show commands', 'dim');
-                    addLine(terminal, ' ', '  STATUS - System status', 'dim');
-                    addLine(terminal, ' ', '  STATS - Refresh stats', 'dim');
-                    addLine(terminal, ' ', '  SCAN - Start scan', 'warning');
-                    addLine(terminal, ' ', '  CLEAR - Clear terminal', 'dim');
-                    addLine(terminal, ' ', '  REFRESH - Refresh all', 'dim');
+                    addLine(terminal, ' ', '  HELP - Commands', 'dim');
+                    addLine(terminal, ' ', '  STATUS - System', 'dim');
+                    addLine(terminal, ' ', '  SCAN - Analyze', 'warning');
                     return;
                 case 'status':
-                    addLine(terminal, '>', 'System ONLINE | Monitoring ACTIVE | Risk: ' + document.getElementById('threatPercent').textContent, 'text');
-                    break;
-                case 'stats':
-                    fetchStats();
-                    addLine(terminal, '>', 'Statistics refreshed', 'highlight');
+                    addLine(terminal, '>', 'System ONLINE | Risk: ' + document.getElementById('threatPercent').textContent, 'text');
                     break;
                 case 'scan':
-                    addLine(terminal, '>', 'Initiating threat scan...', 'warning');
-                    setTimeout(() => addLine(terminal, '>', 'Scan complete. No new threats.', 'success'), 2000);
+                    showAnalysisProgress();
+                    addLine(terminal, '>', 'INITIATING SCAN...', 'warning');
+                    setTimeout(function() { addLine(terminal, '>', 'Scan complete.', 'text'); }, 2500);
                     break;
                 case 'clear':
                     terminal.innerHTML = '';
                     addLine(terminal, '>', 'Console cleared', 'text');
                     return;
-                case 'refresh':
-                    fetchStats();
-                    initCharts();
-                    addLine(terminal, '>', 'All data refreshed', 'highlight');
-                    break;
                 case '': return;
                 default:
-                    addLine(terminal, '>', 'Unknown command: ' + cmd + '. Type HELP.', 'dim');
+                    addLine(terminal, '>', 'Unknown: ' + cmd + '. Type HELP.', 'dim');
             }
             terminal.scrollTop = terminal.scrollHeight;
         }
         
-        function addLine(container, prefix, text, className = 'text') {
+        function addLine(container, prefix, text, className) {
+            className = className || 'text';
             const line = document.createElement('p');
             line.className = 'terminal-line';
-            line.innerHTML = `<span class="prefix">${prefix}</span> <span class="${className}">${text}</span>`;
+            line.innerHTML = '<span class="prefix">' + prefix + '</span> <span class="' + className + '">' + text + '</span>';
             container.appendChild(line);
             container.scrollTop = container.scrollHeight;
         }
         
         function fetchStats() {
-            try {
-                document.getElementById('totalScanned').textContent = Math.floor(Math.random() * 50000 + 10000).toLocaleString();
-                document.getElementById('highRisk').textContent = Math.floor(Math.random() * 5);
-                document.getElementById('mediumRisk').textContent = Math.floor(Math.random() * 15);
-                document.getElementById('predictionScore').textContent = Math.floor(Math.random() * 20) + '%';
-                updateThreatLevel(Math.floor(Math.random() * 15));
-                document.getElementById('predictionText').textContent = 'Low risk environment. No imminent threats identified.';
-                document.getElementById('confidence').textContent = '85%';
-                document.getElementById('dataPoints').textContent = Math.floor(Math.random() * 50000 + 10000).toLocaleString();
-                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
-                document.getElementById('threatsCount').textContent = Math.floor(Math.random() * 20) + ' DETECTED';
-                updateThreatsList();
-            } catch(e) { console.log('Demo mode'); }
+            document.getElementById('totalScanned').textContent = Math.floor(Math.random() * 50000 + 10000).toLocaleString();
+            document.getElementById('highRisk').textContent = Math.floor(Math.random() * 5);
+            document.getElementById('mediumRisk').textContent = Math.floor(Math.random() * 15);
+            document.getElementById('predictionScore').textContent = Math.floor(Math.random() * 20) + '%';
+            updateThreatLevel(Math.floor(Math.random() * 15));
+            document.getElementById('predictionText').textContent = 'Low risk environment. No imminent threats identified.';
+            document.getElementById('confidence').textContent = '85%';
+            document.getElementById('dataPoints').textContent = Math.floor(Math.random() * 50000 + 10000).toLocaleString();
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
+            document.getElementById('threatsCount').textContent = Math.floor(Math.random() * 20) + ' DETECTED';
+            document.getElementById('sourcesCount').textContent = '3 ACTIVE';
         }
         
         function updateThreatLevel(prob) {
@@ -425,20 +514,6 @@
             const badge = document.getElementById('threatBadge');
             percent.textContent = prob + '%';
             gauge.classList.remove('level-1','level-2','level-3');
-            if (prob >= 70) { gauge.classList.add('level-3'); label.textContent = 'CRITICAL THREAT'; badge.textContent = 'CRITICAL'; badge.style.color = 'var(--danger)'; }
-            else if (prob >= 40) { gauge.classList.add('level-2'); label.textContent = 'ELEVATED RISK'; badge.textContent = 'ELEVATED'; badge.style.color = 'var(--warning)'; }
-            else { gauge.classList.add('level-1'); label.textContent = 'No significant threats'; badge.textContent = 'LOW'; badge.style.color = 'var(--safe)'; }
-        }
-        
-        function updateThreatsList() {
-            const list = document.getElementById('threatsList');
-            const threats = [
-                {source:'Twitter: "threaten" keyword', level:'high', time:'2m ago'},
-                {source:'Reddit: Elevated distress', level:'medium', time:'15m ago'},
-                {source:'Forum: Violence-related', level:'low', time:'1h ago'}
-            ];
-            list.innerHTML = threats.map(t => `<div class="threat-item"><span class="threat-source">${t.source}</span><span class="threat-level-tag ${t.level}">${t.level.toUpperCase()}</span><span class="threat-time">${t.time}</span></div>`).join('');
-        }
-    </script>
-</body>
-</html>
+            if (prob >= 70) { gauge.classList.add('level-3'); label.textContent = 'CRITICAL THREAT'; badge.textContent = 'CRITICAL'; }
+            else if (prob >= 40) { gauge.classList.add('level-2'); label.textContent = 'ELEVATED RISK'; badge.textContent = 'ELEVATED'; }
+            else { gauge.classList.add('level-1'); label.textContent = 'No significant threats'; badge.textContent =
