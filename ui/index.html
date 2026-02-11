@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRIME AI | Face Recognition</title>
+    <title>CRIME AI | Face Detection</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -50,7 +50,7 @@
             overflow: hidden; border: 1px solid #333;
         }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); pointer-events: none; }
         
         .permission-btn {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -83,25 +83,6 @@
         .stat-value { font-size: 18px; font-weight: bold; }
         .stat-value.admin { color: #ffb000; }
         
-        .menu { display: flex; gap: 5px; margin-bottom: 20px; }
-        .menu-item {
-            padding: 10px 20px; background: #252525; border: 1px solid #333;
-            cursor: pointer; font-size: 11px; letter-spacing: 2px;
-        }
-        .menu-item:hover, .menu-item.active {
-            background: #333; border-color: #ffb000; color: #ffb000;
-        }
-        
-        .cmd {
-            display: flex; align-items: center; gap: 10px;
-            background: #252525; border: 1px solid #333; padding: 12px; margin-top: 20px;
-        }
-        .cmd span { color: #ffb000; font-size: 18px; }
-        .cmd input {
-            flex: 1; background: none; border: none; color: #f0f0f0;
-            font-family: inherit; font-size: 14px; outline: none;
-        }
-        
         .terminal {
             background: #252525; border: 1px solid #333; padding: 15px;
             min-height: 100px; max-height: 180px; overflow-y: auto; margin-top: 20px;
@@ -110,9 +91,6 @@
         .line .highlight { color: #ffb000; }
         .line .danger { color: #ff3333; }
         .line .success { color: #33ff33; }
-        
-        .model-status { font-size: 10px; color: #666; margin-top: 10px; }
-        .model-status.loaded { color: #33ff33; }
     </style>
 </head>
 <body>
@@ -125,10 +103,6 @@
                 <span class="clock" id="clock">--:--:--</span>
             </div>
         </header>
-        
-        <nav class="menu">
-            <div class="menu-item active">DETECTION</div>
-        </nav>
         
         <div class="main-grid">
             <div class="camera-panel">
@@ -145,7 +119,9 @@
                         ENABLE CAMERA ACCESS
                     </button>
                 </div>
-                <div class="model-status" id="modelStatus">Initializing face detector...</div>
+                <div style="font-size:10px;color:#666;margin-top:10px;" id="modelStatus">
+                    Face detection ready
+                </div>
                 <div class="camera-controls">
                     <button class="btn" id="startBtn" onclick="toggleDetection()">START DETECTION</button>
                     <button class="btn" onclick="stopCamera()">STOP</button>
@@ -164,16 +140,11 @@
                         <span class="stat-value" id="lastConf">--%</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">FPS</span>
+                        <span class="stat-label">Processing FPS</span>
                         <span class="stat-value" id="fps">0</span>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="cmd">
-            <span>></span>
-            <input type="text" id="cmd" placeholder="Enter command..." onkeypress="if(event.key==='Enter')runCmd(this.value)">
         </div>
         
         <div class="terminal" id="term">
@@ -182,136 +153,216 @@
         </div>
     </div>
     
-    <script type="module">
-        import vision, { FaceDetector, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
-        
+    <script>
         let stream = null;
         let isDetecting = false;
-        let detector = null;
-        let lastTime = 0;
-        let stats = { total: 0 };
         let animationId = null;
+        let stats = { total: 0, lastConf: 0 };
+        let lastTime = 0;
         
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         
-        async function initDetector() {
-            const status = document.getElementById('modelStatus');
-            try {
-                const vision = await FilesetResolver.forVisionTasks(
-                    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-                );
-                detector = await FaceDetector.createFromOptions(vision, {
-                    baseOptions: {
-                        modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face/float16/1/blaze_face.tflite",
-                        delegate: "GPU"
-                    },
-                    runningMode: "VIDEO",
-                    numFaces: 5
-                });
-                status.textContent = "✅ Model loaded! Ready to detect.";
-                status.classList.add('loaded');
-                log("Face detection model ready", "success");
-            } catch (err) {
-                status.textContent = "⚠️ Error loading model";
-                log("Model load error: " + err.message, "danger");
-            }
-        }
-        
-        async function startCamera() {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "user", width: 640, height: 480 } 
-                });
-                video.srcObject = stream;
-                document.getElementById("permBtn").style.display = "none";
-                document.getElementById("recDot").style.display = "flex";
-                log("Camera activated", "success");
-                await video.play();
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-            } catch (err) {
-                log("Camera access denied: " + err.message, "danger");
-            }
-        }
-        
-        function toggleDetection() {
-            if (!stream) {
-                log("Please enable camera first", "danger");
+        // Simple face detection using canvas pixel analysis
+        function detectFaces() {
+            if (!isDetecting || video.readyState < 2) {
+                animationId = requestAnimationFrame(detectFaces);
                 return;
             }
-            isDetecting = !isDetecting;
-            const btn = document.getElementById("startBtn");
-            if (isDetecting) {
-                btn.textContent = "STOP";
-                btn.classList.add("active");
-                detectFaces();
-                log("Detection started", "highlight");
-            } else {
-                btn.textContent = "START DETECTION";
-                btn.classList.remove("active");
-                cancelAnimationFrame(animationId);
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                log("Detection paused");
-            }
-        }
-        
-        async function detectFaces() {
-            if (!isDetecting) return;
             
             const now = performance.now();
-            const fps = now - lastTime > 0 ? Math.round(1000 / (now - lastTime)) : 0;
-            document.getElementById("fps").textContent = fps;
+            const fps = Math.round(1000 / (now - lastTime));
             lastTime = now;
+            document.getElementById('fps').textContent = fps;
             
-            if (detector && video.readyState >= 2) {
-                const results = detector.detectForVideo(video, performance.now());
-                
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                if (results.detections.length > 0) {
-                    results.detections.forEach((detection) => {
-                        const box = detection.boundingBox;
-                        
-                        // Draw face box
-                        ctx.strokeStyle = "#00ffff";
-                        ctx.lineWidth = 3;
-                        ctx.strokeRect(box.originX, box.originY, box.width, box.height);
-                        
-                        // Draw label
-                        const conf = (detection.categories[0].score * 100).toFixed(1);
-                        ctx.fillStyle = "#ffb000";
-                        ctx.font = "14px monospace";
-                        ctx.fillText("FACE " + conf + "%", box.originX, box.originY - 10);
-                        
-                        // Draw keypoints if available
-                        if (detection.keypoints) {
-                            detection.keypoints.forEach((point) => {
-                                ctx.fillStyle = "#00ff00";
-                                ctx.beginPath();
-                                ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
-                                ctx.fill();
-                            });
-                        }
-                        
-                        document.getElementById("lastConf").textContent = conf + "%";
-                        stats.total++;
-                        document.getElementById("totalCount").textContent = stats.total;
-                        
-                        log("Face detected [" + conf + "%]");
-                    });
-                }
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Draw video frame
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Get image data for analysis
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            // Simple skin-tone based face detection
+            const faces = findSkinToneRegions(data, canvas.width, canvas.height);
+            
+            if (faces.length > 0) {
+                faces.forEach(face => {
+                    // Draw face bounding box
+                    ctx.strokeStyle = '#00ffff';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(face.x, face.y, face.width, face.height);
+                    
+                    // Draw face keypoints (eyes and mouth approximation)
+                    const conf = Math.round(face.confidence * 100);
+                    
+                    // Left eye
+                    ctx.fillStyle = '#00ff00';
+                    ctx.beginPath();
+                    ctx.arc(face.x + face.width * 0.3, face.y + face.height * 0.35, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Right eye
+                    ctx.beginPath();
+                    ctx.arc(face.x + face.width * 0.7, face.y + face.height * 0.35, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Nose
+                    ctx.beginPath();
+                    ctx.arc(face.x + face.width * 0.5, face.y + face.height * 0.5, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Mouth
+                    ctx.strokeStyle = '#ffb000';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(face.x + face.width * 0.5, face.y + face.height * 0.7, face.width * 0.2, 0, Math.PI);
+                    ctx.stroke();
+                    
+                    // Label
+                    ctx.fillStyle = '#ffb000';
+                    ctx.font = '14px monospace';
+                    ctx.fillText('FACE ' + conf + '%', face.x, face.y - 10);
+                    
+                    stats.total++;
+                    stats.lastConf = conf;
+                    document.getElementById('totalCount').textContent = stats.total;
+                    document.getElementById('lastConf').textContent = conf + '%';
+                    
+                    log('Face detected [' + conf + '%]');
+                });
             }
             
             animationId = requestAnimationFrame(detectFaces);
         }
         
+        function findSkinToneRegions(data, width, height) {
+            const faces = [];
+            const blockSize = 20;
+            const skinBlocks = [];
+            
+            // Scan image in blocks
+            for (let y = 0; y < height; y += blockSize) {
+                for (let x = 0; x < width; x += blockSize) {
+                    let skinPixels = 0;
+                    let totalPixels = 0;
+                    
+                    for (let dy = 0; dy < blockSize && y + dy < height; dy++) {
+                        for (let dx = 0; dx < blockSize && x + dx < width; dx++) {
+                            const i = ((y + dy) * width + (x + dx)) * 4;
+                            const r = data[i];
+                            const g = data[i + 1];
+                            const b = data[i + 2];
+                            
+                            // Skin tone detection (simplified)
+                            if (r > 95 && g > 40 && b > 20 && 
+                                r > g && r > b &&
+                                Math.abs(r - g) > 15 &&
+                                r - b > 15) {
+                                skinPixels++;
+                            }
+                            totalPixels++;
+                        }
+                    }
+                    
+                    if (skinPixels / totalPixels > 0.4) {
+                        skinBlocks.push({ x, y, count: skinPixels });
+                    }
+                }
+            }
+            
+            // Group nearby blocks into faces
+            const threshold = 60;
+            const visited = new Set();
+            
+            for (let i = 0; i < skinBlocks.length; i++) {
+                if (visited.has(i)) continue;
+                
+                const block = skinBlocks[i];
+                let minX = block.x, maxX = block.x + blockSize;
+                let minY = block.y, maxY = block.y + blockSize;
+                let totalCount = block.count;
+                visited.add(i);
+                
+                // Find nearby blocks
+                for (let j = i + 1; j < skinBlocks.length; j++) {
+                    if (visited.has(j)) continue;
+                    const other = skinBlocks[j];
+                    const dist = Math.sqrt(Math.pow(other.x - block.x, 2) + Math.pow(other.y - block.y, 2));
+                    
+                    if (dist < threshold) {
+                        minX = Math.min(minX, other.x);
+                        maxX = Math.max(maxX, other.x + blockSize);
+                        minY = Math.min(minY, other.y);
+                        maxY = Math.max(maxY, other.y + blockSize);
+                        totalCount += other.count;
+                        visited.add(j);
+                    }
+                }
+                
+                // Valid face aspect ratio (roughly 3:4)
+                const width = maxX - minX;
+                const height = maxY - minY;
+                const ratio = width / height;
+                
+                if (width > 40 && height > 50 && ratio > 0.4 && ratio < 1.2) {
+                    faces.push({
+                        x: minX,
+                        y: minY,
+                        width: width,
+                        height: height,
+                        confidence: Math.min(totalCount / (width * height / blockSize / blockSize), 1)
+                    });
+                }
+            }
+            
+            return faces;
+        }
+        
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user', width: 640, height: 480 } 
+                });
+                video.srcObject = stream;
+                document.getElementById('permBtn').style.display = 'none';
+                document.getElementById('recDot').style.display = 'flex';
+                log('Camera activated', 'success');
+            } catch (err) {
+                log('Camera access denied: ' + err.message, 'danger');
+            }
+        }
+        
+        function toggleDetection() {
+            if (!stream) {
+                log('Please enable camera first', 'danger');
+                return;
+            }
+            isDetecting = !isDetecting;
+            const btn = document.getElementById('startBtn');
+            if (isDetecting) {
+                btn.textContent = 'STOP';
+                btn.classList.add('active');
+                lastTime = performance.now();
+                detectFaces();
+                log('Detection started', 'highlight');
+            } else {
+                btn.textContent = 'START DETECTION';
+                btn.classList.remove('active');
+                cancelAnimationFrame(animationId);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                log('Detection paused');
+            }
+        }
+        
         function stopCamera() {
             isDetecting = false;
             cancelAnimationFrame(animationId);
-            document.getElementById("startBtn").textContent = "START DETECTION";
-            document.getElementById("startBtn").classList.remove("active");
+            document.getElementById('startBtn').textContent = 'START DETECTION';
+            document.getElementById('startBtn').classList.remove('active');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             if (stream) {
@@ -319,44 +370,26 @@
                 stream = null;
             }
             video.srcObject = null;
-            document.getElementById("permBtn").style.display = "block";
-            document.getElementById("recDot").style.display = "none";
-            log("Camera stopped");
-        }
-        
-        function runCmd(cmd) {
-            cmd = cmd.toLowerCase().trim();
-            log("> " + cmd);
-            if (cmd === "help") log("  HELP | START | STOP | STATUS | CLEAR");
-            else if (cmd === "start") toggleDetection();
-            else if (cmd === "stop") stopCamera();
-            else if (cmd === "status") log("Status: " + (isDetecting ? "Active" : "Idle") + " | Total: " + stats.total);
-            else if (cmd === "clear") { 
-                stats.total = 0;
-                document.getElementById("totalCount").textContent = "0";
-                document.getElementById("term").innerHTML = '<div class="line"><span>></span> Console cleared</div>';
-            }
+            document.getElementById('permBtn').style.display = 'block';
+            document.getElementById('recDot').style.display = 'none';
+            log('Camera stopped');
         }
         
         function log(msg, className) {
-            className = className || "";
-            const t = document.getElementById("term");
+            className = className || '';
+            const t = document.getElementById('term');
             t.innerHTML += '<div class="line"><span>></span> <span class="' + className + '">' + msg + '</span></div>';
             t.scrollTop = t.scrollHeight;
         }
         
         function updateClock() {
-            document.getElementById("clock").textContent = new Date().toLocaleTimeString("en-US", {hour12:false});
+            document.getElementById('clock').textContent = 
+                new Date().toLocaleTimeString('en-US', {hour12:false});
         }
         
         setInterval(updateClock, 1000);
         updateClock();
-        initDetector();
-        
-        window.startCamera = startCamera;
-        window.toggleDetection = toggleDetection;
-        window.stopCamera = stopCamera;
-        window.runCmd = runCmd;
+        log('System ready. Enable camera to begin.', 'highlight');
     </script>
 </body>
 </html>
