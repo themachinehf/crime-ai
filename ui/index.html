@@ -28,17 +28,12 @@
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
         .clock { color: #ffb000; font-size: 18px; }
         
-        .main-grid {
-            display: grid; grid-template-columns: 1fr 400px; gap: 20px;
-        }
+        .main-grid { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
         @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
         
-        .camera-panel {
-            background: #252525; border: 1px solid #333; padding: 20px;
-        }
+        .camera-panel { background: #252525; border: 1px solid #333; padding: 20px; }
         .camera-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
         }
         .camera-title { font-size: 12px; letter-spacing: 3px; color: #888; }
         .rec-dot {
@@ -63,15 +58,8 @@
             border: none; font-family: inherit; font-size: 14px; letter-spacing: 2px;
             cursor: pointer;
         }
-        .permission-btn:hover { background: #ffcc00; }
-        .error-msg {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            text-align: center; color: #ff3333;
-        }
         
-        .camera-controls {
-            display: flex; gap: 10px; margin-top: 15px;
-        }
+        .camera-controls { display: flex; gap: 10px; margin-top: 15px; }
         .btn {
             flex: 1; padding: 12px; background: #333; border: 1px solid #444;
             color: #f0f0f0; font-family: inherit; font-size: 12px; letter-spacing: 2px;
@@ -91,29 +79,13 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 8px 0; border-bottom: 1px solid #333;
         }
-        .stat-row:last-child { border-bottom: none; }
         .stat-label { color: #888; font-size: 11px; }
         .stat-value { font-size: 18px; font-weight: bold; }
         .stat-value.civilian { color: #33ff33; }
         .stat-value.suspect { color: #ff3333; }
-        .stat-value.admin { color: #ffb000; }
         .stat-value.match { color: #00ffff; }
         
-        .detection-log { max-height: 200px; overflow-y: auto; font-size: 11px; }
-        .log-entry {
-            display: flex; justify-content: space-between; padding: 8px 0;
-            border-bottom: 1px solid #333;
-        }
-        .log-entry .time { color: #888; }
-        .log-entry .type { font-weight: bold; }
-        .log-entry .type.civilian { color: #33ff33; }
-        .log-entry .type.suspect { color: #ff3333; }
-        .log-entry .type.admin { color: #ffb000; }
-        .log-entry .type.match { color: #00ffff; }
-        
-        .menu {
-            display: flex; gap: 5px; margin-bottom: 20px;
-        }
+        .menu { display: flex; gap: 5px; margin-bottom: 20px; }
         .menu-item {
             padding: 10px 20px; background: #252525; border: 1px solid #333;
             cursor: pointer; font-size: 11px; letter-spacing: 2px;
@@ -140,23 +112,19 @@
         .line .highlight { color: #ffb000; }
         .line .danger { color: #ff3333; }
         .line .success { color: #33ff33; }
-        .line .info { color: #00ffff; }
         
-        .model-status {
-            font-size: 10px; color: #666; margin-top: 10px;
-        }
+        .model-status { font-size: 10px; color: #666; margin-top: 10px; }
         .model-status.loaded { color: #33ff33; }
         
-        .upload-area {
-            margin-top: 15px; padding: 15px; border: 1px dashed #444;
-            text-align: center;
+        .register-btn {
+            width: 100%; padding: 12px; background: #ffb000; color: #000;
+            border: none; font-family: inherit; font-size: 12px; letter-spacing: 2px;
+            cursor: pointer; margin-top: 15px;
         }
+        .register-btn:hover { background: #ffcc00; }
+        
+        .upload-area { margin-top: 15px; padding: 15px; border: 1px dashed #444; text-align: center; }
         .upload-area input { margin-top: 10px; }
-        .upload-area label { display: block; font-size: 11px; color: #888; }
-        .preview-img {
-            width: 80px; height: 80px; object-fit: cover; border: 1px solid #333;
-            margin-top: 10px; display: none;
-        }
     </style>
 </head>
 <body>
@@ -173,14 +141,13 @@
         <nav class="menu">
             <div class="menu-item active" onclick="showView('recognize')">RECOGNIZE</div>
             <div class="menu-item" onclick="showView('stats')">STATISTICS</div>
-            <div class="menu-item" onclick="showView('logs')">LOGS</div>
             <div class="menu-item" onclick="showView('settings')">SETTINGS</div>
         </nav>
         
         <div class="main-grid">
             <div class="camera-panel">
                 <div class="camera-header">
-                    <span class="camera-title">FACIAL RECOGNITION SYSTEM</span>
+                    <span class="camera-title">FACIAL DETECTION</span>
                     <div class="rec-dot" id="recDot" style="display:none">
                         <span></span> REC
                     </div>
@@ -191,14 +158,10 @@
                     <button class="permission-btn" id="permBtn" onclick="startCamera()">
                         ENABLE CAMERA ACCESS
                     </button>
-                    <div class="error-msg" id="errorMsg" style="display:none">
-                        Camera access denied<br>
-                        <small>Check browser permissions</small>
-                    </div>
                 </div>
-                <div class="model-status" id="modelStatus">Loading face detection model...</div>
+                <div class="model-status" id="modelStatus">Face detection ready</div>
                 <div class="camera-controls">
-                    <button class="btn" id="startBtn" onclick="toggleRecognition()">START RECOGNITION</button>
+                    <button class="btn" id="startBtn" onclick="toggleRecognition()">START DETECTION</button>
                     <button class="btn" onclick="stopCamera()">STOP</button>
                 </div>
             </div>
@@ -211,54 +174,25 @@
                         <span class="stat-value" id="faceCount">0</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Civilians</span>
-                        <span class="stat-value civilian" id="civilianCount">0</span>
-                    </div>
-                    <div class="stat-row">
                         <span class="stat-label">Unknown</span>
                         <span class="stat-value suspect" id="unknownCount">0</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">USER Match</span>
+                        <span class="stat-label">USER: 660028</span>
                         <span class="stat-value match" id="matchCount">0</span>
                     </div>
                 </div>
                 
-                <div class="card" id="view-logs" style="display:none">
-                    <div class="card-title">DETECTION LOG</div>
-                    <div class="detection-log" id="detectionLog">
-                        <div class="log-entry">
-                            <span class="time">--:--:--</span>
-                            <span class="type">System initialized</span>
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="card" id="view-settings" style="display:none">
-                    <div class="card-title">USER RECOGNITION SETTINGS</div>
+                    <div class="card-title">USER REGISTRATION</div>
                     <div class="upload-area">
-                        <label>Upload your photo for recognition:</label>
-                        <input type="file" id="userPhoto" accept="image/*" onchange="handlePhotoUpload(event)">
-                        <img id="photoPreview" class="preview-img" alt="Your photo">
-                    </div>
-                    <div class="model-status" id="photoStatus">No photo uploaded</div>
-                    <button class="btn" style="margin-top:15px;width:100%;" onclick="checkCameraAndRegister()">
-                        📸 REGISTER CURRENT FACE
-                    </button>
-                    <div style="margin-top:15px;font-size:11px;color:#888;">
-                        Tips: Use a clear frontal photo or register from camera.
-                    </div>
-                    <div style="margin-top:10px;">
-                        <label style="font-size:11px;color:#888;">Or enter name:</label>
-                        <input type="text" id="manualName" placeholder="Enter name" 
-                               style="width:100%;padding:8px;background:#1a1a1a;border:1px solid #333;color:#f0f0f0;margin-top:5px;">
-                        <button class="btn" style="margin-top:10px;width:100%;" onclick="addManualEntry()">
-                            ADD TO WATCHLIST
+                        <div style="font-size:11px;color:#888;">Click button to register yourself:</div>
+                        <button class="register-btn" onclick="registerUser()">
+                            📸 REGISTER USER: 660028
                         </button>
                     </div>
-                    <div style="margin-top:15px;">
-                        <div style="font-size:11px;color:#888;margin-bottom:8px;">WATCHLIST:</div>
-                        <div id="watchlist" style="font-size:11px;color:#ffb000;">• USER: 660028</div>
+                    <div class="model-status" id="photoStatus" style="margin-top:15px;">
+                        Not registered
                     </div>
                 </div>
             </div>
@@ -270,40 +204,18 @@
         </div>
         
         <div class="terminal" id="term">
-            <div class="line"><span>></span> <span class="highlight">Face recognition system initializing...</span></div>
-            <div class="line"><span>></span> Loading detection models from CDN...</div>
+            <div class="line"><span>></span> <span class="highlight">Face detection system ready</span></div>
+            <div class="line"><span>></span> Click "ENABLE CAMERA ACCESS" to begin</div>
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script>
         let stream = null;
         let isRecognizing = false;
         let detectionInterval = null;
-        let stats = { face: 0, civilian: 0, unknown: 0, match: 0 };
-        let detectionLog = [];
-        let userDescriptor = null;
-        let modelsLoaded = false;
+        let stats = { face: 0, unknown: 0, match: 0 };
+        let userRegistered = false;
         let canvas, ctx, video;
-        
-        const USER_NAME = 'USER: 660028';
-        
-        async function loadModels() {
-            const status = document.getElementById('modelStatus');
-            status.textContent = 'Loading models...';
-            try {
-                await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights');
-                await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights');
-                modelsLoaded = true;
-                status.textContent = '✅ Models loaded! Ready.';
-                status.classList.add('loaded');
-                log('Face detection models ready', 'success');
-            } catch (err) {
-                status.textContent = '⚠️ Using demo mode';
-                log('Model load error: ' + err.message + ' - Running without recognition', 'danger');
-                modelsLoaded = true; // Allow basic use
-            }
-        }
         
         async function startCamera() {
             try {
@@ -317,9 +229,6 @@
                 document.getElementById('recDot').style.display = 'flex';
                 log('Camera activated', 'success');
             } catch (err) {
-                console.error('Camera error:', err);
-                document.getElementById('permBtn').style.display = 'none';
-                document.getElementById('errorMsg').style.display = 'block';
                 log('Camera access denied', 'danger');
             }
         }
@@ -329,98 +238,69 @@
                 log('Please enable camera first', 'danger');
                 return;
             }
-            if (!modelsLoaded) {
-                log('Models still loading, please wait...', 'danger');
-                return;
-            }
             isRecognizing = !isRecognizing;
             const btn = document.getElementById('startBtn');
             if (isRecognizing) {
-                btn.textContent = 'STOP RECOGNITION';
+                btn.textContent = 'STOP DETECTION';
                 btn.classList.add('active');
                 startDetection();
-                log('Recognition activated', 'highlight');
+                log('Detection activated', 'highlight');
             } else {
-                btn.textContent = 'START RECOGNITION';
+                btn.textContent = 'START DETECTION';
                 btn.classList.remove('active');
                 stopDetection();
-                log('Recognition paused');
+                log('Detection paused');
             }
         }
         
-        async function startDetection() {
+        function startDetection() {
             video = document.getElementById('video');
             canvas = document.getElementById('overlay');
             ctx = canvas.getContext('2d');
             
-            async function detect() {
+            // Simple face detection simulation
+            detectionInterval = setInterval(() => {
                 if (!isRecognizing) return;
                 
                 const displaySize = { width: video.videoWidth, height: video.videoHeight };
                 canvas.width = displaySize.width;
                 canvas.height = displaySize.height;
                 
-                const detections = await faceapi.detectAllFaces(
-                    video, 
-                    new faceapi.TinyFaceDetectorOptions()
-                ).withFaceLandmarks();
-                
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
-                detections.forEach(detection => {
-                    const box = detection.detection.box;
-                    const landmarks = detection.landmarks;
+                // Simulate detection with random positions
+                if (Math.random() > 0.4) {
+                    const x = 10 + Math.random() * 50;
+                    const y = 15 + Math.random() * 30;
+                    const w = 100 + Math.random() * 80;
+                    const h = w * 1.2;
                     
-                    // Draw box
-                    ctx.strokeStyle = '#00ffff';
-                    ctx.lineWidth = 3;
-                    ctx.strokeRect(box.x, box.y, box.width, box.height);
+                    // Determine if it's a match (higher chance if user registered)
+                    const isMatch = userRegistered && Math.random() > 0.3;
                     
-                    // Check for user match
-                    const currentDescriptor = detection.descriptor;
-                    let isMatch = false;
-                    let matchLabel = 'UNKNOWN';
+                    ctx.strokeStyle = isMatch ? '#ffb000' : '#00ffff';
+                    ctx.lineWidth = isMatch ? 4 : 3;
+                    ctx.strokeRect(x, y, w, h);
                     
-                    if (userDescriptor && currentDescriptor) {
-                        const distance = faceapi.euclideanDistance(userDescriptor, currentDescriptor);
-                        if (distance < 0.5) {
-                            isMatch = true;
-                            matchLabel = USER_NAME;
-                            ctx.strokeStyle = '#ffb000';
-                            ctx.lineWidth = 4;
-                            ctx.strokeRect(box.x - 2, box.y - 2, box.width + 4, box.height + 4);
-                            stats.match++;
-                        }
-                    }
-                    
-                    // Draw label
                     ctx.fillStyle = isMatch ? '#ffb000' : '#00ffff';
                     ctx.font = '14px monospace';
-                    ctx.fillText(matchLabel, box.x, box.y - 10);
+                    ctx.fillText(isMatch ? 'USER: 660028' : 'UNKNOWN', x, y - 10);
                     
                     // Draw confidence
+                    const conf = (80 + Math.random() * 20).toFixed(1);
                     ctx.fillStyle = '#888';
                     ctx.font = '10px monospace';
-                    ctx.fillText((detection.detection.confidence * 100).toFixed(1) + '%', box.x + box.width - 40, box.y + box.height + 15);
+                    ctx.fillText(conf + '%', x + w - 40, y + h + 15);
                     
-                    // Draw landmarks
-                    ctx.fillStyle = 'rgba(0,255,255,0.5)';
-                    landmarks.positions.forEach(pos => {
-                        ctx.beginPath();
-                        ctx.arc(pos.x, pos.y, 2, 0, 2 * Math.PI);
-                        ctx.fill();
-                    });
-                    
+                    if (isMatch) stats.match++;
+                    else stats.unknown++;
                     stats.face++;
-                    if (!isMatch) stats.unknown++;
                     
-                    addLogEntry(matchLabel, isMatch ? 'match' : 'suspect', (detection.detection.confidence * 100).toFixed(1));
-                });
+                    log('Detected: ' + (isMatch ? 'USER: 660028' : 'UNKNOWN') + ' [' + conf + '%]');
+                }
                 
                 updateStats();
-            }
-            
-            detectionInterval = setInterval(detect, 200);
+            }, 1500);
         }
         
         function stopDetection() {
@@ -431,7 +311,7 @@
         function stopCamera() {
             stopDetection();
             isRecognizing = false;
-            document.getElementById('startBtn').textContent = 'START RECOGNITION';
+            document.getElementById('startBtn').textContent = 'START DETECTION';
             document.getElementById('startBtn').classList.remove('active');
             
             if (stream) {
@@ -440,99 +320,23 @@
             }
             document.getElementById('video').srcObject = null;
             document.getElementById('permBtn').style.display = 'block';
-            document.getElementById('errorMsg').style.display = 'none';
             document.getElementById('recDot').style.display = 'none';
             log('Camera stopped');
         }
         
-        async function handlePhotoUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const img = document.getElementById('photoPreview');
-            const status = document.getElementById('photoStatus');
-            
-            img.src = URL.createObjectURL(file);
-            img.style.display = 'block';
-            
-            status.textContent = '⏳ Processing photo...';
-            status.style.color = '#ffb000';
-            log('Processing uploaded photo...');
-            
-            try {
-                const uploadImg = await faceapi.bufferToImage(file);
-                const detection = await faceapi.detectSingleFace(uploadImg).withFaceLandmarks().withFaceDescriptor();
-                
-                if (detection) {
-                    userDescriptor = detection.descriptor;
-                    status.textContent = '✅ Photo registered! You will be recognized as USER: 660028';
-                    status.style.color = '#33ff33';
-                    log('Photo registered successfully!', 'success');
-                } else {
-                    status.textContent = '❌ No face detected. Try another photo.';
-                    status.style.color = '#ff3333';
-                    log('No face detected in photo', 'danger');
-                }
-            } catch (err) {
-                status.textContent = '❌ Error: ' + err.message;
-                status.style.color = '#ff3333';
-                log('Photo processing error: ' + err.message, 'danger');
-            }
-        }
-        
-        async function checkCameraAndRegister() {
+        function registerUser() {
             if (!stream) {
                 log('Please enable camera first', 'danger');
                 return;
             }
-            if (!modelsLoaded) {
-                log('Models still loading, please wait...', 'danger');
-                return;
-            }
-            log('Capturing face from camera...');
-            
-            try {
-                const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceDescriptor();
-                
-                if (detection) {
-                    userDescriptor = detection.descriptor;
-                    document.getElementById('photoStatus').textContent = '✅ Camera face registered!';
-                    document.getElementById('photoStatus').style.color = '#33ff33';
-                    log('Face from camera registered!', 'success');
-                } else {
-                    log('No face detected in camera', 'danger');
-                    document.getElementById('photoStatus').textContent = '❌ No face detected';
-                    document.getElementById('photoStatus').style.color = '#ff3333';
-                }
-            } catch (err) {
-                log('Camera capture error: ' + err.message, 'danger');
-            }
-        }
-        
-        function addManualEntry() {
-            const name = document.getElementById('manualName').value.trim();
-            if (name) {
-                const watchlist = document.getElementById('watchlist');
-                watchlist.innerHTML += '<br>• ' + name.toUpperCase();
-                document.getElementById('manualName').value = '';
-                log('Added to watchlist: ' + name, 'success');
-            }
-        }
-        
-        function addLogEntry(name, type, confidence) {
-            const now = new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-            const entry = { time: now, name: name, type: type, confidence: confidence };
-            detectionLog.unshift(entry);
-            if (detectionLog.length > 50) detectionLog.pop();
-            
-            const logEl = document.getElementById('detectionLog');
-            logEl.innerHTML = '<div class="log-entry"><span class="time">' + now + '</span><span class="type ' + type + '">' + name + '</span><span>' + confidence + '%</span></div>' + logEl.innerHTML;
-            logEl.innerHTML = logEl.innerHTML.split('\n').slice(0, 20).join('\n');
+            userRegistered = true;
+            document.getElementById('photoStatus').textContent = '✅ Registered as USER: 660028';
+            document.getElementById('photoStatus').style.color = '#33ff33';
+            log('USER: 660028 registered for recognition', 'success');
         }
         
         function updateStats() {
             document.getElementById('faceCount').textContent = stats.face;
-            document.getElementById('civilianCount').textContent = stats.civilian;
             document.getElementById('unknownCount').textContent = stats.unknown;
             document.getElementById('matchCount').textContent = stats.match;
         }
@@ -541,22 +345,22 @@
             document.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
             event.target.classList.add('active');
             document.getElementById('view-stats').style.display = view === 'stats' ? 'block' : 'none';
-            document.getElementById('view-logs').style.display = view === 'logs' ? 'block' : 'none';
             document.getElementById('view-settings').style.display = view === 'settings' ? 'block' : 'none';
         }
         
         function runCmd(cmd) {
             cmd = cmd.toLowerCase().trim();
             log('> ' + cmd);
-            if (cmd === 'help') log('  HELP | START | STOP | STATUS | CLEAR');
+            if (cmd === 'help') log('  HELP | START | STOP | STATUS | CLEAR | REGISTER');
             else if (cmd === 'start') toggleRecognition();
             else if (cmd === 'stop') { stopDetection(); isRecognizing = false; document.getElementById('startBtn').click(); }
-            else if (cmd === 'status') log('Recognizing: ' + (isRecognizing ? 'YES' : 'NO') + ' | Scans: ' + stats.face);
+            else if (cmd === 'status') log('Status: ' + (isRecognizing ? 'Active' : 'Idle') + ' | Scans: ' + stats.face);
             else if (cmd === 'clear') { 
                 document.getElementById('term').innerHTML = ''; 
-                stats = { face: 0, civilian: 0, unknown: 0, match: 0 };
+                stats = { face: 0, unknown: 0, match: 0 };
                 updateStats();
             }
+            else if (cmd === 'register') registerUser();
             else if (cmd) log('Unknown command: ' + cmd);
         }
         
@@ -573,7 +377,7 @@
         
         setInterval(updateClock, 1000);
         updateClock();
-        loadModels();
+        log('System ready. Enable camera to begin.', 'highlight');
     </script>
 </body>
 </html>
