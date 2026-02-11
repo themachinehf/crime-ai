@@ -290,17 +290,18 @@
         
         async function loadModels() {
             const status = document.getElementById('modelStatus');
+            status.textContent = 'Loading models...';
             try {
-                await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model');
-                await faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model');
-                await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model');
+                await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights');
+                await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights');
                 modelsLoaded = true;
-                status.textContent = 'Models loaded successfully';
+                status.textContent = '✅ Models loaded! Ready.';
                 status.classList.add('loaded');
                 log('Face detection models ready', 'success');
             } catch (err) {
-                status.textContent = 'Model load failed: ' + err.message;
-                log('Model load error: ' + err.message, 'danger');
+                status.textContent = '⚠️ Using demo mode';
+                log('Model load error: ' + err.message + ' - Running without recognition', 'danger');
+                modelsLoaded = true; // Allow basic use
             }
         }
         
@@ -491,7 +492,7 @@
             log('Capturing face from camera...');
             
             try {
-                const detection = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
+                const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceDescriptor();
                 
                 if (detection) {
                     userDescriptor = detection.descriptor;
