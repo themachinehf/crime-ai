@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRIME AI</title>
+    <title>CRIME AI | Face Recognition</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -11,37 +11,130 @@
             background: #1a1a1a;
             color: #f0f0f0;
             font-size: 14px;
-            padding: 20px;
+            min-height: 100vh;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
         header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 0; border-bottom: 1px solid #333; margin-bottom: 20px;
         }
-        h1 { color: #ffb000; font-size: 24px; letter-spacing: 4px; }
-        .status { color: #33-size: 12ff33; fontpx; }
-        .clock { color: #ffb000; margin-left: 20px; }
-        .grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;
+        h1 { color: #ffb000; font-size: 28px; letter-spacing: 4px; }
+        .status { display: flex; align-items: center; gap: 15px; }
+        .status-dot {
+            width: 10px; height: 10px; background: #33ff33; border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .clock { color: #ffb000; font-size: 18px; }
+        
+        .main-grid {
+            display: grid; grid-template-columns: 1fr 400px; gap: 20px;
+        }
+        @media (max-width: 1024px) { .main-grid { grid-template-columns: 1fr; } }
+        
+        .camera-panel {
+            background: #252525; border: 1px solid #333; padding: 20px;
+        }
+        .camera-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px;
+        }
+        .camera-title { font-size: 12px; letter-spacing: 3px; color: #888; }
+        .rec-dot {
+            display: flex; align-items: center; gap: 8px; color: #ff3333; font-size: 11px;
+        }
+        .rec-dot span {
+            width: 10px; height: 10px; background: #ff3333; border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        .video-container {
+            position: relative; background: #000; aspect-ratio: 16/9;
+            overflow: hidden; border: 1px solid #333;
+        }
+        video {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+        }
+        
+        /* Detection Boxes */
+        .detection-box {
+            position: absolute; border: 3px solid; opacity: 0; transition: opacity 0.3s;
+        }
+        .detection-box.active { opacity: 1; }
+        .detection-box .label {
+            position: absolute; top: -30px; left: -3px;
+            padding: 5px 12px; font-size: 11px; font-weight: bold;
+            letter-spacing: 1px; white-space: nowrap;
+        }
+        .detection-box .confidence {
+            position: absolute; bottom: -25px; right: -3px;
+            padding: 4px 10px; font-size: 10px; background: rgba(0,0,0,0.8);
+        }
+        .civilian { border-color: #33ff33; }
+        .civilian .label { background: #33ff33; color: #000; }
+        .suspect { border-color: #ff3333; }
+        .suspect .label { background: #ff3333; color: #000; }
+        .admin { border-color: #ffb000; }
+        .admin .label { background: #ffb000; color: #000; }
+        
+        .scan-line {
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #ffb000, transparent);
+            animation: scan 3s linear infinite;
+        }
+        @keyframes scan { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+        
+        .camera-controls {
+            display: flex; gap: 10px; margin-top: 15px;
+        }
+        .btn {
+            flex: 1; padding: 12px; background: #333; border: 1px solid #444;
+            color: #f0f0f0; font-family: inherit; font-size: 12px; letter-spacing: 2px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn:hover { background: #444; border-color: #ffb000; }
+        .btn.active { background: #ffb000; color: #000; border-color: #ffb000; }
+        .btn.recording { background: #ff3333; border-color: #ff3333; color: #fff; }
+        
+        .stats-panel {
+            display: flex; flex-direction: column; gap: 15px;
         }
         .card {
             background: #252525; border: 1px solid #333; padding: 15px;
         }
         .card-title {
-            font-size: 10px; color: #888; letter-spacing: 2px; margin-bottom: 10px;
+            font-size: 10px; letter-spacing: 3px; color: #888; margin-bottom: 12px;
         }
-        .stat { font-size: 32px; color: #ffb000; }
-        .gauge {
-            width: 100px; height: 100px; border-radius: 50%; border: 3px solid #33ff33;
-            display: flex; align-items: center; justify-content: center; margin: 10px auto;
-            font-size: 28px; color: #33ff33;
+        .stat-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 0; border-bottom: 1px solid #333;
         }
-        .chart {
-            display: flex; align-items: flex-end; gap: 2px; height: 80px;
+        .stat-row:last-child { border-bottom: none; }
+        .stat-label { color: #888; font-size: 11px; }
+        .stat-value { font-size: 18px; font-weight: bold; }
+        .stat-value.civilian { color: #33ff33; }
+        .stat-value.suspect { color: #ff3333; }
+        .stat-value.admin { color: #ffb000; }
+        
+        .detection-log {
+            max-height: 200px; overflow-y: auto; font-size: 11px;
         }
-        .bar {
-            flex: 1; background: #ffb000; border-radius: 2px 2px 0 0;
+        .log-entry {
+            display: flex; justify-content: space-between; padding: 8px 0;
+            border-bottom: 1px solid #333;
         }
+        .log-entry .time { color: #888; }
+        .log-entry .type { font-weight: bold; }
+        .log-entry .type.civilian { color: #33ff33; }
+        .log-entry .type.suspect { color: #ff3333; }
+        .log-entry .type.admin { color: #ffb000; }
+        
         .menu {
             display: flex; gap: 5px; margin-bottom: 20px;
         }
@@ -52,226 +145,302 @@
         .menu-item:hover, .menu-item.active {
             background: #333; border-color: #ffb000; color: #ffb000;
         }
+        
         .cmd {
             display: flex; align-items: center; gap: 10px;
-            background: #252525; border: 1px solid #333; padding: 12px; margin-bottom: 20px;
+            background: #252525; border: 1px solid #333; padding: 12px; margin-top: 20px;
         }
         .cmd span { color: #ffb000; font-size: 18px; }
         .cmd input {
             flex: 1; background: none; border: none; color: #f0f0f0;
             font-family: inherit; font-size: 14px; outline: none;
         }
+        
         .terminal {
             background: #252525; border: 1px solid #333; padding: 15px;
-            min-height: 100px; max-height: 200px; overflow-y: auto;
+            min-height: 100px; max-height: 180px; overflow-y: auto; margin-top: 20px;
         }
-        .line { margin-bottom: 4px; }
-        .line span { color: #888; margin-right: 8px; }
+        .line { margin-bottom: 4px; color: #888; }
+        .line .highlight { color: #ffb000; }
+        .line .danger { color: #ff3333; }
         
-        /* Animations */
-        .face-frame {
-            position: fixed; width: 150px; height: 180px;
-            border: 3px solid #ffb000; opacity: 0;
-            transition: opacity 0.3s; z-index: 1000;
+        .permission-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            padding: 20px 40px; background: #ffb000; color: #000;
+            border: none; font-family: inherit; font-size: 14px; letter-spacing: 2px;
+            cursor: pointer;
         }
-        .face-frame::before, .face-frame::after {
-            content: ''; position: absolute; width: 25px; height: 25px;
-            border: 3px solid #ffb000;
-        }
-        .face-frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
-        .face-frame::after { bottom: -3px; right: -3px; border-left: none; border-top: none; }
-        .face-frame .tag {
-            position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
-            background: #ffb000; color: #000; padding: 4px 10px;
-            font-size: 10px; letter-spacing: 2px;
-        }
-        .face-frame.active { opacity: 1; }
+        .permission-btn:hover { background: #ffcc00; }
         
-        .scan-grid {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, transparent 99%, #ffb000 100%),
-                        linear-gradient(0deg, transparent 99%, #ffb000 100%);
-            background-size: 60px 60px; opacity: 0; pointer-events: none;
-            z-index: 999;
-        }
-        .scan-grid.active { opacity: 0.3; animation: scan 10s linear infinite; }
-        @keyframes scan { from { transform: translate(0,0); } to { transform: translate(60px,60px); } }
-        
-        .target-lock {
-            position: fixed; width: 180px; height: 220px;
-            border: 4px solid #ff3333; opacity: 0; transform: scale(0.8);
-            transition: all 0.3s; z-index: 1001;
-        }
-        .target-lock::before, .target-lock::after {
-            content: ''; position: absolute; width: 30px; height: 30px;
-            border: 4px solid #ff3333;
-        }
-        .target-lock::before { top: -4px; left: -4px; border-right: none; border-bottom: none; }
-        .target-lock::after { bottom: -4px; right: -4px; border-left: none; border-top: none; }
-        .target-lock .label {
-            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
-            background: #ff3333; color: #000; padding: 6px 15px;
-            font-size: 12px; letter-spacing: 2px; font-weight: bold;
-        }
-        .target-lock.active { opacity: 1; transform: scale(1); }
-        
-        @media (max-width: 768px) {
-            .grid { grid-template-columns: 1fr; }
+        .error-msg {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; color: #ff3333;
         }
     </style>
 </head>
 <body>
-    <!-- Animations -->
-    <div class="scan-grid" id="scanGrid"></div>
-    <div class="face-frame" id="faceFrame">
-        <div class="tag">IDENTIFYING</div>
-    </div>
-    <div class="target-lock" id="targetLock"><div class="label">TARGET LOCK</div></div>
-    
     <div class="container">
         <header>
             <h1>CRIME AI</h1>
-            <div><span class="status">●</span> MONITORING <span class="clock" id="clock">--:--:--</span></div>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>RECOGNITION ACTIVE</span>
+                <span class="clock" id="clock">--:--:--</span>
+            </div>
         </header>
         
         <nav class="menu">
-            <div class="menu-item active" onclick="showView('overview')">OVERVIEW</div>
-            <div class="menu-item" onclick="showView('threats')">THREATS</div>
-            <div class="menu-item" onclick="showView('sources')">SOURCES</div>
+            <div class="menu-item active" onclick="showView('recognize')">RECOGNIZE</div>
+            <div class="menu-item" onclick="showView('stats')">STATISTICS</div>
+            <div class="menu-item" onclick="showView('logs')">LOGS</div>
         </nav>
         
-        <div id="view-overview" class="view">
-            <div class="grid">
-                <div class="card">
-                    <div class="card-title">STATISTICS</div>
-                    <div class="stat" id="scanned">--</div>
-                    <div style="color:#888;font-size:10px;margin-top:5px;">SUBJECTS SCANNED</div>
+        <div class="main-grid">
+            <div class="camera-panel">
+                <div class="camera-header">
+                    <span class="camera-title">FACIAL RECOGNITION SYSTEM</span>
+                    <div class="rec-dot" id="recDot" style="display:none">
+                        <span></span> REC
+                    </div>
                 </div>
-                <div class="card">
-                    <div class="card-title">HIGH RISK</div>
-                    <div class="stat" style="color:#ff3333" id="highRisk">0</div>
-                    <div style="color:#888;font-size:10px;margin-top:5px;">ACTIVE THREATS</div>
+                <div class="video-container" id="videoContainer">
+                    <video id="video" autoplay playsinline muted></video>
+                    <div class="overlay" id="overlay">
+                        <div class="scan-line"></div>
+                        <div class="detection-box civilian" id="box1">
+                            <div class="label">CIVILIAN</div>
+                            <div class="confidence">98.7%</div>
+                        </div>
+                    </div>
+                    <button class="permission-btn" id="permBtn" onclick="startCamera()">
+                        ENABLE CAMERA ACCESS
+                    </button>
+                    <div class="error-msg" id="errorMsg" style="display:none">
+                        Camera access denied<br>
+                        <small>Check browser permissions</small>
+                    </div>
                 </div>
-                <div class="card">
-                    <div class="card-title">THREAT LEVEL</div>
-                    <div class="gauge" id="gauge">0%</div>
-                    <div style="text-align:center;color:#888;font-size:10px;" id="gaugeLabel">NO THREATS</div>
-                </div>
-            </div>
-            <div class="grid">
-                <div class="card">
-                    <div class="card-title">24H TREND</div>
-                    <div class="chart" id="chart"></div>
-                </div>
-                <div class="card">
-                    <div class="card-title">PREDICTION</div>
-                    <div class="stat" id="prediction">LOW</div>
-                    <div style="color:#888;font-size:10px;margin-top:5px;">7-DAY FORECAST</div>
-                </div>
-                <div class="card">
-                    <div class="card-title">ANALYSIS</div>
-                    <div style="font-size:12px;line-height:1.6;">System monitoring active. No imminent threats identified.</div>
+                <div class="camera-controls">
+                    <button class="btn" id="startBtn" onclick="toggleRecognition()">START RECOGNITION</button>
+                    <button class="btn" onclick="stopCamera()">STOP</button>
                 </div>
             </div>
-        </div>
-        
-        <div id="view-threats" class="view" style="display:none">
-            <div class="card">
-                <div class="card-title">ACTIVE THREATS</div>
-                <div class="line"><span>Subject: JOHN DOE</span> <span style="color:#ff3333;margin-left:20px;">HIGH</span></div>
-                <div class="line"><span>Subject: JANE SMITH</span> <span style="color:#ffaa00;margin-left:20px;">MEDIUM</span></div>
-                <div class="line"><span>Subject: UNKNOWN</span> <span style="color:#33ff33;margin-left:20px;">LOW</span></div>
-            </div>
-        </div>
-        
-        <div id="view-sources" class="view" style="display:none">
-            <div class="card">
-                <div class="card-title">DATA SOURCES</div>
-                <div class="line">🐦 Twitter/X - Monitoring</div>
-                <div class="line">📰 News Feed - Connected</div>
-                <div class="line">💬 Reddit - Active</div>
+            
+            <div class="stats-panel">
+                <div class="card" id="view-stats">
+                    <div class="card-title">REAL-TIME STATISTICS</div>
+                    <div class="stat-row">
+                        <span class="stat-label">Civilians Detected</span>
+                        <span class="stat-value civilian" id="civilianCount">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Suspects Identified</span>
+                        <span class="stat-value suspect" id="suspectCount">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Admin Personnel</span>
+                        <span class="stat-value admin" id="adminCount">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Scans</span>
+                        <span class="stat-value" id="totalScans">0</span>
+                    </div>
+                </div>
+                
+                <div class="card" id="view-logs" style="display:none">
+                    <div class="card-title">DETECTION LOG</div>
+                    <div class="detection-log" id="detectionLog">
+                        <div class="log-entry">
+                            <span class="time">--:--:--</span>
+                            <span class="type">System initialized</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
         <div class="cmd">
             <span>></span>
-            <input type="text" id="cmd" placeholder="Type command..." onkeypress="if(event.key==='Enter')runCmd(this.value)">
+            <input type="text" id="cmd" placeholder="Enter command..." onkeypress="if(event.key====')runCmd(this.value)">
         </div>
         
         <div class="terminal" id="term">
-            <div class="line"><span>></span> System initialized</div>
-            <div class="line"><span>></span> Threat monitoring active</div>
+            <div class="line"><span>></span> <span class="highlight">Facial recognition system ready</span></div>
+            <div class="line"><span>></span> Click "ENABLE CAMERA ACCESS" to begin</div>
         </div>
     </div>
     
     <script>
-        function log(msg) {
-            const t = document.getElementById('term');
-            t.innerHTML += '<div class="line"><span>></span> ' + msg + '</div>';
-            t.scrollTop = t.scrollHeight;
+        let stream = null;
+        let isRecognizing = false;
+        let detectionInterval = null;
+        let stats = { civilian: 0, suspect: 0, admin: 0, total: 0 };
+        let detectionLog = [];
+        
+        const roles = [
+            { type: 'civilian', names: ['John Smith', 'Jane Doe', 'Mike Wilson', 'Sarah Brown'] },
+            { type: 'suspect', names: ['Subject: Unknown', 'Person of Interest', 'Vehicle: Silver Ford', 'Subject: Male 30s'] },
+            { type: 'admin', names: ['OFFICER K. REECE', 'DETECTIVE M. FINCH', 'ADMIN: HIGH CLEARANCE'] }
+        ];
+        
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user', width: 640, height: 480 } 
+                });
+                document.getElementById('video').srcObject = stream;
+                document.getElementById('permBtn').style.display = 'none';
+                document.getElementById('recDot').style.display = 'flex';
+                log('Camera activated. Press START RECOGNITION.', 'highlight');
+            } catch (err) {
+                console.error('Camera error:', err);
+                document.getElementById('permBtn').style.display = 'none';
+                document.getElementById('errorMsg').style.display = 'block';
+                log('Camera access denied', 'danger');
+            }
         }
         
-        function runCmd(c) {
-            log(c);
-            c = c.toLowerCase().trim();
-            if (c === 'help') log('  HELP | SCAN | STATUS | CLEAR');
-            else if (c === 'scan') { log('INITIATING SCAN...'); startScan(); }
-            else if (c === 'status') log('System ONLINE');
-            else if (c === 'clear') document.getElementById('term').innerHTML = '';
-            else if (c) log('Unknown: ' + c);
+        function toggleRecognition() {
+            if (!stream) {
+                log('Please enable camera first', 'danger');
+                return;
+            }
+            isRecognizing = !isRecognizing;
+            const btn = document.getElementById('startBtn');
+            if (isRecognizing) {
+                btn.textContent = 'STOP RECOGNITION';
+                btn.classList.add('active', 'recording');
+                startDetection();
+                log('Recognition activated', 'highlight');
+            } else {
+                btn.textContent = 'START RECOGNITION';
+                btn.classList.remove('active', 'recording');
+                stopDetection();
+                log('Recognition paused');
+            }
         }
         
-        function showView(v) {
-            document.querySelectorAll('.view').forEach(x => x.style.display = 'none');
-            document.getElementById('view-' + v).style.display = 'block';
-            document.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-        
-        function startScan() {
-            document.getElementById('scanGrid').classList.add('active');
-            document.getElementById('faceFrame').classList.add('active');
-            setInterval(() => {
-                const f = document.getElementById('faceFrame');
-                f.style.left = (5 + Math.random() * 70) + '%';
-                f.style.top = (5 + Math.random() * 60) + '%';
+        function startDetection() {
+            const box = document.getElementById('box1');
+            const overlay = document.getElementById('overlay');
+            
+            detectionInterval = setInterval(() => {
+                // Random position for detection box
+                const x = 10 + Math.random() * 50;
+                const y = 15 + Math.random() * 40;
+                const w = 120 + Math.random() * 100;
+                const h = w * 1.3;
+                
+                // Random role
+                const roleIndex = Math.random();
+                let role, colorClass;
+                if (roleIndex < 0.6) { role = roles[0]; colorClass = 'civilian'; }
+                else if (roleIndex < 0.85) { role = roles[1]; colorClass = 'suspect'; }
+                else { role = roles[2]; colorClass = 'admin'; }
+                
+                const name = role.names[Math.floor(Math.random() * role.names.length)];
+                const confidence = (85 + Math.random() * 15).toFixed(1);
+                
+                // Update box
+                box.className = 'detection-box active ' + colorClass;
+                box.style.left = x + '%';
+                box.style.top = y + '%';
+                box.style.width = w + 'px';
+                box.style.height = h + 'px';
+                box.querySelector('.label').textContent = name;
+                box.querySelector('.confidence').textContent = confidence + '%';
+                
+                // Update stats
+                stats[colorClass]++;
+                stats.total++;
+                
+                // Add log
+                addLogEntry(name, colorClass, confidence);
+                updateStats();
+                
+                log('Detected: ' + name + ' [' + colorClass.toUpperCase() + '] ' + confidence + '%');
+                
+                // Hide box after delay
+                setTimeout(() => box.classList.remove('active'), 1500);
+                
             }, 2000);
         }
         
-        function triggerLock() {
-            const l = document.getElementById('targetLock');
-            l.classList.add('active');
-            l.style.left = (20 + Math.random() * 40) + '%';
-            l.style.top = (20 + Math.random() * 40) + '%';
-            setTimeout(() => l.classList.remove('active'), 4000);
+        function stopDetection() {
+            clearInterval(detectionInterval);
+            document.getElementById('box1').classList.remove('active');
         }
         
-        function updateClock() {
-            document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour12:false});
+        function stopCamera() {
+            stopDetection();
+            isRecognizing = false;
+            document.getElementById('startBtn').textContent = 'START RECOGNITION';
+            document.getElementById('startBtn').classList.remove('active', 'recording');
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            document.getElementById('video').srcObject = null;
+            document.getElementById('permBtn').style.display = 'block';
+            document.getElementById('errorMsg').style.display = 'none';
+            document.getElementById('recDot').style.display = 'none';
+            log('Camera stopped');
         }
         
-        function initChart() {
-            let h = '';
-            for(let i=0;i<24;i++) h += '<div class="bar" style="height:'+(20+Math.random()*60)+'%"></div>';
-            document.getElementById('chart').innerHTML = h;
+        function addLogEntry(name, type, confidence) {
+            const now = new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+            const entry = { time: now, name: name, type: type, confidence: confidence };
+            detectionLog.unshift(entry);
+            if (detectionLog.length > 50) detectionLog.pop();
+            
+            const logEl = document.getElementById('detectionLog');
+            logEl.innerHTML = '<div class="log-entry"><span class="time">' + now + '</span><span class="type ' + type + '">' + name + '</span><span>' + confidence + '%</span></div>' + logEl.innerHTML;
+            logEl.innerHTML = logEl.innerHTML.split('\n').slice(0, 20).join('\n');
         }
         
         function updateStats() {
-            document.getElementById('scanned').textContent = Math.floor(Math.random()*50000+10000).toLocaleString();
-            document.getElementById('highRisk').textContent = Math.floor(Math.random()*5);
+            document.getElementById('civilianCount').textContent = stats.civilian;
+            document.getElementById('suspectCount').textContent = stats.suspect;
+            document.getElementById('adminCount').textContent = stats.admin;
+            document.getElementById('totalScans').textContent = stats.total;
         }
         
-        setInterval(updateClock,1000);
-        setInterval(triggerLock,8000);
-        setInterval(updateStats,30000);
+        function showView(view) {
+            document.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('view-stats').style.display = view === 'stats' ? 'block' : 'none';
+            document.getElementById('view-logs').style.display = view === 'logs' ? 'block' : 'none';
+        }
         
-        document.addEventListener('DOMContentLoaded', () => {
-            initChart();
-            updateClock();
-            updateStats();
-            setTimeout(startScan,1000);
-            setTimeout(triggerLock,5000);
-        });
+        function runCmd(cmd) {
+            cmd = cmd.toLowerCase().trim();
+            log('> ' + cmd);
+            if (cmd === 'help') log('  HELP | START | STOP | STATUS | CLEAR');
+            else if (cmd === 'start') toggleRecognition();
+            else if (cmd === 'stop') { stopDetection(); isRecognizing = false; document.getElementById('startBtn').click(); }
+            else if (cmd === 'status') log('Recognizing: ' + (isRecognizing ? 'YES' : 'NO') + ' | Scans: ' + stats.total);
+            else if (cmd === 'clear') { 
+                document.getElementById('term').innerHTML = ''; 
+                stats = { civilian: 0, suspect: 0, admin: 0, total: 0 };
+                updateStats();
+            }
+            else if (cmd) log('Unknown command: ' + cmd);
+        }
+        
+        function log(msg, className) {
+            className = className || '';
+            const t = document.getElementById('term');
+            t.innerHTML += '<div class="line"><span>></span> <span class="' + className + '">' + msg + '</span></div>';
+            t.scrollTop = t.scrollHeight;
+        }
+        
+        function updateClock() {
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', {hour12:false});
+        }
+        
+        setInterval(updateClock, 1000);
+        updateClock();
     </script>
 </body>
 </html>
