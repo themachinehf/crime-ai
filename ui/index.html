@@ -26,11 +26,6 @@
             pointer-events: none; z-index: 999;
             background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
         }
-        .scan-line {
-            position: fixed; top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            animation: scan 4s linear infinite; z-index: 1000; pointer-events: none;
-        }
         @keyframes scan {
             0% { top: -2px; opacity: 0; }
             10% { opacity: 1; }
@@ -250,7 +245,7 @@
     <!-- POI THE MACHINE Enhanced Effects -->
     <div class="data-flood" id="dataFlood"></div>
     <div class="scan-overlay"></div>
-    <div class="scan-line"></div>
+    
     
     <!-- Scanning Frames - Multiple targets -->
     <div class="scan-frame scan1" id="scan1" style="width:180px;height:220px;"></div>
