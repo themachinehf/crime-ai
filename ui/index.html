@@ -81,7 +81,6 @@
         }
         .stat-label { color: #888; font-size: 11px; }
         .stat-value { font-size: 18px; font-weight: bold; }
-        .stat-value.admin { color: #ffb000; }
         
         .terminal {
             background: #252525; border: 1px solid #333; padding: 15px;
@@ -119,8 +118,8 @@
                         ENABLE CAMERA ACCESS
                     </button>
                 </div>
-                <div style="font-size:10px;color:#666;margin-top:10px;" id="modelStatus">
-                    Face detection ready
+                <div style="font-size:10px;color:#666;margin-top:10px;">
+                    Real-time skin-tone detection
                 </div>
                 <div class="camera-controls">
                     <button class="btn" id="startBtn" onclick="toggleDetection()">START DETECTION</button>
@@ -132,11 +131,11 @@
                 <div class="card">
                     <div class="card-title">STATISTICS</div>
                     <div class="stat-row">
-                        <span class="stat-label">Total Detections</span>
+                        <span class="stat-label">Faces Detected</span>
                         <span class="stat-value" id="totalCount">0</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label">Last Confidence</span>
+                        <span class="stat-label">Current Confidence</span>
                         <span class="stat-value" id="lastConf">--%</span>
                     </div>
                     <div class="stat-row">
@@ -157,170 +156,13 @@
         let stream = null;
         let isDetecting = false;
         let animationId = null;
-        let stats = { total: 0, lastConf: 0 };
+        let stats = { total: 0 };
         let lastTime = 0;
+        let hasFace = false;
         
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        
-        // Simple face detection using canvas pixel analysis
-        function detectFaces() {
-            if (!isDetecting || video.readyState < 2) {
-                animationId = requestAnimationFrame(detectFaces);
-                return;
-            }
-            
-            const now = performance.now();
-            const fps = Math.round(1000 / (now - lastTime));
-            lastTime = now;
-            document.getElementById('fps').textContent = fps;
-            
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            // Draw video frame
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Get image data for analysis
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imageData.data;
-            
-            // Simple skin-tone based face detection
-            const faces = findSkinToneRegions(data, canvas.width, canvas.height);
-            
-            if (faces.length > 0) {
-                faces.forEach(face => {
-                    // Draw face bounding box
-                    ctx.strokeStyle = '#00ffff';
-                    ctx.lineWidth = 3;
-                    ctx.strokeRect(face.x, face.y, face.width, face.height);
-                    
-                    // Draw face keypoints (eyes and mouth approximation)
-                    const conf = Math.round(face.confidence * 100);
-                    
-                    // Left eye
-                    ctx.fillStyle = '#00ff00';
-                    ctx.beginPath();
-                    ctx.arc(face.x + face.width * 0.3, face.y + face.height * 0.35, 4, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Right eye
-                    ctx.beginPath();
-                    ctx.arc(face.x + face.width * 0.7, face.y + face.height * 0.35, 4, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Nose
-                    ctx.beginPath();
-                    ctx.arc(face.x + face.width * 0.5, face.y + face.height * 0.5, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Mouth
-                    ctx.strokeStyle = '#ffb000';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.arc(face.x + face.width * 0.5, face.y + face.height * 0.7, face.width * 0.2, 0, Math.PI);
-                    ctx.stroke();
-                    
-                    // Label
-                    ctx.fillStyle = '#ffb000';
-                    ctx.font = '14px monospace';
-                    ctx.fillText('FACE ' + conf + '%', face.x, face.y - 10);
-                    
-                    stats.total++;
-                    stats.lastConf = conf;
-                    document.getElementById('totalCount').textContent = stats.total;
-                    document.getElementById('lastConf').textContent = conf + '%';
-                    
-                    log('Face detected [' + conf + '%]');
-                });
-            }
-            
-            animationId = requestAnimationFrame(detectFaces);
-        }
-        
-        function findSkinToneRegions(data, width, height) {
-            const faces = [];
-            const blockSize = 20;
-            const skinBlocks = [];
-            
-            // Scan image in blocks
-            for (let y = 0; y < height; y += blockSize) {
-                for (let x = 0; x < width; x += blockSize) {
-                    let skinPixels = 0;
-                    let totalPixels = 0;
-                    
-                    for (let dy = 0; dy < blockSize && y + dy < height; dy++) {
-                        for (let dx = 0; dx < blockSize && x + dx < width; dx++) {
-                            const i = ((y + dy) * width + (x + dx)) * 4;
-                            const r = data[i];
-                            const g = data[i + 1];
-                            const b = data[i + 2];
-                            
-                            // Skin tone detection (simplified)
-                            if (r > 95 && g > 40 && b > 20 && 
-                                r > g && r > b &&
-                                Math.abs(r - g) > 15 &&
-                                r - b > 15) {
-                                skinPixels++;
-                            }
-                            totalPixels++;
-                        }
-                    }
-                    
-                    if (skinPixels / totalPixels > 0.4) {
-                        skinBlocks.push({ x, y, count: skinPixels });
-                    }
-                }
-            }
-            
-            // Group nearby blocks into faces
-            const threshold = 60;
-            const visited = new Set();
-            
-            for (let i = 0; i < skinBlocks.length; i++) {
-                if (visited.has(i)) continue;
-                
-                const block = skinBlocks[i];
-                let minX = block.x, maxX = block.x + blockSize;
-                let minY = block.y, maxY = block.y + blockSize;
-                let totalCount = block.count;
-                visited.add(i);
-                
-                // Find nearby blocks
-                for (let j = i + 1; j < skinBlocks.length; j++) {
-                    if (visited.has(j)) continue;
-                    const other = skinBlocks[j];
-                    const dist = Math.sqrt(Math.pow(other.x - block.x, 2) + Math.pow(other.y - block.y, 2));
-                    
-                    if (dist < threshold) {
-                        minX = Math.min(minX, other.x);
-                        maxX = Math.max(maxX, other.x + blockSize);
-                        minY = Math.min(minY, other.y);
-                        maxY = Math.max(maxY, other.y + blockSize);
-                        totalCount += other.count;
-                        visited.add(j);
-                    }
-                }
-                
-                // Valid face aspect ratio (roughly 3:4)
-                const width = maxX - minX;
-                const height = maxY - minY;
-                const ratio = width / height;
-                
-                if (width > 40 && height > 50 && ratio > 0.4 && ratio < 1.2) {
-                    faces.push({
-                        x: minX,
-                        y: minY,
-                        width: width,
-                        height: height,
-                        confidence: Math.min(totalCount / (width * height / blockSize / blockSize), 1)
-                    });
-                }
-            }
-            
-            return faces;
-        }
         
         async function startCamera() {
             try {
@@ -353,9 +195,144 @@
                 btn.textContent = 'START DETECTION';
                 btn.classList.remove('active');
                 cancelAnimationFrame(animationId);
+                hasFace = false;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 log('Detection paused');
             }
+        }
+        
+        function detectFaces() {
+            if (!isDetecting || video.readyState < 2) {
+                animationId = requestAnimationFrame(detectFaces);
+                return;
+            }
+            
+            const now = performance.now();
+            const fps = Math.round(1000 / (now - lastTime));
+            lastTime = now;
+            document.getElementById('fps').textContent = fps;
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Draw video
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Detect face region
+            const face = findFaceRegion(ctx, canvas.width, canvas.height);
+            
+            if (face) {
+                // Clear previous detection
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Draw ONE face box
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(face.x, face.y, face.width, face.height);
+                
+                // Draw keypoints on face
+                const cx = face.x + face.width / 2;
+                const cy = face.y + face.height / 2;
+                
+                // Eyes
+                ctx.fillStyle = '#00ff00';
+                ctx.beginPath();
+                ctx.arc(face.x + face.width * 0.3, face.y + face.height * 0.3, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(face.x + face.width * 0.7, face.y + face.height * 0.3, 6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Nose
+                ctx.beginPath();
+                ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Mouth
+                ctx.strokeStyle = '#ffb000';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(cx, face.y + face.height * 0.7, face.width * 0.2, 0.1 * Math.PI, 0.9 * Math.PI);
+                ctx.stroke();
+                
+                // Label
+                ctx.fillStyle = '#ffb000';
+                ctx.font = 'bold 16px monospace';
+                ctx.fillText('FACE ' + face.confidence + '%', face.x, face.y - 12);
+                
+                // Confidence bar
+                ctx.fillStyle = 'rgba(255, 176, 0, 0.3)';
+                ctx.fillRect(face.x, face.y + face.height + 8, face.width * (face.confidence / 100), 6);
+                ctx.strokeStyle = '#ffb000';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(face.x, face.y + face.height + 8, face.width, 6);
+                
+                if (!hasFace) {
+                    hasFace = true;
+                    stats.total++;
+                    document.getElementById('totalCount').textContent = stats.total;
+                }
+                document.getElementById('lastConf').textContent = face.confidence + '%';
+                log('Face detected [' + face.confidence + '%]');
+            } else {
+                hasFace = false;
+                document.getElementById('lastConf').textContent = '--%';
+            }
+            
+            animationId = requestAnimationFrame(detectFaces);
+        }
+        
+        function findFaceRegion(ctx, width, height) {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            
+            // Focus on center-upper region where face usually is
+            const startX = Math.floor(width * 0.2);
+            const endX = Math.floor(width * 0.8);
+            const startY = Math.floor(height * 0.1);
+            const endY = Math.floor(height * 0.6);
+            
+            let skinCount = 0;
+            let minX = endX, maxX = startX;
+            let minY = endY, maxY = startY;
+            const totalScan = (endX - startX) * (endY - startY);
+            
+            // Scan for skin tones
+            for (let y = startY; y < endY; y++) {
+                for (let x = startX; x < endX; x++) {
+                    const i = (y * width + x) * 4;
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    
+                    if (r > 95 && g > 40 && b > 20 && r > g && r > b && Math.abs(r - g) > 15 && r - b > 15) {
+                        skinCount++;
+                        minX = Math.min(minX, x);
+                        maxX = Math.max(maxX, x);
+                        minY = Math.min(minY, y);
+                        maxY = Math.max(maxY, y);
+                    }
+                }
+            }
+            
+            const faceWidth = maxX - minX;
+            const faceHeight = maxY - minY;
+            const ratio = faceWidth / faceHeight;
+            const skinRatio = skinCount / totalScan;
+            
+            // Validate face region
+            if (skinRatio > 0.12 && faceWidth > 60 && faceHeight > 80 && ratio > 0.5 && ratio < 1.0) {
+                return {
+                    x: minX - 10,
+                    y: Math.max(0, minY - 20),
+                    width: faceWidth + 20,
+                    height: faceHeight + 30,
+                    confidence: Math.min(Math.round(skinRatio * 400), 99)
+                };
+            }
+            
+            return null;
         }
         
         function stopCamera() {
@@ -364,6 +341,7 @@
             document.getElementById('startBtn').textContent = 'START DETECTION';
             document.getElementById('startBtn').classList.remove('active');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasFace = false;
             
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
