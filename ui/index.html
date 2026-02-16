@@ -595,6 +595,11 @@
     </div>
 
     <script defer>
+        // Cache config
+        const CACHE_TTL = 30000; // 30 seconds
+        const STATS_KEY = 'crimeai_stats';
+        const PRED_KEY = 'crimeai_pred';
+        
         // Clock
         function updateClock() {
             const now = new Date();
@@ -677,12 +682,32 @@
             document.getElementById('analyzedCount').textContent = parseInt(document.getElementById('analyzedCount').textContent) + 1;
         }
 
-        // Load statistics
-        async function loadStats() {
+        // Load statistics with localStorage caching
+        async function loadStats(force = false) {
+            // Check cache first
+            if (!force) {
+                const cached = localStorage.getItem(STATS_KEY);
+                if (cached) {
+                    const { data, timestamp } = JSON.parse(cached);
+                    if (Date.now() - timestamp < CACHE_TTL) {
+                        const stats = data;
+                        document.getElementById('totalThreats').textContent = stats.total_threats;
+                        document.getElementById('criticalCount').textContent = stats.by_level.critical || 0;
+                        document.getElementById('highCount').textContent = stats.by_level.high || 0;
+                        document.getElementById('mediumCount').textContent = stats.by_level.medium || 0;
+                        document.getElementById('lowCount').textContent = stats.by_level.low || 0;
+                        return;
+                    }
+                }
+            }
+            
             try {
                 const response = await fetch(`${API_BASE}/statistics`);
                 const stats = await response.json();
-
+                
+                // Cache the result
+                localStorage.setItem(STATS_KEY, JSON.stringify({ data: stats, timestamp: Date.now() }));
+                
                 document.getElementById('totalThreats').textContent = stats.total_threats;
                 document.getElementById('criticalCount').textContent = stats.by_level.critical || 0;
                 document.getElementById('highCount').textContent = stats.by_level.high || 0;
@@ -719,11 +744,37 @@
             }
         }
 
-        // Load prediction
-        async function loadPrediction() {
+        // Load prediction with caching
+        async function loadPrediction(force = false) {
+            // Check cache first
+            if (!force) {
+                const cached = localStorage.getItem(PRED_KEY);
+                if (cached) {
+                    const { data, timestamp } = JSON.parse(cached);
+                    if (Date.now() - timestamp < CACHE_TTL) {
+                        const pred = data;
+                        document.getElementById('citywideRisk').textContent = pred.citywide_risk;
+                        document.getElementById('citywideRisk').className = 'prediction-value ' + pred.citywide_risk;
+                        document.getElementById('predictedCrimes').textContent = pred.predicted_crimes;
+                        document.getElementById('confidence').textContent = pred.confidence;
+
+                        const hotspots = document.getElementById('hotspots');
+                        if (pred.hotspots && pred.hotspots.length > 0) {
+                            hotspots.innerHTML = pred.hotspots.map(h => `<span class="hotspot">${h}</span>`).join('');
+                        } else {
+                            hotspots.innerHTML = '<span class="hotspot" style="background: #333; color: #666;">No active hotspots</span>';
+                        }
+                        return;
+                    }
+                }
+            }
+            
             try {
                 const response = await fetch(`${API_BASE}/prediction`);
                 const pred = await response.json();
+                
+                // Cache the result
+                localStorage.setItem(PRED_KEY, JSON.stringify({ data: pred, timestamp: Date.now() }));
 
                 document.getElementById('citywideRisk').textContent = pred.citywide_risk;
                 document.getElementById('citywideRisk').className = 'prediction-value ' + pred.citywide_risk;

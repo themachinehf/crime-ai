@@ -7,12 +7,13 @@ import json
 from datetime import datetime, timedelta
 import uuid
 import hashlib
+import re
 
-# Simple in-memory cache
+# Simple in-memory cache with TTL
 _cache = {}
 _CACHE_TTL = 60  # seconds
 
-# Threat Analyzer (simplified for serverless)
+# Threat Analyzer (enhanced for serverless with pattern detection)
 class ThreatAnalyzer:
     VIOLENCE_KEYWORDS = {
         # Physical violence
@@ -23,6 +24,7 @@ class ThreatAnalyzer:
         # Threats & intimidation
         "threaten": 70, "hurt": 65, "destroy": 70, "revenge": 75,
         "eliminate": 80, "wipe out": 85, "end it all": 90,
+        "payback": 70, "going to kill": 95, "want them dead": 95,
         
         # Weapons
         "gun": 60, "knife": 55, "weapon": 65, "arsenal": 75,
@@ -31,22 +33,72 @@ class ThreatAnalyzer:
         # Cyber threats
         "hack": 50, "breach": 55, "ddos": 60, "malware": 55,
         "ransomware": 65, "phishing": 45, "cyberattack": 70,
+        "sql injection": 60, "exploit": 50, "backdoor": 55,
         
         # Property crime
         "steal": 50, "rob": 65, "burglary": 60, "vandalism": 45,
-        "fraud": 55, "scam": 45, "extortion": 70,
+        "fraud": 55, "scam": 45, "extortion": 70, "embezzlement": 60,
+        
+        # Harassment
+        "harass": 60, "stalk": 70, "bullying": 55, "intimidate": 65,
+        "doxxing": 55, "swatting": 75,
+        
+        # Chinese keywords
+        "杀人": 95, "杀": 90, "杀掉": 95, "杀了他": 100,
+        "炸弹": 90, "炸药": 95, "引爆": 90, "恐怖分子": 95,
+        "枪": 60, "刀": 55, "武器": 65, "子弹": 60,
+        "偷": 50, "抢": 65, "盗窃": 60, "诈骗": 55,
+        "威胁": 70, "恐吓": 70, "骚扰": 60, "自杀": 90,
     }
     
     THREAT_CATEGORIES = {
-        "physical_violence": ["kill", "murder", "shoot", "attack", "stab", "assault", "abuse"],
-        "terrorism": ["terrorist", "bomb", "explosion", "massacre"],
-        "self_harm": ["suicide", "want to die", "end it all"],
-        "harassment": ["threaten", "harass", "stalk", "bullying"],
-        "property_crime": ["steal", "rob", "burglary", "vandalism", "fraud", "extortion"],
-        "cyber_threat": ["hack", "breach", "ddos", "malware", "ransomware", "cyberattack"],
+        "physical_violence": ["kill", "murder", "shoot", "attack", "stab", "assault", "abuse", "杀"],
+        "terrorism": ["terrorist", "bomb", "explosion", "massacre", "炸弹", "恐怖分子"],
+        "self_harm": ["suicide", "want to die", "end it all", "自杀"],
+        "harassment": ["threaten", "harass", "stalk", "bullying", "intimidate", "doxxing", "swatting", "骚扰"],
+        "property_crime": ["steal", "rob", "burglary", "vandalism", "fraud", "extortion", "embezzlement", "偷", "抢"],
+        "cyber_threat": ["hack", "breach", "ddos", "malware", "ransomware", "cyberattack", "sql injection"],
     }
     
+    # Pattern detection regex
+    URGENT_PATTERNS = [
+        (r"right now", 15), (r"tonight", 15), (r"today.*going to", 15),
+        (r"tomorrow.*will", 15), (r"this weekend", 10), (r"counting down", 20),
+    ]
+    
+    TARGET_PATTERNS = [
+        (r"my (boss|colleague|teacher|classmate|neighbor|ex)", 20),
+        (r"that (guy|girl|person|man|woman)", 15),
+        (r"they.*deserve", 20), (r"will make them pay", 25),
+    ]
+    
+    PLANNING_PATTERNS = [
+        (r"going to buy", 25), (r"just ordered", 25),
+        (r"already have", 30), (r"waiting for", 20), (r"research.*how", 20),
+    ]
+    
+    def _detect_patterns(self, text: str) -> list:
+        """Detect suspicious patterns in text"""
+        patterns = []
+        
+        for pattern, score in self.URGENT_PATTERNS:
+            if re.search(pattern, text, re.I):
+                patterns.append({"type": "urgency", "score": score})
+        
+        for pattern, score in self.TARGET_PATTERNS:
+            if re.search(pattern, text, re.I):
+                patterns.append({"type": "targeted", "score": score})
+        
+        for pattern, score in self.PLANNING_PATTERNS:
+            if re.search(pattern, text, re.I):
+                patterns.append({"type": "planning", "score": score})
+        
+        return patterns
+    
     def analyze_text(self, text):
+        if not text or not isinstance(text, str):
+            return {"error": "Invalid text input", "threat_score": 0, "threat_level": "low"}
+        
         text_lower = text.lower()
         found_threats = []
         total_score = 0
@@ -60,7 +112,11 @@ class ThreatAnalyzer:
                 })
                 total_score += score
         
-        final_score = min(total_score, 100)
+        # Add pattern detection
+        patterns = self._detect_patterns(text_lower)
+        pattern_bonus = sum(p["score"] for p in patterns)
+        
+        final_score = min(total_score + pattern_bonus, 100)
         
         if final_score >= 80:
             level = "critical"
@@ -76,7 +132,7 @@ class ThreatAnalyzer:
             "threat_score": final_score,
             "threat_level": level,
             "found_threats": found_threats,
-            "detected_patterns": [],
+            "detected_patterns": patterns,
             "analyzed_at": datetime.now().isoformat()
         }
     
@@ -119,7 +175,7 @@ def handler(request):
             "body": json.dumps({
                 "name": "Crime AI",
                 "status": "operational",
-                "version": "1.0.0",
+                "version": "1.0.1",
                 "message": "Threat Prediction System Online"
             })
         }
@@ -133,7 +189,15 @@ def handler(request):
             text = body.get("text", "")
             location = body.get("location")
             
+            # Validate input
+            if not text:
+                return {"statusCode": 400, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Text is required"})}
+            
             analysis = analyzer.analyze_text(text)
+            
+            if "error" in analysis:
+                return {"statusCode": 400, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps(analysis)}
+            
             threats = [analysis] if analysis["threat_level"] in ["high", "critical"] else []
             prediction = analyzer.calculate_crime_probability(threats, location)
             
@@ -153,6 +217,8 @@ def handler(request):
                     "prediction": prediction
                 })
             }
+        except json.JSONDecodeError:
+            return {"statusCode": 400, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Invalid JSON"})}
         except Exception as e:
             return {"statusCode": 500, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": str(e)})}
     
