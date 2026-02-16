@@ -20,35 +20,45 @@ class ThreatAnalyzer:
         "kill": 90, "murder": 95, "shoot": 85, "attack": 80,
         "massacre": 100, "terrorist": 95, "bomb": 90, "explosion": 85,
         "rape": 95, "stab": 85, "assault": 75, "abuse": 70,
+        "lynch": 90, "beating": 65, "torture": 85, "strangle": 85,
         
         # Threats & intimidation
         "threaten": 70, "hurt": 65, "destroy": 70, "revenge": 75,
         "eliminate": 80, "wipe out": 85, "end it all": 90,
         "payback": 70, "going to kill": 95, "want them dead": 95,
+        "will die": 75, "should die": 80, "deserve to die": 95,
         
         # Weapons
         "gun": 60, "knife": 55, "weapon": 65, "arsenal": 75,
-        "ammunition": 65, "firearm": 70, "rifle": 60,
+        "ammunition": 65, "firearm": 70, "rifle": 60, "pistol": 65,
+        "shotgun": 65, "explosive": 85, "dynamite": 90, "grenade": 90,
         
         # Cyber threats
         "hack": 50, "breach": 55, "ddos": 60, "malware": 55,
         "ransomware": 65, "phishing": 45, "cyberattack": 70,
         "sql injection": 60, "exploit": 50, "backdoor": 55,
+        "botnet": 55, "keylogger": 60, "trojan": 55, "virus": 50,
         
         # Property crime
         "steal": 50, "rob": 65, "burglary": 60, "vandalism": 45,
         "fraud": 55, "scam": 45, "extortion": 70, "embezzlement": 60,
+        "shoplift": 40, "pickpocket": 45, "carjack": 70, "mug": 55,
         
         # Harassment
         "harass": 60, "stalk": 70, "bullying": 55, "intimidate": 65,
-        "doxxing": 55, "swatting": 75,
+        "doxxing": 55, "swatting": 75, "terrorize": 80,
         
-        # Chinese keywords
+        # Gangs & organized crime
+        "gang": 65, "cartel": 75, "mafia": 70, "syndicate": 65,
+        "hitman": 90, "assassin": 90, "mercenary": 75,
+        
+        # Chinese keywords - extended
         "杀人": 95, "杀": 90, "杀掉": 95, "杀了他": 100,
         "炸弹": 90, "炸药": 95, "引爆": 90, "恐怖分子": 95,
         "枪": 60, "刀": 55, "武器": 65, "子弹": 60,
         "偷": 50, "抢": 65, "盗窃": 60, "诈骗": 55,
         "威胁": 70, "恐吓": 70, "骚扰": 60, "自杀": 90,
+        "绑架": 85, "勒索": 70, "投毒": 85, "纵火": 85,
     }
     
     THREAT_CATEGORIES = {
@@ -192,6 +202,26 @@ def handler(request):
             # Validate input
             if not text:
                 return {"statusCode": 400, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Text is required"})}
+            
+            # Input sanitization - limit text length
+            if len(text) > 10000:
+                return {"statusCode": 400, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Text too long (max 10000 chars)"})}
+            
+            # Rate limiting check (simple in-memory)
+            client_ip = request.headers.get("x-forwarded-for", "unknown")
+            rate_key = f"rate_{client_ip}"
+            now = datetime.now()
+            
+            if rate_key in _cache:
+                last_req, count = _cache[rate_key]
+                if (now - last_req).seconds < 60 and count > 30:
+                    return {"statusCode": 429, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Rate limit exceeded"})}
+                if (now - last_req).seconds >= 60:
+                    _cache[rate_key] = (now, 1)
+                else:
+                    _cache[rate_key] = (last_req, count + 1)
+            else:
+                _cache[rate_key] = (now, 1)
             
             analysis = analyzer.analyze_text(text)
             
