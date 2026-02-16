@@ -100,6 +100,16 @@ class ThreatAnalyzer:
         "想死": 85, "不想活了": 90, "报复": 75,
         "绑架": 85, "勒索": 70, "投毒": 85, "纵火": 85,
         "贩毒": 80, "毒品": 65, "走私": 60, "猥亵": 85,
+        # Extended violent methods
+        "弄死": 95, "搞死": 90, "嫩死": 95, "做掉": 85,
+        "砍死": 90, "砸死": 80, "溺死": 85, "烧死": 85,
+        "毒死": 85, "掐死": 85, "硫酸": 90, "农药": 80,
+        # Extended weapons
+        "汽油弹": 90, "燃烧瓶": 85, "土制炸弹": 90, "雷管": 85,
+        "TNT": 95, "硝化甘油": 95, "雷": 50,
+        # More explicit threats
+        "弄死你": 100, "搞死你": 95, "杀了你": 100,
+        "砍死你": 95, "弄死全家": 100, "灭门": 100,
     }
     
     # 威胁类型分类
@@ -171,6 +181,11 @@ class ThreatAnalyzer:
             (r"tomorrow.*will", "urgency", 15, "明日行动计划"),
             (r"this weekend", "urgency", 10, "周末行动计划"),
             (r"counting down", "urgency", 20, "倒计时威胁"),
+            # Additional urgency patterns
+            (r"at (\d+)\s*(am|pm)", "urgency", 15, "指定时间行动"),
+            (r"in (\d+)\s*hours?", "urgency", 15, "倒计时行动"),
+            (r"final.*warning", "urgency", 25, "最后警告"),
+            (r"time.*is.*running", "urgency", 20, "时间紧迫"),
         ]
         
         for pattern, ptype, score, desc in urgent_patterns:
@@ -187,6 +202,12 @@ class ThreatAnalyzer:
             (r"that (guy|girl|person|man|woman)", "targeted", 15, "指定具体目标-陌生人"),
             (r"they.*deserve", "targeted", 20, "正当化暴力"),
             (r"will make them pay", "targeted", 25, "报复意图"),
+            # Additional targeting patterns
+            (r"at (school|work|home)", "targeted", 20, "指定地点目标"),
+            (r"(teacher|professor|student).*deserve", "targeted", 25, "教育场所威胁"),
+            (r"(boss|manager|ceo).*pay", "targeted", 30, "职场报复威胁"),
+            # Chinese targeting patterns
+            (r"(老师|同学|同事|老板).*(该|活该|死)", "targeted", 30, "中文目标威胁"),
         ]
         
         for pattern, ptype, score, desc in victim_patterns:
@@ -204,6 +225,14 @@ class ThreatAnalyzer:
             (r"already have", "planning", 30, "已拥有工具"),
             (r"waiting for", "planning", 20, "等待工具到位"),
             (r"research.*how", "planning", 20, "研究犯罪方法"),
+            # Additional planning patterns
+            (r"picked (up|bought|got)", "planning", 20, "获取物品"),
+            (r"know.*where.*(live|work)", "planning", 25, "掌握目标位置"),
+            (r"been planning", "planning", 30, "预谋已久"),
+            (r"planned.*out", "planning", 35, "周密计划"),
+            # Chinese planning
+            (r"(准备|计划|打算).*(杀|砍|弄)", "planning", 35, "中文计划威胁"),
+            (r"(买|搞|弄).*(刀|枪|药)", "planning", 30, "中文准备获取"),
         ]
         
         for pattern, ptype, score, desc in planning_patterns:
@@ -219,6 +248,14 @@ class ThreatAnalyzer:
             (r"no.*reason.*live", "emotional", 30, "厌世情绪"),
             (r"nothing.*matter", "emotional", 25, "冷漠情绪"),
             (r"finally.*peace", "emotional", 20, "寻求解脱"),
+            # Additional emotional patterns
+            (r"(angry|mad).*enough", "emotional", 25, "愤怒情绪积累"),
+            (r"(lost|had enough)", "emotional", 30, "绝望情绪"),
+            (r"(nobody|care|understand)", "emotional", 20, "孤独无助"),
+            # Chinese emotional
+            (r"(活着|人生).*(没意思|无聊|累)", "emotional", 30, "中文厌世"),
+            (r"(不想|不愿).*活", "emotional", 35, "中文轻生"),
+            (r"(恨|讨厌|气).*(死|炸)", "emotional", 25, "中文愤怒"),
         ]
         
         for pattern, ptype, score, desc in emotion_patterns:

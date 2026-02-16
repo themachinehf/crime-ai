@@ -440,6 +440,57 @@
         .container {
             min-width: 320px;
         }
+        
+        /* Better mobile responsiveness */
+        @media (max-width: 768px) {
+            .threat-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-right {
+                gap: 15px;
+            }
+            
+            .clock {
+                font-size: 14px;
+            }
+            
+            .logo h1 {
+                font-size: 18px;
+                letter-spacing: 2px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-group .btn {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .threat-display {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            
+            .threat-card {
+                padding: 12px;
+            }
+            
+            .threat-card .count {
+                font-size: 24px;
+            }
+            
+            .panel {
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -447,7 +498,7 @@
         <header>
             <div class="logo">
                 <h1>CRIME AI</h1>
-                <span class="subtitle">THREAT PREDICTION SYSTEM</span>
+                <span class="subtitle">THREAT PREDICTION SYSTEM v1.0.2</span>
             </div>
             <div class="header-right">
                 <div class="status-badge">
@@ -551,6 +602,7 @@
                 <div class="panel">
                     <div class="panel-header">
                         <span class="panel-title">SYSTEM STATISTICS</span>
+                        <button class="btn secondary" id="autoRefreshBtn" onclick="toggleAutoRefresh()" style="padding: 6px 10px; font-size: 9px; color: var(--safe);">AUTO: ON</button>
                     </div>
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -803,22 +855,74 @@
         }
         setInterval(updateUptime, 60000);
 
-        // Enter key to analyze
+        // Enter key to analyze (Ctrl+Enter also works)
         document.getElementById('analysisInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') analyzeText();
+            if (e.key === 'Enter' && !e.ctrlKey) analyzeText();
+        });
+        // Ctrl+Enter to analyze
+        document.getElementById('analysisInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                analyzeText();
+            }
+            // Ctrl+L to refresh data
+            if (e.key === 'l' && e.ctrlKey) {
+                e.preventDefault();
+                loadStats(true);
+                loadThreats();
+                loadPrediction(true);
+                log('Data refreshed manually', 'safe');
+            }
+        });
+        
+        // Auto-refresh toggle
+        let autoRefresh = true;
+        let refreshInterval;
+        
+        function toggleAutoRefresh() {
+            autoRefresh = !autoRefresh;
+            const btn = document.getElementById('autoRefreshBtn');
+            if (autoRefresh) {
+                refreshInterval = setInterval(() => {
+                    loadStats();
+                    loadThreats();
+                    loadPrediction();
+                }, 30000);
+                btn.textContent = 'AUTO: ON';
+                btn.style.color = 'var(--safe)';
+                log('Auto-refresh enabled', 'safe');
+            } else {
+                clearInterval(refreshInterval);
+                btn.textContent = 'AUTO: OFF';
+                btn.style.color = 'var(--text-dim)';
+                log('Auto-refresh disabled', 'warn');
+            }
+        }
+        
+        // Escape to clear input
+        document.getElementById('analysisInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('analysisInput').value = '';
+                document.getElementById('analysisInput').focus();
+            }
         });
 
         // Initial load
         loadStats();
         loadThreats();
         loadPrediction();
-        setInterval(() => {
-            loadStats();
-            loadThreats();
-            loadPrediction();
+        refreshInterval = setInterval(() => {
+            if (autoRefresh) {
+                loadStats();
+                loadThreats();
+                loadPrediction();
+            }
         }, 30000);
 
         log('Dashboard loaded successfully', 'safe');
+        
+        // Keyboard shortcuts help
+        log('Shortcuts: Ctrl+Enter=Analyze, Ctrl+L=Refresh, Esc=Clear', 'safe');
     </script>
 </body>
 </html>

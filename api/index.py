@@ -1,6 +1,7 @@
 """
 Crime AI - Vercel Serverless API
 Optimized: 2026-02-17
+Version: 1.0.2
 """
 
 import json
@@ -59,6 +60,21 @@ class ThreatAnalyzer:
         "偷": 50, "抢": 65, "盗窃": 60, "诈骗": 55,
         "威胁": 70, "恐吓": 70, "骚扰": 60, "自杀": 90,
         "绑架": 85, "勒索": 70, "投毒": 85, "纵火": 85,
+        # Extended - violent methods
+        "弄死": 95, "搞死": 90, "嫩死": 95, "做掉": 85,
+        "砍死": 90, "砸死": 80, "溺死": 85, "烧死": 85,
+        "毒死": 85, "掐死": 85, "硫酸": 90, "农药": 80,
+        # Extended - weapons/implants
+        "汽油弹": 90, "燃烧瓶": 85, "土制炸弹": 90, "雷管": 85,
+        "TNT": 95, "硝化甘油": 95, "烟花": 60, "雷": 50,
+        # More English keywords
+        "acid attack": 90, "hit and run": 75, "drive by": 80,
+        "sniping": 85, "assassination": 90, "contract killing": 95,
+        "human trafficking": 90, "hostage": 80, "barricade": 70,
+        "siege": 80, "serial": 85, "rampage": 90, "spree": 85,
+        # Implied threats
+        "you'll regret": 60, "you asked for it": 65, "payback time": 70,
+        "won't see tomorrow": 80, "last mistake": 75, "make an example": 75,
     }
     
     THREAT_CATEGORIES = {
@@ -185,7 +201,7 @@ def handler(request):
             "body": json.dumps({
                 "name": "Crime AI",
                 "status": "operational",
-                "version": "1.0.1",
+                "version": "1.0.2",
                 "message": "Threat Prediction System Online"
             })
         }
@@ -206,6 +222,13 @@ def handler(request):
             # Input sanitization - limit text length
             if len(text) > 10000:
                 return {"statusCode": 400, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Text too long (max 10000 chars)"})}
+            
+            # Input sanitization - strip and clean HTML/script tags
+            text = text.strip()
+            # Remove potential HTML/script injection
+            text = re.sub(r'<script[^>]*>.*?</script>', '', text, flags=re.I | re.DOTALL)
+            text = re.sub(r'javascript:', '', text, flags=re.I)
+            text = re.sub(r'on\w+\s*=', '', text, flags=re.I)
             
             # Rate limiting check (simple in-memory)
             client_ip = request.headers.get("x-forwarded-for", "unknown")
