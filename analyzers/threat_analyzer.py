@@ -37,6 +37,8 @@ class ThreatAnalyzer:
         "explosion": 85,
         "rape": 95,
         "stab": 85,
+        "assault": 75,
+        "abuse": 70,
         
         # 威胁表达
         "threaten": 70,
@@ -56,15 +58,48 @@ class ThreatAnalyzer:
         "weapon": 65,
         "arsenal": 75,
         "ammunition": 65,
+        "firearm": 70,
+        "rifle": 60,
+        
+        # 网络犯罪关键词
+        "hack": 50,
+        "breach": 55,
+        "ddos": 60,
+        "malware": 55,
+        "ransomware": 65,
+        "phishing": 45,
+        "cyberattack": 70,
+        "sql injection": 60,
+        "exploit": 50,
+        "backdoor": 55,
+        
+        # 财产犯罪
+        "steal": 50,
+        "rob": 65,
+        "burglary": 60,
+        "vandalism": 45,
+        "fraud": 55,
+        "scam": 45,
+        "extortion": 70,
+        "embezzlement": 60,
+        
+        # 骚扰相关
+        "harass": 60,
+        "stalk": 70,
+        "bullying": 55,
+        "intimidate": 65,
+        "doxxing": 55,
+        "swatting": 75,
     }
     
     # 威胁类型分类
     THREAT_CATEGORIES = {
-        "physical_violence": ["kill", "murder", "shoot", "attack", "stab", "hurt"],
+        "physical_violence": ["kill", "murder", "shoot", "attack", "stab", "hurt", "assault", "abuse"],
         "terrorism": ["terrorist", "bomb", "explosion", "massacre"],
         "self_harm": ["end it all", "suicide", "want to die", "give up"],
-        "harassment": ["threaten", "harass", "stalk", "bullying"],
-        "property_crime": ["steal", "rob", "burglary", "vandalism"],
+        "harassment": ["threaten", "harass", "stalk", "bullying", "intimidate", "doxxing", "swatting"],
+        "property_crime": ["steal", "rob", "burglary", "vandalism", "fraud", "extortion", "embezzlement"],
+        "cyber_threat": ["hack", "breach", "ddos", "malware", "ransomware", "cyberattack", "sql injection", "exploit", "backdoor", "phishing"],
     }
     
     def __init__(self):
@@ -120,50 +155,68 @@ class ThreatAnalyzer:
         
         # 紧迫性模式
         urgent_patterns = [
-            r"right now",
-            r"tonight",
-            r"today.*going to",
-            r"tomorrow.*will",
-            r"this weekend",
+            (r"right now", "urgency", 15, "表达紧迫行动意图"),
+            (r"tonight", "urgency", 15, "计划在今晚行动"),
+            (r"today.*going to", "urgency", 15, "当天行动计划"),
+            (r"tomorrow.*will", "urgency", 15, "明日行动计划"),
+            (r"this weekend", "urgency", 10, "周末行动计划"),
+            (r"counting down", "urgency", 20, "倒计时威胁"),
         ]
         
-        for pattern in urgent_patterns:
+        for pattern, ptype, score, desc in urgent_patterns:
             if re.search(pattern, text):
                 patterns.append({
-                    "type": "urgency",
-                    "description": "表达紧迫行动意图",
-                    "score": 15
+                    "type": ptype,
+                    "description": desc,
+                    "score": score
                 })
         
         # 受害者指定模式
         victim_patterns = [
-            r"my (boss|colleague|teacher|classmate|neighbor|ex)",
-            r"that (guy|girl|person|man|woman)",
-            r"they.*deserve",
+            (r"my (boss|colleague|teacher|classmate|neighbor|ex)", "targeted", 20, "指定具体目标-熟人"),
+            (r"that (guy|girl|person|man|woman)", "targeted", 15, "指定具体目标-陌生人"),
+            (r"they.*deserve", "targeted", 20, "正当化暴力"),
+            (r"will make them pay", "targeted", 25, "报复意图"),
         ]
         
-        for pattern in victim_patterns:
+        for pattern, ptype, score, desc in victim_patterns:
             if re.search(pattern, text):
                 patterns.append({
-                    "type": "targeted",
-                    "description": "指定具体目标",
-                    "score": 20
+                    "type": ptype,
+                    "description": desc,
+                    "score": score
                 })
         
         # 计划模式
         planning_patterns = [
-            r"going to buy",
-            r"just ordered",
-            r"already have",
-            r"waiting for",
+            (r"going to buy", "planning", 25, "显示准备购买行为"),
+            (r"just ordered", "planning", 25, "已完成准备行为"),
+            (r"already have", "planning", 30, "已拥有工具"),
+            (r"waiting for", "planning", 20, "等待工具到位"),
+            (r"research.*how", "planning", 20, "研究犯罪方法"),
         ]
         
-        for pattern in planning_patterns:
+        for pattern, ptype, score, desc in planning_patterns:
             if re.search(pattern, text):
                 patterns.append({
-                    "type": "planning",
-                    "description": "显示准备行为",
-                    "score": 25
+                    "type": ptype,
+                    "description": desc,
+                    "score": score
+                })
+        
+        # 极端情绪模式
+        emotion_patterns = [
+            (r"no.*reason.*live", "emotional", 30, "厌世情绪"),
+            (r"nothing.*matter", "emotional", 25, "冷漠情绪"),
+            (r"finally.*peace", "emotional", 20, "寻求解脱"),
+        ]
+        
+        for pattern, ptype, score, desc in emotion_patterns:
+            if re.search(pattern, text):
+                patterns.append({
+                    "type": ptype,
+                    "description": desc,
+                    "score": score
                 })
         
         return patterns
