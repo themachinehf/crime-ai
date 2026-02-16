@@ -110,6 +110,16 @@ class ThreatAnalyzer:
         # More explicit threats
         "弄死你": 100, "搞死你": 95, "杀了你": 100,
         "砍死你": 95, "弄死全家": 100, "灭门": 100,
+        # Mass attack methods
+        "开车撞人": 90, "冲撞": 85, "无差别": 95, "随机": 75,
+        "砍杀": 90, "杀杀": 95, "见人就": 85,
+        # Poison/weapon enhancements
+        "氰化物": 95, "铊": 95, "砒霜": 90, "河豚": 85,
+        # Kidnapping detailed
+        "绑架撕票": 100, "绑架勒索": 90, "囚禁": 75,
+        # Organized crime
+        "黑社会": 70, "帮派": 65, "赌场": 60, "洗钱": 65,
+        "地下": 55, "军火": 80, "雇佣兵": 75,
     }
     
     # 威胁类型分类
@@ -225,6 +235,14 @@ class ThreatAnalyzer:
             (r"already have", "planning", 30, "已拥有工具"),
             (r"waiting for", "planning", 20, "等待工具到位"),
             (r"research.*how", "planning", 20, "研究犯罪方法"),
+            # Mass attack planning
+            (r"drive.*(truck|car).*into", "planning", 40, "车辆冲撞计划"),
+            (r"crowd.*people", "planning", 35, "人群攻击计划"),
+            (r"gasoline.*(station|building)", "planning", 40, "纵火计划"),
+            # Detailed planning
+            (r"exact.*time", "planning", 30, "精确定时"),
+            (r"watch.*(school|work).*every", "planning", 35, "蹲点观察"),
+            (r"know.*routine", "planning", 30, "掌握作息规律"),
             # Additional planning patterns
             (r"picked (up|bought|got)", "planning", 20, "获取物品"),
             (r"know.*where.*(live|work)", "planning", 25, "掌握目标位置"),

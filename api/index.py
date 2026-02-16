@@ -72,9 +72,19 @@ class ThreatAnalyzer:
         "sniping": 85, "assassination": 90, "contract killing": 95,
         "human trafficking": 90, "hostage": 80, "barricade": 70,
         "siege": 80, "serial": 85, "rampage": 90, "spree": 85,
+        # Mass attack
+        "drive truck": 90, "drive car into": 85, "vehicle attack": 85,
+        "crowd attack": 90, "mass stabbing": 95, "mass shooting": 100,
+        "open fire": 90, "fire in": 85,
         # Implied threats
         "you'll regret": 60, "you asked for it": 65, "payback time": 70,
         "won't see tomorrow": 80, "last mistake": 75, "make an example": 75,
+        # More Chinese keywords
+        "开车撞人": 90, "冲撞": 85, "无差别": 95, "随机": 75,
+        "砍杀": 90, "杀杀": 95, "见人就": 85,
+        "氰化物": 95, "铊": 95, "砒霜": 90, "河豚": 85,
+        "绑架撕票": 100, "绑架勒索": 90, "囚禁": 75,
+        "黑社会": 70, "帮派": 65, "赌场": 60, "洗钱": 65,
     }
     
     THREAT_CATEGORIES = {

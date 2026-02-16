@@ -653,6 +653,15 @@
         const STATS_KEY = 'crimeai_stats';
         const PRED_KEY = 'crimeai_pred';
         
+        // Debounce helper for faster UI
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+        
         // Clock
         function updateClock() {
             const now = new Date();
@@ -683,6 +692,11 @@
 
             if (!text) {
                 log('Please enter text to analyze', 'warn');
+                return;
+            }
+            
+            if (text.length < 3) {
+                log('Text too short (min 3 chars)', 'warn');
                 return;
             }
 
