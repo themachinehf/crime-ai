@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <meta name="description" content="Crime AI - Real-time threat prediction and analysis system">
     <meta name="theme-color" content="#0a0a0f">
+    <!-- v1.0.5 - Optimized -->
     <!-- Optimized: inline critical CSS for faster LCP -->
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -526,7 +527,7 @@
         <header>
             <div class="logo">
                 <h1>CRIME AI</h1>
-                <span class="subtitle">THREAT PREDICTION SYSTEM v1.0.4</span>
+                <span class="subtitle">THREAT PREDICTION SYSTEM v1.0.5</span>
             </div>
             <div class="header-right">
                 <div class="status-badge">
@@ -738,6 +739,18 @@
         // API Base URL - auto-detect for Vercel/production
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const API_BASE = isLocalhost ? 'http://localhost:8000' : '';
+        
+        // Network error handling
+        let networkErrorShown = false;
+        
+        function handleNetworkError(e, context = 'request') {
+            if (!networkErrorShown) {
+                networkErrorShown = true;
+                log(`Network error during ${context}: ${e.message}`, 'warn');
+                setTimeout(() => { networkErrorShown = false; }, 30000);
+            }
+            showToast(`Connection issue - using cached data`, 'warning', 4000);
+        }
 
         // Analyze text
         async function analyzeText() {

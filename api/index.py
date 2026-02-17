@@ -1,7 +1,7 @@
 """
 Crime AI - Vercel Serverless API
 Optimized: 2026-02-17
-Version: 1.0.4
+Version: 1.0.5
 """
 
 import json
@@ -220,7 +220,7 @@ def handler(request):
             "body": json.dumps({
                 "name": "Crime AI",
                 "status": "operational",
-                "version": "1.0.4",
+                "version": "1.0.5",
                 "message": "Threat Prediction System Online"
             })
         }
@@ -295,6 +295,40 @@ def handler(request):
                     "id": str(uuid.uuid4())[:8],
                     "analysis": analysis,
                     "prediction": prediction
+                })
+            }
+        except json.JSONDecodeError:
+            return {"statusCode": 400, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Invalid JSON"})}
+        except Exception as e:
+            return {"statusCode": 500, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": str(e)})}
+    
+    # Batch analysis endpoint
+    if path == "/analyze/batch" and method == "POST":
+        try:
+            body = json.loads(request.body)
+            texts = body.get("texts", [])
+            
+            if not texts or not isinstance(texts, list):
+                return {"statusCode": 400, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Array of texts required"})}
+            
+            if len(texts) > 20:
+                return {"statusCode": 400, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Max 20 texts per batch"})}
+            
+            results = []
+            for text in texts:
+                text = text.strip() if isinstance(text, str) else ""
+                if text:
+                    analysis = analyzer.analyze_text(text[:10000])
+                    results.append(analysis)
+            
+            high_risk = sum(1 for r in results if r["threat_level"] in ["high", "critical"])
+            
+            return {
+                "headers": {"Content-Type": "application/json", **headers},
+                "body": json.dumps({
+                    "analyzed": len(results),
+                    "high_risk_count": high_risk,
+                    "results": results
                 })
             }
         except json.JSONDecodeError:

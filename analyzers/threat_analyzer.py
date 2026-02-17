@@ -160,6 +160,32 @@ class ThreatAnalyzer:
         # Child-specific threats
         "grooming": 85, "child abuse": 95, "csam": 100,
         "exploitation": 75, "trafficking": 90,
+        
+        # 2026 Emerging threats
+        "ai hate": 75, "hate ai": 75, "destroy ai": 65,
+        "robot attack": 70, "autonomous vehicle weapon": 75,
+        "3d printed gun": 80, "ghost gun": 80, "80% lower": 75,
+        "pipe gun": 75, "zip gun": 80,
+        "finsta": 50, "finstagram": 50, "private account": 45,
+        " burner account": 50, "throwaway": 45,
+        "copypasta": 40, "meme threat": 55,
+        # New targeting
+        "influencer": 45, "content creator": 45, "streamer": 50,
+        "famous": 45, "celebrity": 55, "public figure": 50,
+        # Political violence 2026
+        "election violence": 80, "political attack": 75,
+        "protest violence": 70, "antifa": 65, "proud boys": 70,
+        "maga attack": 70, "capital riot": 80,
+        # Social media threats
+        "troll farm": 60, "disinformation": 55, "fake news attack": 60,
+        "bot army": 55, "coordinated attack": 70,
+        # New methods
+        "water poisoning": 90, "air poisoning": 85,
+        "crop duster": 75, "drone delivery": 70,
+        "package bomb": 90, "letter bomb": 90,
+        # Financial threats
+        "cryptojacking": 55, "exchange hack": 70, "nft scam": 50,
+        "pump and dump": 45, "rug pull": 55,
     }
     
     # 威胁类型分类
