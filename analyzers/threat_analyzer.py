@@ -139,6 +139,14 @@ class ThreatAnalyzer:
         "deepfake blackmail": 70, "ai generated abuse": 75,
         "swatting service": 80, "pipe bomb": 90,
         "improvised explosive": 85, "ied": 85,
+        # 2026 new keywords
+        "electric shock": 75, "taser attack": 80, "laser blind": 65,
+        "drone swarm": 85, "poison water": 90, "contaminated food": 85,
+        "biological threat": 95, "radiological threat": 95,
+        "WMD": 100, "weapon of mass destruction": 100,
+        # Online radicalization
+        "jihad": 90, "white supremacist": 85, "nazi": 80,
+        "extremist forum": 75, "terror manual": 90, "bomb recipe": 95,
     }
     
     # 威胁类型分类

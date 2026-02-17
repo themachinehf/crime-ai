@@ -696,7 +696,10 @@
         setInterval(updateClock, 1000);
         updateClock();
         
-        // Terminal logging
+        // Terminal logging - limit to last 30 lines to prevent memory bloat
+        const _terminalLog = [];
+        const MAX_LOG_LINES = 30;
+        
         function log(msg, type = '') {
             const terminal = document.getElementById('terminal');
             const time = new Date().toLocaleTimeString('en-US', { hour12: false });
@@ -704,6 +707,16 @@
             line.className = 'line';
             line.innerHTML = `<span class="time">[${time}]</span> <span class="${type}">${msg}</span>`;
             terminal.appendChild(line);
+            
+            // Limit terminal lines to prevent memory bloat
+            _terminalLog.push(line);
+            if (_terminalLog.length > MAX_LOG_LINES) {
+                const oldLine = _terminalLog.shift();
+                if (oldLine && oldLine.parentNode) {
+                    oldLine.parentNode.removeChild(oldLine);
+                }
+            }
+            
             terminal.scrollTop = terminal.scrollHeight;
         }
         
