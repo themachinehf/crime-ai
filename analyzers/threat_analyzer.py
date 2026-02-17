@@ -260,6 +260,16 @@ class ThreatAnalyzer:
         # Infrastructure
         "power grid": 80, "water supply": 75, "food tampering": 80,
         "airline threat": 85, "maritime threat": 75,
+        # 2026-02-18 NEW - Emerging attack vectors
+        "airtag stalking": 70, "airtag tracking": 70, "find my weapon": 80,
+        "crowdstrike": 55, "global outage": 60, "supply chain attack": 75,
+        "ransomware as service": 70, "ransomware-aaa": 70, "raas": 70,
+        "botnet ddos": 65, "iot exploit": 60, "smart device hack": 55,
+        "car hack": 70, "vehicle exploit": 75, "tesla hack": 65,
+        # Chinese 2026-02
+        "定位器跟踪": 70, "电子定位": 65, "全球停电": 60,
+        "供应链攻击": 75, "勒索软件服务": 70, "物联网漏洞": 60,
+        "智能设备入侵": 55, "汽车破解": 70, "车辆漏洞": 75,
     }
     
     # 威胁类型分类

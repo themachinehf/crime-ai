@@ -70,13 +70,17 @@ class Cache:
     def __init__(self, ttl_seconds: int = 300):
         self._cache: Dict[str, tuple] = {}
         self._ttl = ttl_seconds
+        self._hits = 0
+        self._misses = 0
     
     def get(self, key: str) -> Optional[Dict]:
         if key in self._cache:
             data, timestamp = self._cache[key]
             if time.time() - timestamp < self._ttl:
+                self._hits += 1
                 return data
             del self._cache[key]
+        self._misses += 1
         return None
     
     def set(self, key: str, data: Dict):
@@ -84,9 +88,52 @@ class Cache:
     
     def clear(self):
         self._cache.clear()
+        self._hits = 0
+        self._misses = 0
+    
+    def stats(self) -> Dict:
+        total = self._hits + self._misses
+        return {
+            "size": len(self._cache),
+            "hits": self._hits,
+            "misses": self._misses,
+            "hit_rate": round(self._hits / total * 100, 1) if total > 0 else 0
+        }
+
+# Rate limiter
+class RateLimiter:
+    def __init__(self, max_requests: int = 100, window_seconds: int = 60):
+        self._requests: Dict[str, list] = {}
+        self._max_requests = max_requests
+        self._window = window_seconds
+    
+    def is_allowed(self, identifier: str) -> bool:
+        now = time.time()
+        if identifier not in self._requests:
+            self._requests[identifier] = []
+        
+        # Clean old requests
+        self._requests[identifier] = [
+            ts for ts in self._requests[identifier]
+            if now - ts < self._window
+        ]
+        
+        if len(self._requests[identifier]) >= self._max_requests:
+            return False
+        
+        self._requests[identifier].append(now)
+        return True
+    
+    def get_remaining(self, identifier: str) -> int:
+        now = time.time()
+        if identifier not in self._requests:
+            return self._max_requests
+        recent = [ts for ts in self._requests.get(identifier, []) if now - ts < self._window]
+        return max(0, self._max_requests - len(recent))
 
 # Initialize
 cache = Cache(ttl_seconds=300)
+rate_limiter = RateLimiter(max_requests=100, window_seconds=60)
 analyzer = ThreatAnalyzer() if ANALYZER_AVAILABLE else None
 
 # Demo threat data for the feed
@@ -119,8 +166,12 @@ def hash_text(text: str) -> str:
     """Generate cache key from text"""
     return hashlib.md5(text.encode()).hexdigest()
 
-def analyze_handler(body: dict) -> tuple:
+def analyze_handler(body: dict, client_id: str = "default") -> tuple:
     """Handle /analyze endpoint"""
+    # Rate limiting check
+    if not rate_limiter.is_allowed(client_id):
+        return create_response(False, error="Rate limit exceeded", status=429)
+    
     text = body.get("text", "").strip()
     if not text:
         return create_response(False, error="No text provided", status=400)
@@ -132,7 +183,7 @@ def analyze_handler(body: dict) -> tuple:
     cache_key = hash_text(text)
     cached = cache.get(cache_key)
     if cached:
-        return create_response(True, {"analysis": cached, "cached": True})
+        return create_response(True, {"analysis": cached, "cached": True}, headers={"X-RateLimit-Remaining": str(rate_limiter.get_remaining(client_id))})
     
     # Analyze
     try:
@@ -227,7 +278,20 @@ def health_handler() -> tuple:
         "status": "healthy",
         "analyzer_available": ANALYZER_AVAILABLE,
         "cache_enabled": True,
-        "version": "2.0.1"
+        "rate_limiting": True,
+        "version": "2.0.2"
+    })
+
+def cache_stats_handler() -> tuple:
+    """Handle /cache/stats endpoint"""
+    return create_response(True, cache.stats())
+
+def rate_limit_handler() -> tuple:
+    """Handle /rate-limit status endpoint"""
+    return create_response(True, {
+        "enabled": True,
+        "max_requests": rate_limiter._max_requests,
+        "window_seconds": rate_limiter._window
     })
 
 def cache_clear_handler() -> tuple:
@@ -243,6 +307,8 @@ ROUTES = {
     "/prediction": ("GET", lambda _: prediction_handler()),
     "/health": ("GET", lambda _: health_handler()),
     "/cache/clear": ("POST", lambda _: cache_clear_handler()),
+    "/cache/stats": ("GET", lambda _: cache_stats_handler()),
+    "/rate-limit": ("GET", lambda _: rate_limit_handler()),
 }
 
 def handler(event, context):
