@@ -219,7 +219,15 @@ export default function handler(req, res) {
         req.on("end", () => {
             try {
                 const { text } = JSON.parse(body);
-                const analysis = analyzeText(text);
+                // Input sanitization - prevent empty or malicious input
+                if (!text || typeof text !== "string" || text.trim().length === 0) {
+                    return res.status(400).json({ error: "Text input required" });
+                }
+                if (text.length > 10000) {
+                    return res.status(400).json({ error: "Text too long (max 10000 chars)" });
+                }
+                const sanitizedText = text.trim().slice(0, 5000); // Limit processing length
+                const analysis = analyzeText(sanitizedText);
                 
                 if (["critical", "high"].includes(analysis.threat_level)) {
                     threatLog.push({

@@ -218,6 +218,11 @@ class ThreatAnalyzer:
         # AI threats
         "autonomous weapon": 85, "killer robot": 90, "military ai": 80,
         "deepfake extortion": 75, "synthetic identity theft": 70,
+        
+        # 2026-02 new threats (auto-optimize)
+        "train attack": 85, "metro attack": 80, "subway attack": 80,
+        "airport threat": 85, "bridge attack": 85, "tunnel attack": 80,
+        "ai impersonation": 70, "faceless": 65, "cloaked": 60,
     }
     
     # 威胁类型分类
