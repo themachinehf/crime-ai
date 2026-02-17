@@ -503,7 +503,7 @@
         <header>
             <div class="logo">
                 <h1>THE MACHINE</h1>
-                <span class="version">V2.0.7 // CRIME PREDICTION SYSTEM</span>
+                <span class="version">V2.0.8 // CRIME PREDICTION SYSTEM</span>
             </div>
             <div class="status-bar">
                 <div class="status-item">
@@ -953,6 +953,28 @@
         // Enter key to analyze
         document.getElementById('analysisInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && e.ctrlKey) analyzeText();
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+Shift+A: Focus analysis input
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                e.preventDefault();
+                document.getElementById('analysisInput').focus();
+            }
+            // Ctrl+R: Refresh data
+            if (e.ctrlKey && e.key === 'r' && e.shiftKey) {
+                e.preventDefault();
+                loadStats();
+                loadThreats();
+                loadPrediction();
+                log('Data refreshed manually', 'highlight');
+            }
+            // Escape: Clear input
+            if (e.key === 'Escape') {
+                document.getElementById('analysisInput').value = '';
+                document.getElementById('resultBox').classList.remove('show');
+            }
         });
         
         // Initial load - deferred for performance

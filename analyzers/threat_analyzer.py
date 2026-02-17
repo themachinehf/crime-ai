@@ -319,6 +319,14 @@ class ThreatAnalyzer:
         # Chinese newest
         "量子解密": 85, "现在存储以后破解": 90, "AI智能体攻击": 75,
         "自主黑客": 80, "自传播恶意软件": 85, "社交图谱攻击": 70,
+        # 2026-02-18 auto-optimize additional
+        "clone attack": 75, "identity theft": 65, "passport fraud": 70,
+        "fingerprint hack": 75, "retina scan bypass": 80, "biometric hack": 75,
+        "smart dust": 85, "nanobot": 80, "microscopic weapon": 90,
+        "emp attack": 95, "electromagnetic pulse": 95, "power outage": 60,
+        # 2026 emerging
+        "brain computer": 65, "neural interface": 70, "mind hack": 80,
+        "thought attack": 85, "cognitive warfare": 75, "memory manipulation": 80,
     }
     
     # Chinese social engineering - NEW section

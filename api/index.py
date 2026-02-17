@@ -193,6 +193,13 @@ def hash_text(text: str) -> str:
     """Generate cache key from text"""
     return hashlib.md5(text.encode()).hexdigest()
 
+def sanitize_input(text: str) -> str:
+    """Sanitize input to prevent injection attacks"""
+    # Remove null bytes and control characters
+    import re
+    text = re.sub(r'[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f]', '', text)
+    return text.strip()
+
 def analyze_handler(body: dict, client_id: str = "default") -> tuple:
     """Handle /analyze endpoint"""
     # Rate limiting check
@@ -202,6 +209,9 @@ def analyze_handler(body: dict, client_id: str = "default") -> tuple:
     text = body.get("text", "").strip()
     if not text:
         return create_response(False, error="No text provided", status=400)
+    
+    # Sanitize input
+    text = sanitize_input(text)
     
     if len(text) > 10000:
         return create_response(False, error="Text too long (max 10000 chars)", status=400)
@@ -322,7 +332,7 @@ def health_handler() -> tuple:
         "analyzer_available": ANALYZER_AVAILABLE,
         "cache_enabled": True,
         "rate_limiting": True,
-        "version": "2.0.6"
+        "version": "2.0.8"
     })
 
 def cache_stats_handler() -> tuple:
