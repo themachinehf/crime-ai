@@ -135,6 +135,10 @@ class ThreatAnalyzer:
         "domestic terrorism": 90, "lone wolf": 85,
         "意识形态": 70, "极端主义": 85, "圣战": 95,
         "独狼": 85, "自我激化": 90, "恐怖宣传": 75,
+        # Emerging threats 2026
+        "deepfake blackmail": 70, "ai generated abuse": 75,
+        "swatting service": 80, "pipe bomb": 90,
+        "improvised explosive": 85, "ied": 85,
     }
     
     # 威胁类型分类

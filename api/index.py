@@ -219,7 +219,7 @@ def handler(request):
             "body": json.dumps({
                 "name": "Crime AI",
                 "status": "operational",
-                "version": "1.0.2",
+                "version": "1.0.3",
                 "message": "Threat Prediction System Online"
             })
         }
