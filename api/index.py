@@ -1,7 +1,7 @@
 """
 Crime AI - Vercel Serverless API
 Optimized: 2026-02-17
-Version: 1.0.5
+Version: 1.0.6
 """
 
 import json
@@ -220,13 +220,13 @@ def handler(request):
             "body": json.dumps({
                 "name": "Crime AI",
                 "status": "operational",
-                "version": "1.0.5",
+                "version": "1.0.6",
                 "message": "Threat Prediction System Online"
             })
         }
     
     if path == "/health":
-        return {"headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"status": "healthy"})}
+        return {"headers": {"Content-Type": "application/json", "Cache-Control": "public, max-age=60", **headers}, "body": json.dumps({"status": "healthy", "timestamp": datetime.now().isoformat()})}
     
     if path == "/analyze" and method == "POST":
         try:
@@ -338,7 +338,7 @@ def handler(request):
     
     if path == "/statistics":
         by_level = {"critical": 0, "high": 0, "medium": 0, "low": 0}
-        by_source = {"api": len(threat_log)}
+        by_source = {"api": len(threat_log), "cache_entries": len(_cache)}
         
         for t in threat_log:
             level = t["analysis"]["threat_level"]
@@ -407,7 +407,7 @@ def handler(request):
     # Cache status endpoint
     if path == "/cache/status":
         return {
-            "headers": {"Content-Type": "application/json", **headers},
+            "headers": {"Content-Type": "application/json", "Cache-Control": "public, max-age=30", **headers},
             "body": json.dumps({
                 "entries": len(_cache),
                 "ttl_seconds": _CACHE_TTL,

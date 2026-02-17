@@ -120,6 +120,16 @@ class ThreatAnalyzer:
         # Organized crime
         "黑社会": 70, "帮派": 65, "赌场": 60, "洗钱": 65,
         "地下": 55, "军火": 80, "雇佣兵": 75,
+        # 2026 new Chinese threats
+        "网暴": 65, "网络暴力": 65, "人肉搜索": 70, "开盒": 75,
+        "恶搞": 50, "造谣": 60, "诽谤": 55, "侮辱": 50,
+        "假消息": 55, "假新闻": 55, "水军": 50, "刷屏": 45,
+        "炸弹客": 95, "纵火犯": 85, "投毒者": 90,
+        "杀人犯": 95, "凶手": 90, "罪犯": 70, "变态": 65,
+        # Chinese emerging
+        "电信诈骗": 65, "杀猪盘": 70, "冒充": 55, "钓鱼": 55,
+        "伪基站": 60, "GOIP": 60, "嗅探": 55,
+    }
         # New keywords - 2026-02-17
         "ai attack": 70, "deepfake": 55, "bioweapon": 90,
         "mass poison": 95, "radiation": 85, "chemical weapon": 90,
@@ -186,6 +196,17 @@ class ThreatAnalyzer:
         # Financial threats
         "cryptojacking": 55, "exchange hack": 70, "nft scam": 50,
         "pump and dump": 45, "rug pull": 55,
+        
+        # 2026-02 new threats
+        "ai scam": 65, "romance scam": 60, "pig butchering": 70,
+        "job scam": 55, "fake celebrity": 60, "impersonation": 55,
+        "qr code scam": 50, "voice deepfake": 65, "video deepfake": 65,
+        # Social engineering
+        "pretexting": 50, "baiting": 55, "quid pro quo": 55,
+        "tailgating": 45, "shoulder surfing": 50,
+        # New violence methods
+        "acid attack": 90, "machete": 80, "crossbow": 75,
+        "crossbow attack": 85, "balloon bomb": 90,
     }
     
     # 威胁类型分类
