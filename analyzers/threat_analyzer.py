@@ -120,6 +120,13 @@ class ThreatAnalyzer:
         # Organized crime
         "黑社会": 70, "帮派": 65, "赌场": 60, "洗钱": 65,
         "地下": 55, "军火": 80, "雇佣兵": 75,
+        # New keywords - 2026-02-17
+        "ai attack": 70, "deepfake": 55, "bioweapon": 90,
+        "mass poison": 95, "radiation": 85, "chemical weapon": 90,
+        "incel": 65, "mass killer": 100, "stabbing spree": 90,
+        "hammer attack": 80, "vehicle ramming": 85,
+        "校园": 60, "幼儿园": 70, "小学": 60, "中学": 55,
+        "投鼠忌器": 75, "狗急跳墙": 70, "铤而走险": 75,
     }
     
     # 威胁类型分类

@@ -1,7 +1,7 @@
 """
 Crime AI - Vercel Serverless API
 Optimized: 2026-02-17
-Version: 1.0.2
+Version: 1.0.3
 """
 
 import json
@@ -52,6 +52,14 @@ class ThreatAnalyzer:
         # Gangs & organized crime
         "gang": 65, "cartel": 75, "mafia": 70, "syndicate": 65,
         "hitman": 90, "assassin": 90, "mercenary": 75,
+        
+        # New keywords - 2026-02-17
+        "ai attack": 70, "deepfake": 55, "bioweapon": 90,
+        "mass poison": 95, "radiation": 85, "chemical weapon": 90,
+        "incel": 65, "mass killer": 100, "stabbing spree": 90,
+        "hammer attack": 80, "vehicle ramming": 85,
+        "arson": 80, "firebombing": 85, "mail bomb": 90,
+        "ricin": 95, "anthrax": 100, "nerve agent": 100,
         
         # Chinese keywords - extended
         "杀人": 95, "杀": 90, "杀掉": 95, "杀了他": 100,
