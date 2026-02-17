@@ -290,8 +290,28 @@ class ThreatAnalyzer:
         # 2026-02 new attack surfaces
         "esim swap": 70, "callback phishing": 75, "vat phishing": 70,
         " adversary in the middle": 80, "aitm": 75,
+        
+        # 2026-02-18 MORE emerging threats
+        "ai cloning": 70, "digital twin attack": 75, "synthetic identity fraud": 70,
+        "voice deepfake scam": 75, "video deepfake extortion": 80,
+        "xr attack": 65, "vr assault": 70, "metaverse threat": 60,
+        "iot ransomware": 70, "smart home hack": 65, "connected car threat": 70,
+        "medical device hack": 85, "implant attack": 90, "pacemaker hack": 95,
+        # 2026 election threats
+        "election interference": 80, "vote manipulation": 85, "deepfake candidate": 75,
+        "disinformation campaign": 65, "foreign influence": 75,
+        # Space threats
+        "space weapon": 90, "satellite jamming": 80, "orbital strike": 95,
+        # Chinese 2026
+        "元宇宙攻击": 65, "虚拟现实威胁": 70, "数字人诈骗": 75,
+        "AI克隆": 70, "深度伪造敲诈": 80, "智能设备入侵": 65,
+        "医疗设备黑客": 85, "植入物攻击": 90, "起搏器黑客": 95,
+        "选举干预": 80, "投票操纵": 85, "虚假候选人": 75,
+        "卫星干扰": 80, "轨道武器": 95,
     }
-        # Chinese social engineering
+    
+    # Chinese social engineering - NEW section
+    CHINESE_SOCIAL_ENGINEERING = {
         "ai客服": 55, "虚拟绑架": 80, "视频ai换脸": 75,
         "仿冒公检法": 75, "仿冒领导": 70, "杀鱼": 55,
         # 2026 new vectors

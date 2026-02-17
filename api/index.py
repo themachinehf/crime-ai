@@ -156,14 +156,14 @@ state = {
     "threats": []
 }
 
-def create_response(success: bool, data=None, error: str = None, status: int = 200):
+def create_response(success: bool, data=None, error: str = None, status: int = 200, headers: dict = None):
     """Create standardized API response"""
     response = {"success": success, "timestamp": datetime.now().isoformat()}
     if data:
         response["data"] = data
     if error:
         response["error"] = error
-    return response, status
+    return response, status, headers or {}
 
 def hash_text(text: str) -> str:
     """Generate cache key from text"""
@@ -186,7 +186,11 @@ def analyze_handler(body: dict, client_id: str = "default") -> tuple:
     cache_key = hash_text(text)
     cached = cache.get(cache_key)
     if cached:
-        return create_response(True, {"analysis": cached, "cached": True}, headers={"X-RateLimit-Remaining": str(rate_limiter.get_remaining(client_id))})
+        headers = {
+            "X-RateLimit-Remaining": str(rate_limiter.get_remaining(client_id)),
+            "X-Cache": "HIT"
+        }
+        return create_response(True, {"analysis": cached, "cached": True}, headers=headers)
     
     # Analyze
     try:
@@ -194,6 +198,10 @@ def analyze_handler(body: dict, client_id: str = "default") -> tuple:
             analysis = analyzer.analyze_text(text)
         else:
             analysis = ThreatAnalyzer().analyze_text(text)
+        
+        # Validate analysis result
+        if not analysis or "threat_score" not in analysis:
+            return create_response(False, error="Analysis returned invalid result", status=500)
         
         # Calculate prediction
         if analyzer:
@@ -214,8 +222,16 @@ def analyze_handler(body: dict, client_id: str = "default") -> tuple:
             "prediction": prediction,
             "cached": False
         }
-        return create_response(True, result)
+        
+        # Add cache headers
+        headers = {
+            "X-RateLimit-Remaining": str(rate_limiter.get_remaining(client_id)),
+            "X-Cache": "MISS"
+        }
+        return create_response(True, result, headers=headers)
     
+    except ValueError as e:
+        return create_response(False, error=f"Invalid input: {str(e)}", status=400)
     except Exception as e:
         return create_response(False, error=f"Analysis failed: {str(e)}", status=500)
 
@@ -282,7 +298,7 @@ def health_handler() -> tuple:
         "analyzer_available": ANALYZER_AVAILABLE,
         "cache_enabled": True,
         "rate_limiting": True,
-        "version": "2.0.3"
+        "version": "2.0.4"
     })
 
 def cache_stats_handler() -> tuple:
@@ -343,7 +359,7 @@ ROUTES = {
     "/analyze": ("POST", analyze_handler),
     "/batch-analyze": ("POST", batch_analyze_handler),
     "/statistics": ("GET", lambda _: statistics_handler()),
-    "/threats": ("GET", lambda _: threats_handler()),
+    "/threats": ("GET", lambda body: threats_handler(body.get("limit", 20))),
     "/prediction": ("GET", lambda _: prediction_handler()),
     "/health": ("GET", lambda _: health_handler()),
     "/cache/clear": ("POST", lambda _: cache_clear_handler()),
@@ -374,17 +390,21 @@ def handler(event, context):
             except:
                 return create_response(False, error="Invalid JSON", status=400)
         
-        response_data, status = handler_fn(body)
+        response_data, status, response_headers = handler_fn(body)
     else:
-        response_data, status = create_response(False, error="Not found", status=404)
+        response_data, status, response_headers = create_response(False, error="Not found", status=404)
+    
+    # Merge default headers with response-specific headers
+    default_headers = {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-cache"
+    }
+    default_headers.update(response_headers)
     
     return {
         "statusCode": status,
-        "headers": {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Cache-Control": "no-cache"
-        },
+        "headers": default_headers,
         "body": json.dumps(response_data)
     }
 
