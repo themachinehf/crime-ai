@@ -207,6 +207,17 @@ class ThreatAnalyzer:
         # New violence methods
         "acid attack": 90, "machete": 80, "crossbow": 75,
         "crossbow attack": 85, "balloon bomb": 90,
+        # 2026 weapon tech
+        "3d printed weapon": 80, "ghost gun": 80, "80% lower": 75,
+        "zip gun": 80, "pipe gun": 75,
+        # Space/infrastructure threats
+        "satellite attack": 85, "space debris": 60, "orbital weapon": 90,
+        "power grid": 75, "infrastructure attack": 80,
+        # Biological 2026
+        "engineered virus": 100, "synthetic biology": 90, "gene editing weapon": 95,
+        # AI threats
+        "autonomous weapon": 85, "killer robot": 90, "military ai": 80,
+        "deepfake extortion": 75, "synthetic identity theft": 70,
     }
     
     # 威胁类型分类
