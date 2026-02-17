@@ -66,7 +66,15 @@ except ImportError:
                 # 2026-02-18 NEWEST
                 "quantum decryption": 85, "harvest now decrypt later": 90, 
                 "ai agent attack": 75, "autonomous hacking": 80,
-                "选举干预": 80, "投票操纵": 85, "卫星干扰": 80,
+                "election interference": 80, "vote manipulation": 85, "deepfake candidate": 75,
+                # 2026-02-18 auto-optimize
+                "airdrop scam": 55, "nft mint scam": 60, "discord scam": 55,
+                "fake exchange": 65, "ponzi scheme": 70, "pig butchering scam": 75,
+                "deepfakeceo": 80, "fake meeting": 70, "virtual abduction": 85,
+                "water hack": 80, "dam hack": 85, "traffic light hack": 70,
+                # Chinese new
+                "空气净化器攻击": 75, "智能家居漏洞": 65, "汽车远程入侵": 70,
+                "无人机集群攻击": 85, "区块链攻击": 65, "Defi攻击": 70,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -332,7 +340,7 @@ def health_handler() -> tuple:
         "analyzer_available": ANALYZER_AVAILABLE,
         "cache_enabled": True,
         "rate_limiting": True,
-        "version": "2.0.8"
+        "version": "2.0.9"
     })
 
 def cache_stats_handler() -> tuple:

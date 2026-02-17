@@ -327,6 +327,19 @@ class ThreatAnalyzer:
         # 2026 emerging
         "brain computer": 65, "neural interface": 70, "mind hack": 80,
         "thought attack": 85, "cognitive warfare": 75, "memory manipulation": 80,
+        # 2026-02-18 auto-optimize additions
+        "airdrop scam": 55, "nft mint scam": 60, "discord scam": 55,
+        "fake exchange": 65, "ponzi scheme": 70, "pyramid scheme": 70,
+        "pig butchering scam": 75, "employment scam": 60, "investment scam": 65,
+        # Social engineering 2026
+        "deepfakeceo": 80, "fake meeting": 70, "virtual abduction": 85,
+        "ai kidnapping": 80, "simulation attack": 75, "synthetic witness": 70,
+        # Infrastructure 2026
+        "water hack": 80, "dam hack": 85, "traffic light hack": 70,
+        "smart city attack": 75, "iot botnet": 60, "firmware attack": 70,
+        # Chinese emerging
+        "空气净化器攻击": 75, "智能家居漏洞": 65, "汽车远程入侵": 70,
+        "无人机集群攻击": 85, "区块链攻击": 65, "Defi攻击": 70,
     }
     
     # Chinese social engineering - NEW section
