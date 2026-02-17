@@ -674,6 +674,30 @@
     </div>
     
     <script>
+        // Local storage cache helper
+        const Cache = {
+            get: (key) => {
+                try {
+                    const item = localStorage.getItem('crimeai_' + key);
+                    if (!item) return null;
+                    const { data, expiry } = JSON.parse(item);
+                    if (Date.now() > expiry) {
+                        localStorage.removeItem('crimeai_' + key);
+                        return null;
+                    }
+                    return data;
+                } catch { return null; }
+            },
+            set: (key, data, minutes = 5) => {
+                try {
+                    localStorage.setItem('crimeai_' + key, JSON.stringify({
+                        data,
+                        expiry: Date.now() + minutes * 60000
+                    }));
+                } catch {}
+            }
+        };
+        
         // Clock
         function updateClock() {
             const now = new Date();
@@ -827,11 +851,23 @@
             document.getElementById('resultBox').classList.add('show');
         }
         
-        // Load statistics
+        // Load statistics (with cache)
         async function loadStats() {
+            const cached = Cache.get('stats');
+            if (cached) {
+                document.getElementById('totalThreats').textContent = cached.total_threats;
+                document.getElementById('criticalCount').textContent = cached.by_level?.critical || 0;
+                document.getElementById('highCount').textContent = cached.by_level?.high || 0;
+                document.getElementById('mediumCount').textContent = cached.by_level?.medium || 0;
+                document.getElementById('monitoredCount').textContent = cached.by_level?.low || 0;
+                document.getElementById('statViolence').textContent = cached.by_level?.critical || 0;
+                document.getElementById('statTerrorism').textContent = cached.by_level?.critical || 0;
+            }
             try {
                 const response = await fetch(`${API_BASE}/statistics`);
                 const stats = await response.json();
+                
+                Cache.set('stats', stats, 2);
                 
                 document.getElementById('totalThreats').textContent = stats.total_threats;
                 document.getElementById('criticalCount').textContent = stats.by_level.critical || 0;
@@ -839,12 +875,10 @@
                 document.getElementById('mediumCount').textContent = stats.by_level.medium || 0;
                 document.getElementById('monitoredCount').textContent = stats.by_level.low || 0;
                 
-                // Quick stats
                 document.getElementById('statViolence').textContent = stats.by_level.critical || 0;
                 document.getElementById('statTerrorism').textContent = stats.by_level.critical || 0;
             } catch (e) {
-                // Use demo data
-                document.getElementById('totalThreats').textContent = Math.floor(Math.random() * 50);
+                if (!cached) document.getElementById('totalThreats').textContent = Math.floor(Math.random() * 50);
             }
         }
         

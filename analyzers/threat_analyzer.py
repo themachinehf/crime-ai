@@ -243,6 +243,23 @@ class ThreatAnalyzer:
         "社交工程": 55, "鱼叉式钓鱼": 60, "冒充公检法": 75,
         "杀猪盘新": 70, "裸聊敲诈": 80, "视频敲诈": 75,
         "虚假恐吓": 65, "恶意锁定": 70, "勒索病毒": 65,
+        # 2026-02-17 MORE keywords (auto-optimize v2)
+        "serial attack": 90, "copycat crime": 55, "mass casualty": 95,
+        "public shooting": 95, "assassination": 85, "targeted killing": 90,
+        "IED": 85, "pressure cooker": 80, "fertilizer bomb": 85,
+        "incel attack": 85, "misogynistic": 60, "incel manifesto": 90,
+        "rape threat": 85, "sexual assault threat": 80,
+        # Chinese more
+        "连续作案": 85, "模仿犯罪": 55, "公共场所行凶": 95,
+        "暗杀": 85, "针对性杀害": 90, "土制炸弹": 90,
+        "单身攻击": 85, "厌女攻击": 85, "强奸威胁": 85,
+        # New attack methods
+        "car attack": 80, "vehicle attack": 80, "truck attack": 85,
+        "ramming attack": 85, "vehicle ramming": 90,
+        "machete": 80, "sword": 70, "acid throwing": 90, "glass attack": 75,
+        # Infrastructure
+        "power grid": 80, "water supply": 75, "food tampering": 80,
+        "airline threat": 85, "maritime threat": 75,
     }
     
     # 威胁类型分类

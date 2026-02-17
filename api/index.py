@@ -20,9 +20,26 @@ except ImportError:
     class ThreatAnalyzer:
         def __init__(self):
             self.threat_keywords = {
+                # Core violent
                 "kill": 90, "murder": 95, "bomb": 90, "attack": 80,
                 "terrorist": 95, "shoot": 85, "threaten": 70,
-                "杀人": 95, "杀": 90, "炸弹": 90, "恐怖分子": 95,
+                "stab": 85, "massacre": 100, "rape": 95, "explosion": 85,
+                # Weapons
+                "gun": 60, "knife": 55, "weapon": 65, "arsenal": 75,
+                # Threats
+                "hurt": 65, "destroy": 70, "revenge": 75, "eliminate": 80,
+                "going to kill": 95, "want them dead": 95,
+                # Chinese core
+                "杀人": 95, "杀": 90, "杀掉": 95, "杀了他": 100,
+                "炸弹": 90, "炸药": 95, "引爆": 90, "恐怖分子": 95,
+                "枪": 60, "刀": 55, "武器": 65, "子弹": 60,
+                "威胁": 70, "恐吓": 70, "自杀": 90, "绑架": 85,
+                # 2026 emerging
+                "deepfake": 55, "ai attack": 70, "bioweapon": 90,
+                "drone attack": 85, "mass poison": 95, "school shooting": 100,
+                "网暴": 65, "人肉搜索": 70, "开盒": 75,
+                "电信诈骗": 65, "杀猪盘": 70, "ai诈骗": 65,
+                "火车袭击": 85, "地铁袭击": 80, "机场威胁": 85,
             }
         
         def analyze_text(self, text: str) -> Dict:
