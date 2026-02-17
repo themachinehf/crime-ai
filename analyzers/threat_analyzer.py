@@ -223,6 +223,14 @@ class ThreatAnalyzer:
         "train attack": 85, "metro attack": 80, "subway attack": 80,
         "airport threat": 85, "bridge attack": 85, "tunnel attack": 80,
         "ai impersonation": 70, "faceless": 65, "cloaked": 60,
+        # Additional 2026 threats
+        "electric shock": 75, "taser attack": 80, "laser blind": 65,
+        "package bomb": 90, "letter bomb": 90,
+        "engineered virus": 100, "synthetic biology": 90, "gene editing weapon": 95,
+        "autonomous weapon": 85, "killer robot": 90, "military ai": 80,
+        # Chinese 2026
+        "火车袭击": 85, "地铁袭击": 80, "机场威胁": 85,
+        "人工智能冒充": 70, "合成病毒": 100, "基因武器": 95,
     }
     
     # 威胁类型分类
@@ -384,6 +392,10 @@ class ThreatAnalyzer:
             (r"(nobody|no one).*miss", "emotional", 35, "认为无人会在乎"),
             (r"better.*without.*me", "emotional", 40, "死亡念头"),
             (r"final.*(goodbye|message)", "emotional", 50, "遗书迹象"),
+            # 2026-02 new patterns
+            (r"(3d|ghost).*print", "planning", 30, "3D打印武器"),
+            (r"engineered.*virus", "planning", 45, "工程病毒计划"),
+            (r"synthetic.*(biology|dna)", "planning", 40, "合成生物学威胁"),
         ]
         
         for pattern, ptype, score, desc in emotion_patterns:

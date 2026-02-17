@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE MACHINE | Crime Prediction System</title>
+    <meta name="description" content="AI-powered crime prediction and threat analysis system">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
     <style>
         :root {
             --bg-dark: #0a0a0a;
@@ -706,7 +709,7 @@
             }
         }
         
-        // API Base - Improved detection
+        // API Base - Improved detection with fallback
         const API_BASE = (() => {
             const host = window.location.hostname;
             const port = window.location.port;
@@ -717,6 +720,20 @@
             // Production - use same origin
             return '';
         })();
+        
+        // Retry helper with exponential backoff
+        async function fetchWithRetry(url, options = {}, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response;
+                } catch (e) {
+                    if (i === retries - 1) throw e;
+                    await new Promise(r => setTimeout(r, delay * (i + 1)));
+                }
+            }
+        }
         
         // Generate random number
         function generateNumber() {
@@ -740,12 +757,12 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 10000);
                 
-                const response = await fetch(`${API_BASE}/analyze`, {
+                const response = await fetchWithRetry(`${API_BASE}/analyze`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text }),
                     signal: controller.signal
-                });
+                }, 3, 1500);
                 
                 clearTimeout(timeoutId);
                 
@@ -764,7 +781,7 @@
                 if (e.name === 'AbortError') {
                     log('Analysis timeout - using local fallback', 'danger');
                 } else {
-                    log('Analysis failed: ' + e.message, 'danger');
+                    log('Analysis failed: ' + e.message + ' - Using offline mode', 'danger');
                 }
                 // Show demo result on error
                 showDemoResult();

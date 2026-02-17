@@ -1,7 +1,10 @@
-// Crime AI - API Server (v2.2 - Auto-Optimized)
-// Simple in-memory cache with error handling
+// Crime AI - API Server (v2.3 - Auto-Optimized 2026-02-17)
+// Simple in-memory cache with error handling and rate limiting
 const cache = { stats: null, pred: null, threats: null };
 const CACHE_TTL = 5000; // 5 seconds
+const requestCounts = new Map(); // Rate limiting
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const RATE_LIMIT_MAX = 30; // Max requests per window
 
 // Extended threat keywords from Python v2.2 - 2026 threats
 const VIOLENCE_KEYWORDS = {
@@ -58,6 +61,15 @@ const VIOLENCE_KEYWORDS = {
     "黑社会": 70, "帮派": 65, "赌场": 60, "洗钱": 65, "军火": 80,
     // School threats
     "校园": 60, "幼儿园": 70, "小学": 60, "中学": 55,
+    // 2026-02-17 new threats (auto-optimize)
+    "train attack": 85, "metro attack": 80, "subway attack": 80,
+    "airport threat": 85, "bridge attack": 85, "tunnel attack": 80,
+    "ai impersonation": 70, "faceless": 65, "cloaked": 60,
+    "train attack": 85, "metro attack": 80,
+    "electric shock": 75, "taser attack": 80,
+    "package bomb": 90, "letter bomb": 90,
+    "engineered virus": 100, "synthetic biology": 90,
+    "autonomous weapon": 85, "killer robot": 90,
 };
 
 const CATEGORIES = {
@@ -116,6 +128,12 @@ const PATTERNS = [
     // Chinese patterns
     { regex: /(老师|同学|同事|老板).*(该|活该|死)/i, type: "targeted", score: 30 },
     { regex: /(准备|计划|打算).*(杀|砍|弄)/i, type: "planning", score: 35 },
+    // 2026-02-17 new patterns
+    { regex: /final.*(goodbye|message|note)/i, type: "emotional", score: 50 },
+    { regex: /nobody.*(miss|remember|care)/i, type: "emotional", score: 30 },
+    { regex: /always.*(tired|exhausted|depressed)/i, type: "emotional", score: 25 },
+    { regex: /(3d|ghost).*(print|gun)/i, type: "planning", score: 30 },
+    { regex: /synthetic.*(virus|biology)/i, type: "planning", score: 40 },
 ];
 
 function analyzeText(text) {
@@ -187,9 +205,35 @@ function calculateProbability(threats) {
     };
 }
 
+// Rate limiting check
+function checkRateLimit(ip) {
+    const now = Date.now();
+    const windowStart = now - RATE_LIMIT_WINDOW;
+    
+    // Clean old entries
+    for (const [key, timestamp] of requestCounts) {
+        if (timestamp < windowStart) requestCounts.delete(key);
+    }
+    
+    const count = (requestCounts.get(ip) || []).filter(t => t > windowStart).length;
+    if (count >= RATE_LIMIT_MAX) return false;
+    
+    // Add current request
+    const times = requestCounts.get(ip) || [];
+    times.push(now);
+    requestCounts.set(ip, times);
+    return true;
+}
+
 export default function handler(req, res) {
     const path = req.url;
     const method = req.method;
+    const clientIp = req.headers['x-forwarded-for'] || req.connection?.remoteAddress || 'unknown';
+    
+    // Rate limiting for /analyze endpoint
+    if (path === "/analyze" && !checkRateLimit(clientIp)) {
+        return res.status(429).json({ error: "Rate limit exceeded. Try again later." });
+    }
     
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -204,8 +248,8 @@ export default function handler(req, res) {
         return res.json({
             name: "THE MACHINE",
             status: "OPERATIONAL",
-            version: "2.0",
-            message: "Crime Prediction System Online"
+            version: "2.3",
+            message: "Crime Prediction System Online (Auto-Optimized)"
         });
     }
     
