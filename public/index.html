@@ -503,7 +503,7 @@
         <header>
             <div class="logo">
                 <h1>THE MACHINE</h1>
-                <span class="version">V2.0.4 // CRIME PREDICTION SYSTEM</span>
+                <span class="version">V2.0.5 // CRIME PREDICTION SYSTEM</span>
             </div>
             <div class="status-bar">
                 <div class="status-item">
@@ -744,6 +744,17 @@
             // Production - use same origin
             return '';
         })();
+        
+        // Error handling wrapper
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            log('Runtime error: ' + msg, 'danger');
+            return false;
+        };
+        
+        // Unhandled promise rejection
+        window.addEventListener('unhandledrejection', function(event) {
+            log('Promise rejection: ' + event.reason, 'danger');
+        });
         
         // Retry helper with exponential backoff
         async function fetchWithRetry(url, options = {}, retries = 3, delay = 1000) {

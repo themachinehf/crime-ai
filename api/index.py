@@ -43,6 +43,10 @@ except ImportError:
                 # 2026-02-18
                 "币圈跑路": 75, "貔貅盘": 70, "土狗币": 50,
                 "esim攻击": 70, "虚拟绑架": 80,
+                # 2026-02-18 NEW
+                "train attack": 85, "metro attack": 80, "subway attack": 80,
+                "airport threat": 85, "bridge attack": 85, "tunnel attack": 80,
+                "quantum threat": 80, "post-quantum": 75, "encryption break": 85,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -298,7 +302,7 @@ def health_handler() -> tuple:
         "analyzer_available": ANALYZER_AVAILABLE,
         "cache_enabled": True,
         "rate_limiting": True,
-        "version": "2.0.4"
+        "version": "2.0.5"
     })
 
 def cache_stats_handler() -> tuple:

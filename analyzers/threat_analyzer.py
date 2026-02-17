@@ -308,6 +308,10 @@ class ThreatAnalyzer:
         "医疗设备黑客": 85, "植入物攻击": 90, "起搏器黑客": 95,
         "选举干预": 80, "投票操纵": 85, "虚假候选人": 75,
         "卫星干扰": 80, "轨道武器": 95,
+        # 2026-02-18 auto-optimize new
+        "glovo": 50, "food delivery": 45, "uber": 50,
+        "delivery hijack": 70, "package intercept": 65,
+        "ceo fraud": 75, "business email": 70, "wire fraud": 75,
     }
     
     # Chinese social engineering - NEW section
