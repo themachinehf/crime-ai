@@ -910,17 +910,19 @@
             if (e.key === 'Enter' && e.ctrlKey) analyzeText();
         });
         
-        // Initial load
-        loadStats();
-        loadThreats();
-        loadPrediction();
+        // Initial load - deferred for performance
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            loadThreats();
+            loadPrediction();
+        });
         
-        // Auto refresh
+        // Auto refresh - slower interval for performance
         setInterval(() => {
             loadStats();
             loadThreats();
             loadPrediction();
-        }, 10000);
+        }, 30000); // Increased from 10000ms to 30000ms
         
         log('Dashboard loaded successfully', 'highlight');
         

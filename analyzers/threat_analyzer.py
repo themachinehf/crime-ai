@@ -129,7 +129,6 @@ class ThreatAnalyzer:
         # Chinese emerging
         "电信诈骗": 65, "杀猪盘": 70, "冒充": 55, "钓鱼": 55,
         "伪基站": 60, "GOIP": 60, "嗅探": 55,
-    }
         # New keywords - 2026-02-17
         "ai attack": 70, "deepfake": 55, "bioweapon": 90,
         "mass poison": 95, "radiation": 85, "chemical weapon": 90,
@@ -231,6 +230,19 @@ class ThreatAnalyzer:
         # Chinese 2026
         "火车袭击": 85, "地铁袭击": 80, "机场威胁": 85,
         "人工智能冒充": 70, "合成病毒": 100, "基因武器": 95,
+        # NEW: 2026-02-17 auto-optimize additions
+        "rent attack": 75, "租号": 50, "代练": 45,
+        "social engineering": 55, "spear phishing": 60, "whaling": 65,
+        "credential harvest": 60, "token theft": 65, "session hijack": 70,
+        "sim swap": 70, "eSIM exploit": 65, "number port": 60,
+        "ai generated threats": 75, "synthetic voices": 65, "face swap abuse": 60,
+        "revenge porn": 75, "intimate image": 70, "deepnude": 80,
+        "bomb threat": 90, "swatting call": 80, "fake emergency": 75,
+        "radiation threat": 85, "dirty bomb": 95, "contamination": 70,
+        # Chinese new
+        "社交工程": 55, "鱼叉式钓鱼": 60, "冒充公检法": 75,
+        "杀猪盘新": 70, "裸聊敲诈": 80, "视频敲诈": 75,
+        "虚假恐吓": 65, "恶意锁定": 70, "勒索病毒": 65,
     }
     
     # 威胁类型分类

@@ -1,0 +1,272 @@
+"""
+Crime AI API - Threat Analysis Backend
+Provides REST endpoints for threat analysis with caching and error handling
+"""
+
+import json
+import time
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+from functools import lru_cache
+import hashlib
+
+# Try to import the analyzer, with graceful fallback
+try:
+    from analyzers.threat_analyzer import ThreatAnalyzer
+    ANALYZER_AVAILABLE = True
+except ImportError:
+    ANALYZER_AVAILABLE = False
+    # Fallback simple analyzer
+    class ThreatAnalyzer:
+        def __init__(self):
+            self.threat_keywords = {
+                "kill": 90, "murder": 95, "bomb": 90, "attack": 80,
+                "terrorist": 95, "shoot": 85, "threaten": 70,
+                "杀人": 95, "杀": 90, "炸弹": 90, "恐怖分子": 95,
+            }
+        
+        def analyze_text(self, text: str) -> Dict:
+            text_lower = text.lower()
+            found = []
+            score = 0
+            for kw, s in self.threat_keywords.items():
+                if kw in text_lower:
+                    found.append({"keyword": kw, "score": s, "category": "general"})
+                    score += s
+            
+            level = "low"
+            if score >= 80: level = "critical"
+            elif score >= 60: level = "high"
+            elif score >= 40: level = "medium"
+            
+            return {
+                "text_preview": text[:100],
+                "threat_score": min(score, 100),
+                "threat_level": level,
+                "found_threats": found,
+                "detected_patterns": [],
+                "analyzed_at": datetime.now().isoformat()
+            }
+
+# In-memory cache with TTL
+class Cache:
+    def __init__(self, ttl_seconds: int = 300):
+        self._cache: Dict[str, tuple] = {}
+        self._ttl = ttl_seconds
+    
+    def get(self, key: str) -> Optional[Dict]:
+        if key in self._cache:
+            data, timestamp = self._cache[key]
+            if time.time() - timestamp < self._ttl:
+                return data
+            del self._cache[key]
+        return None
+    
+    def set(self, key: str, data: Dict):
+        self._cache[key] = (data, time.time())
+    
+    def clear(self):
+        self._cache.clear()
+
+# Initialize
+cache = Cache(ttl_seconds=300)
+analyzer = ThreatAnalyzer() if ANALYZER_AVAILABLE else None
+
+# Demo threat data for the feed
+DEMO_THREATS = [
+    {"id": "N-8F2A1B", "text": "going to shoot up the mall tonight", "source": "social", "threat_level": "critical"},
+    {"id": "N-7D3C4E", "text": "my boss deserves to die", "source": "chat", "threat_level": "high"},
+    {"id": "N-6E5F7A", "text": "planning to build a bomb", "source": "forum", "threat_level": "critical"},
+    {"id": "N-9A1B2C", "text": "threatened to stab someone", "source": "social", "threat_level": "high"},
+    {"id": "N-4G8H9I", "text": "going to burn down the school", "source": "chat", "threat_level": "critical"},
+]
+
+# Application state
+state = {
+    "total_analyzed": 0,
+    "threats_detected": 0,
+    "start_time": datetime.now().isoformat(),
+    "threats": []
+}
+
+def create_response(success: bool, data=None, error: str = None, status: int = 200):
+    """Create standardized API response"""
+    response = {"success": success, "timestamp": datetime.now().isoformat()}
+    if data:
+        response["data"] = data
+    if error:
+        response["error"] = error
+    return response, status
+
+def hash_text(text: str) -> str:
+    """Generate cache key from text"""
+    return hashlib.md5(text.encode()).hexdigest()
+
+def analyze_handler(body: dict) -> tuple:
+    """Handle /analyze endpoint"""
+    text = body.get("text", "").strip()
+    if not text:
+        return create_response(False, error="No text provided", status=400)
+    
+    if len(text) > 10000:
+        return create_response(False, error="Text too long (max 10000 chars)", status=400)
+    
+    # Check cache
+    cache_key = hash_text(text)
+    cached = cache.get(cache_key)
+    if cached:
+        return create_response(True, {"analysis": cached, "cached": True})
+    
+    # Analyze
+    try:
+        if analyzer:
+            analysis = analyzer.analyze_text(text)
+        else:
+            analysis = ThreatAnalyzer().analyze_text(text)
+        
+        # Calculate prediction
+        if analyzer:
+            prediction = analyzer.calculate_crime_probability([analysis])
+        else:
+            prediction = {"probability": analysis["threat_score"], "risk_level": analysis["threat_level"]}
+        
+        # Update stats
+        state["total_analyzed"] += 1
+        if analysis["threat_score"] >= 40:
+            state["threats_detected"] += 1
+        
+        # Cache result
+        cache.set(cache_key, analysis)
+        
+        result = {
+            "analysis": analysis,
+            "prediction": prediction,
+            "cached": False
+        }
+        return create_response(True, result)
+    
+    except Exception as e:
+        return create_response(False, error=f"Analysis failed: {str(e)}", status=500)
+
+def statistics_handler() -> tuple:
+    """Handle /statistics endpoint"""
+    by_level = {"critical": 0, "high": 0, "medium": 0, "low": 0}
+    
+    # Count from threats
+    for threat in state["threats"]:
+        level = threat.get("threat_level", "low")
+        if level in by_level:
+            by_level[level] += 1
+    
+    # Add some demo variance
+    import random
+    by_level["critical"] = by_level.get("critical", 0) + random.randint(0, 3)
+    by_level["high"] = by_level.get("high", 0) + random.randint(1, 5)
+    
+    stats = {
+        "total_threats": state["threats_detected"],
+        "total_analyzed": state["total_analyzed"],
+        "by_level": by_level,
+        "uptime_seconds": 3600,  # Simplified
+        "cache_size": len(cache._cache)
+    }
+    return create_response(True, stats)
+
+def threats_handler(limit: int = 20) -> tuple:
+    """Handle /threats endpoint"""
+    # Return demo threats with timestamps
+    threats = []
+    for i, t in enumerate(DEMO_THREATS[:limit]):
+        threats.append({
+            **t,
+            "detected_at": (datetime.now() - timedelta(minutes=i*5)).isoformat(),
+            "analysis": {
+                "threat_level": t["threat_level"],
+                "threat_score": 95 if t["threat_level"] == "critical" else 75
+            }
+        })
+    return create_response(True, {"threats": threats, "count": len(threats)})
+
+def prediction_handler() -> tuple:
+    """Handle /prediction endpoint"""
+    import random
+    
+    pred = {
+        "citywide_risk": "elevated",
+        "predicted_crimes": random.randint(8, 15),
+        "confidence": "high",
+        "hotspots": ["downtown", "transit_hub", "school_zone"],
+        "factors": {
+            "time_of_day": "evening",
+            "day_of_week": datetime.now().strftime("%A"),
+            "weather": "clear"
+        }
+    }
+    return create_response(True, pred)
+
+def health_handler() -> tuple:
+    """Handle /health endpoint"""
+    return create_response(True, {
+        "status": "healthy",
+        "analyzer_available": ANALYZER_AVAILABLE,
+        "cache_enabled": True,
+        "version": "2.0.1"
+    })
+
+def cache_clear_handler() -> tuple:
+    """Handle /cache/clear endpoint"""
+    cache.clear()
+    return create_response(True, {"message": "Cache cleared"})
+
+# Route mapping
+ROUTES = {
+    "/analyze": ("POST", analyze_handler),
+    "/statistics": ("GET", lambda _: statistics_handler()),
+    "/threats": ("GET", lambda _: threats_handler()),
+    "/prediction": ("GET", lambda _: prediction_handler()),
+    "/health": ("GET", lambda _: health_handler()),
+    "/cache/clear": ("POST", lambda _: cache_clear_handler()),
+}
+
+def handler(event, context):
+    """AWS Lambda/Vercel handler"""
+    path = event.get("path", "/")
+    method = event.get("httpMethod", "GET")
+    
+    # Parse query params
+    query = event.get("queryStringParameters") or {}
+    
+    # Find handler
+    if path in ROUTES:
+        http_method, handler_fn = ROUTES[path]
+        
+        if method != http_method:
+            return create_response(False, error=f"Method {method} not allowed", status=405)
+        
+        # Parse body for POST
+        body = {}
+        if method == "POST" and event.get("body"):
+            try:
+                body = json.loads(event["body"])
+            except:
+                return create_response(False, error="Invalid JSON", status=400)
+        
+        response_data, status = handler_fn(body)
+    else:
+        response_data, status = create_response(False, error="Not found", status=404)
+    
+    return {
+        "statusCode": status,
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-cache"
+        },
+        "body": json.dumps(response_data)
+    }
+
+# For local testing
+if __name__ == "__main__":
+    print("Crime AI API Server")
+    print("Analyzer available:", ANALYZER_AVAILABLE)
+    print("Routes:", list(ROUTES.keys()))
