@@ -282,6 +282,15 @@ class ThreatAnalyzer:
         # 2026 emerging social
         "deepfake scam": 75, "ai客服诈骗": 70, "virtual kidnapping": 80,
         "ai voice fraud": 70, "video call scam": 75, "face swap scam": 75,
+        # 2026-02-18 new
+        "crypto drainer": 75, "approval phishing": 70, "address poisoning": 65,
+        "ice phishing": 65, "bridge exploit": 80, "mixer": 55,
+        # Chinese crypto threats
+        "币圈诈骗": 70, "跑路": 65, "土狗": 50, "貔貅": 60,
+        # 2026-02 new attack surfaces
+        "esim swap": 70, "callback phishing": 75, "vat phishing": 70,
+        " adversary in the middle": 80, "aitm": 75,
+    }
         # Chinese social engineering
         "ai客服": 55, "虚拟绑架": 80, "视频ai换脸": 75,
         "仿冒公检法": 75, "仿冒领导": 70, "杀鱼": 55,
