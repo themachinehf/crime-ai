@@ -147,16 +147,31 @@ class ThreatAnalyzer:
         # Online radicalization
         "jihad": 90, "white supremacist": 85, "nazi": 80,
         "extremist forum": 75, "terror manual": 90, "bomb recipe": 95,
+        # 2026 emerging threats
+        "voice clone": 65, "synthetic identity": 60, "ai fraud": 70,
+        "deep voice": 65, "face swap": 55, "ai harassment": 70,
+        "automated swat": 80, "zoombombing": 55, "doxbin": 75,
+        # New attack vectors
+        "evil twin": 50, "juice jacking": 55, "RFID skimming": 55,
+        "carding": 55, "credential stuffing": 60, "MFA bombing": 70,
+        # Chemical/biological
+        "nerve agent": 100, "mustard gas": 95, "sarin": 100,
+        "vx nerve": 100, "botulinum": 95, "smallpox": 100,
+        # Child-specific threats
+        "grooming": 85, "child abuse": 95, "csam": 100,
+        "exploitation": 75, "trafficking": 90,
     }
     
     # 威胁类型分类
     THREAT_CATEGORIES = {
-        "physical_violence": ["kill", "murder", "shoot", "attack", "stab", "hurt", "assault", "abuse"],
-        "terrorism": ["terrorist", "bomb", "explosion", "massacre"],
-        "self_harm": ["end it all", "suicide", "want to die", "give up"],
+        "physical_violence": ["kill", "murder", "shoot", "attack", "stab", "hurt", "assault", "abuse", "rampage", "spree"],
+        "terrorism": ["terrorist", "bomb", "explosion", "massacre", "bioweapon", "chemical weapon", "radiation"],
+        "self_harm": ["end it all", "suicide", "want to die", "give up", "no reason to live"],
         "harassment": ["threaten", "harass", "stalk", "bullying", "intimidate", "doxxing", "swatting"],
         "property_crime": ["steal", "rob", "burglary", "vandalism", "fraud", "extortion", "embezzlement"],
         "cyber_threat": ["hack", "breach", "ddos", "malware", "ransomware", "cyberattack", "sql injection", "exploit", "backdoor", "phishing"],
+        "ai_threat": ["deepfake", "ai attack", "ai-generated", "voice clone", "synthetic media"],
+        "mass_casualty": ["mass shooting", "mass stabbing", "vehicle ramming", "crowd attack", "drive by"],
     }
     
     def __init__(self):
@@ -301,6 +316,11 @@ class ThreatAnalyzer:
             (r"(活着|人生).*(没意思|无聊|累)", "emotional", 30, "中文厌世"),
             (r"(不想|不愿).*活", "emotional", 35, "中文轻生"),
             (r"(恨|讨厌|气).*(死|炸)", "emotional", 25, "中文愤怒"),
+            # 2026 new emotional patterns
+            (r"always.*(tired|exhausted)", "emotional", 25, "持续疲劳厌世"),
+            (r"(nobody|no one).*miss", "emotional", 35, "认为无人会在乎"),
+            (r"better.*without.*me", "emotional", 40, "死亡念头"),
+            (r"final.*(goodbye|message)", "emotional", 50, "遗书迹象"),
         ]
         
         for pattern, ptype, score, desc in emotion_patterns:

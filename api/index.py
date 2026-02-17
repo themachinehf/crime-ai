@@ -1,7 +1,7 @@
 """
 Crime AI - Vercel Serverless API
 Optimized: 2026-02-17
-Version: 1.0.3
+Version: 1.0.4
 """
 
 import json
@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import uuid
 import hashlib
 import re
+import os
 
 # Simple in-memory cache with TTL
 _cache = {}
@@ -219,7 +220,7 @@ def handler(request):
             "body": json.dumps({
                 "name": "Crime AI",
                 "status": "operational",
-                "version": "1.0.3",
+                "version": "1.0.4",
                 "message": "Threat Prediction System Online"
             })
         }
@@ -358,6 +359,35 @@ def handler(request):
         return {
             "headers": {"Content-Type": "application/json", **headers},
             "body": json.dumps(result)
+        }
+    
+    # Cache management endpoint
+    if path == "/cache/clear":
+        global _cache
+        _cache = {}
+        return {
+            "headers": {"Content-Type": "application/json", **headers},
+            "body": json.dumps({"status": "cache cleared", "entries": 0})
+        }
+    
+    # Cache status endpoint
+    if path == "/cache/status":
+        return {
+            "headers": {"Content-Type": "application/json", **headers},
+            "body": json.dumps({
+                "entries": len(_cache),
+                "ttl_seconds": _CACHE_TTL,
+                "threat_log_count": len(threat_log)
+            })
+        }
+    
+    # Clear threats log endpoint
+    if path == "/threats/clear":
+        global threat_log
+        threat_log = []
+        return {
+            "headers": {"Content-Type": "application/json", **headers},
+            "body": json.dumps({"status": "threat log cleared"})
         }
     
     return {"statusCode": 404, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Not found"})}
