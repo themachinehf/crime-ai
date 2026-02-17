@@ -312,6 +312,16 @@ class ThreatAnalyzer:
         "glovo": 50, "food delivery": 45, "uber": 50,
         "delivery hijack": 70, "package intercept": 65,
         "ceo fraud": 75, "business email": 70, "wire fraud": 75,
+        # 2026-02-18 NEW - auto-optimize
+        "airtag stalking": 70, "airtag tracking": 70, "find my weapon": 80,
+        "crowdstrike": 55, "global outage": 60, "supply chain attack": 75,
+        "ransomware as service": 70, "ransomware-aaa": 70, "raas": 70,
+        "ai cloning": 70, "digital twin attack": 75, "synthetic identity fraud": 70,
+        "voice deepfake scam": 75, "video deepfake extortion": 80,
+        "medical device hack": 85, "implant attack": 90, "pacemaker hack": 95,
+        "election interference": 80, "vote manipulation": 85, "deepfake candidate": 75,
+        "space weapon": 90, "satellite jamming": 80, "orbital strike": 95,
+        "crypto drainer": 75, "approval phishing": 70, "address poisoning": 65,
     }
     
     # Chinese social engineering - NEW section

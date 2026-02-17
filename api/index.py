@@ -47,6 +47,22 @@ except ImportError:
                 "train attack": 85, "metro attack": 80, "subway attack": 80,
                 "airport threat": 85, "bridge attack": 85, "tunnel attack": 80,
                 "quantum threat": 80, "post-quantum": 75, "encryption break": 85,
+                # 2026-02-18 MORE
+                "ai cloning": 70, "digital twin attack": 75, "synthetic identity fraud": 70,
+                "voice deepfake scam": 75, "video deepfake extortion": 80,
+                "medical device hack": 85, "implant attack": 90, "pacemaker hack": 95,
+                "election interference": 80, "vote manipulation": 85, "deepfake candidate": 75,
+                "space weapon": 90, "satellite jamming": 80, "orbital strike": 95,
+                # 2026 crypto/financial
+                "crypto drainer": 75, "approval phishing": 70, "address poisoning": 65,
+                "ice phishing": 65, "bridge exploit": 80, "mixer": 55,
+                # 2026 delivery attacks
+                "delivery hijack": 70, "package intercept": 65,
+                "ceo fraud": 75, "business email": 70, "wire fraud": 75,
+                # 中文2026新增
+                "虚拟绑架": 80, "AI克隆": 70, "深度伪造敲诈": 80,
+                "医疗设备黑客": 85, "植入物攻击": 90, "起搏器黑客": 95,
+                "选举干预": 80, "投票操纵": 85, "卫星干扰": 80,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -302,7 +318,7 @@ def health_handler() -> tuple:
         "analyzer_available": ANALYZER_AVAILABLE,
         "cache_enabled": True,
         "rate_limiting": True,
-        "version": "2.0.5"
+        "version": "2.0.6"
     })
 
 def cache_stats_handler() -> tuple:
