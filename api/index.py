@@ -256,7 +256,7 @@ def handler(request):
             if rate_key in _cache:
                 last_req, count = _cache[rate_key]
                 if (now - last_req).seconds < 60 and count > 30:
-                    return {"statusCode": 429, "headers": {"Content-Type": "application/json", **headers}, "body": json.dumps({"error": "Rate limit exceeded"})}
+                    return {"statusCode": 429, "headers": {"Content-Type": "application/json", **headers, "Retry-After": "60"}, "body": json.dumps({"error": "Rate limit exceeded", "retry_after": 60})}
                 if (now - last_req).seconds >= 60:
                     _cache[rate_key] = (now, 1)
                 else:
@@ -271,6 +271,14 @@ def handler(request):
             
             threats = [analysis] if analysis["threat_level"] in ["high", "critical"] else []
             prediction = analyzer.calculate_crime_probability(threats, location)
+            
+            # Add retry-after header on rate limit
+            rate_limit_headers = {}
+            if rate_key in _cache:
+                last_req, _ = _cache[rate_key]
+                retry_after = max(0, 60 - (datetime.now() - last_req).seconds)
+                if retry_after > 0:
+                    rate_limit_headers["Retry-After"] = str(retry_after)
             
             if analysis["threat_level"] in ["high", "critical"]:
                 threat_log.append({

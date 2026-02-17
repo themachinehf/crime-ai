@@ -127,6 +127,14 @@ class ThreatAnalyzer:
         "hammer attack": 80, "vehicle ramming": 85,
         "校园": 60, "幼儿园": 70, "小学": 60, "中学": 55,
         "投鼠忌器": 75, "狗急跳墙": 70, "铤而走险": 75,
+        # 2026 new threats
+        "drone attack": 85, "iot botnet": 55, "supply chain": 60,
+        "swatting hoax": 75, "fake bomb": 65, "copycat": 50,
+        "gas attack": 90, "nerve gas": 100, " Dirty bomb": 95,
+        "school shooting": 100, "workplace violence": 85,
+        "domestic terrorism": 90, "lone wolf": 85,
+        "意识形态": 70, "极端主义": 85, "圣战": 95,
+        "独狼": 85, "自我激化": 90, "恐怖宣传": 75,
     }
     
     # 威胁类型分类

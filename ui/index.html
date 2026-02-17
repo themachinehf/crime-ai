@@ -398,6 +398,31 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error { border-color: var(--accent); color: var(--accent); }
+        .toast.success { border-color: var(--safe); color: var(--safe); }
+        .toast.warning { border-color: var(--warning); color: var(--warning); }
+
         /* Prediction */
         .prediction-box {
             background: linear-gradient(135deg, var(--bg-card), var(--bg-panel));
@@ -682,6 +707,19 @@
             terminal.scrollTop = terminal.scrollHeight;
         }
         
+        // Toast notification
+        function showToast(message, type = 'info', duration = 3000) {
+            let toast = document.querySelector('.toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => toast.classList.remove('show'), duration);
+        }
+        
         // API Base URL - auto-detect for Vercel/production
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const API_BASE = isLocalhost ? 'http://localhost:8000' : '';
@@ -692,12 +730,12 @@
             const text = input.value.trim();
 
             if (!text) {
-                log('Please enter text to analyze', 'warn');
+                showToast('Please enter text to analyze', 'warning');
                 return;
             }
             
             if (text.length < 3) {
-                log('Text too short (min 3 chars)', 'warn');
+                showToast('Text too short (min 3 chars)', 'warning');
                 return;
             }
 
@@ -716,7 +754,7 @@
                 log(`Analyzed: "${text.substring(0, 30)}..." - ${data.analysis.threat_level.toUpperCase()}`,
                     data.analysis.threat_level === 'low' ? 'safe' : 'highlight');
             } catch (e) {
-                log('Analysis failed: ' + e.message, 'warn');
+                showToast('Analysis failed: ' + e.message, 'error');
             }
 
             document.getElementById('loading').classList.remove('show');
