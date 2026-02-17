@@ -63,6 +63,10 @@ except ImportError:
                 "虚拟绑架": 80, "AI克隆": 70, "深度伪造敲诈": 80,
                 "医疗设备黑客": 85, "植入物攻击": 90, "起搏器黑客": 95,
                 "选举干预": 80, "投票操纵": 85, "卫星干扰": 80,
+                # 2026-02-18 NEWEST
+                "quantum decryption": 85, "harvest now decrypt later": 90, 
+                "ai agent attack": 75, "autonomous hacking": 80,
+                "选举干预": 80, "投票操纵": 85, "卫星干扰": 80,
             }
         
         def analyze_text(self, text: str) -> Dict:
