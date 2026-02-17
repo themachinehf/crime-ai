@@ -270,6 +270,24 @@ class ThreatAnalyzer:
         "定位器跟踪": 70, "电子定位": 65, "全球停电": 60,
         "供应链攻击": 75, "勒索软件服务": 70, "物联网漏洞": 60,
         "智能设备入侵": 55, "汽车破解": 70, "车辆漏洞": 75,
+        # 2026-02-17 auto-optimize v3
+        "clop ransomware": 75, "lockbit": 70, "alphv": 70, "ransum": 65,
+        "cpu exhaustion": 55, "memory exhaustion": 55, "disk exhaustion": 50,
+        "api abuse": 60, "rate limit bypass": 65, "waf bypass": 70,
+        "cdn bypass": 65, "tor browser": 50, "dark web": 55,
+        # Chinese 2026-02 v2
+        "蓝屏攻击": 55, "资源耗尽": 55, "api滥用": 60,
+        "流量清洗": 50, "暗网交易": 60, "肉鸡": 65,
+        "僵尸网络": 70, "挖矿木马": 60, "供应链投毒": 80,
+        # 2026 emerging social
+        "deepfake scam": 75, "ai客服诈骗": 70, "virtual kidnapping": 80,
+        "ai voice fraud": 70, "video call scam": 75, "face swap scam": 75,
+        # Chinese social engineering
+        "ai客服": 55, "虚拟绑架": 80, "视频ai换脸": 75,
+        "仿冒公检法": 75, "仿冒领导": 70, "杀鱼": 55,
+        # 2026 new vectors
+        "quantum threat": 80, "post-quantum": 75, "encryption break": 85,
+        "nuclear comms": 90, "satellite hijack": 85, "gps spoof": 75,
     }
     
     # 威胁类型分类

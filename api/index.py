@@ -279,7 +279,7 @@ def health_handler() -> tuple:
         "analyzer_available": ANALYZER_AVAILABLE,
         "cache_enabled": True,
         "rate_limiting": True,
-        "version": "2.0.2"
+        "version": "2.0.3"
     })
 
 def cache_stats_handler() -> tuple:
@@ -299,9 +299,46 @@ def cache_clear_handler() -> tuple:
     cache.clear()
     return create_response(True, {"message": "Cache cleared"})
 
+def batch_analyze_handler(body: dict, client_id: str = "default") -> tuple:
+    """Handle /batch-analyze endpoint - analyze multiple texts at once"""
+    texts = body.get("texts", [])
+    
+    if not texts:
+        return create_response(False, error="No texts provided", status=400)
+    
+    if len(texts) > 50:
+        return create_response(False, error="Maximum 50 texts per batch", status=400)
+    
+    # Rate limiting check (1 request per text)
+    for _ in texts:
+        if not rate_limiter.is_allowed(client_id):
+            return create_response(False, error="Rate limit exceeded", status=429)
+    
+    results = []
+    for text in texts:
+        if not text or not isinstance(text, str):
+            continue
+        try:
+            if analyzer:
+                analysis = analyzer.analyze_text(text)
+            else:
+                analysis = ThreatAnalyzer().analyze_text(text)
+            results.append({
+                "text": text[:100],
+                "analysis": analysis
+            })
+        except Exception as e:
+            results.append({
+                "text": text[:100],
+                "error": str(e)
+            })
+    
+    return create_response(True, {"results": results, "count": len(results)})
+
 # Route mapping
 ROUTES = {
     "/analyze": ("POST", analyze_handler),
+    "/batch-analyze": ("POST", batch_analyze_handler),
     "/statistics": ("GET", lambda _: statistics_handler()),
     "/threats": ("GET", lambda _: threats_handler()),
     "/prediction": ("GET", lambda _: prediction_handler()),
