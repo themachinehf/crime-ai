@@ -340,8 +340,10 @@ def health_handler() -> tuple:
         "status": "healthy",
         "analyzer_available": ANALYZER_AVAILABLE,
         "cache_enabled": True,
+        "cache_stats": cache.stats(),
         "rate_limiting": True,
-        "version": "2.1.0",
+        "rate_limit_remaining": rate_limiter.get_remaining("health"),
+        "version": "2.2.0",
         "uptime_seconds": int(time.time() - start_time) if 'start_time' in globals() else 0
     })
 
@@ -365,15 +367,16 @@ def cache_clear_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.1.0",
-        "api_version": "2.1",
+        "version": "2.2.0",
+        "api_version": "2.2",
         "build_date": "2026-02-18",
         "features": [
             "threat_analysis",
             "batch_processing",
             "caching",
             "rate_limiting",
-            "pattern_detection"
+            "pattern_detection",
+            "enhanced_health_checks"
         ]
     })
 

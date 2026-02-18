@@ -128,6 +128,20 @@ class ThreatAnalyzer:
         "杀人犯": 95, "凶手": 90, "罪犯": 70, "变态": 65,
         # Chinese emerging
         "电信诈骗": 65, "杀猪盘": 70, "冒充": 55, "钓鱼": 55,
+        # 2026-02-18 Auto-Optimize: NEW emerging threats
+        "ai诈骗": 65, "语音伪造": 70, "视频伪造": 70, "裸聊诈骗": 80,
+        "虚假绑架": 80, "ai换脸": 65, "深度伪造": 70, "勒索视频": 75,
+        "快递诈骗": 60, "刷单诈骗": 65, "虚假投资": 70, "假冒客服": 65,
+        "FaceTime诈骗": 70, "苹果ID诈骗": 75, "钓鱼链接": 60,
+        # Chinese new threats 2026
+        "无人机袭": 85, "无人机攻击": 85, "植入侵入": 90,
+        "智能穿戴攻击": 75, "汽车黑客": 70, "远程控制": 65,
+        # 2026 Infrastructure attacks
+        "电网攻击": 80, "水务攻击": 75, "交通系统": 70,
+        "智慧城市漏洞": 65, "工业控制系统": 80, "scada攻击": 85,
+        # Chinese social
+        "网络暴力": 65, "软暴力": 60, "精神控制": 75, "pua": 70,
+        "职场霸凌": 65, "校园霸凌": 70, "网络敲诈": 75,
         
         # 2026-02-18 auto-optimize - NEW emerging threats
         "ai agent attack": 75, "autonomous hacking": 80, "self-propagating malware": 85,
@@ -362,6 +376,26 @@ class ThreatAnalyzer:
         # Chinese emerging
         "空气净化器攻击": 75, "智能家居漏洞": 65, "汽车远程入侵": 70,
         "无人机集群攻击": 85, "区块链攻击": 65, "Defi攻击": 70,
+        # 2026-02-18 Auto-Optimize: NEW emerging threats
+        "ai诈骗": 65, "语音伪造": 70, "视频伪造": 70, "裸聊诈骗": 80,
+        "虚假绑架": 80, "ai换脸": 65, "深度伪造": 70, "勒索视频": 75,
+        "快递诈骗": 60, "刷单诈骗": 65, "虚假投资": 70, "假冒客服": 65,
+        "FaceTime诈骗": 70, "苹果ID诈骗": 75, "钓鱼链接": 60,
+        "无人机袭": 85, "植入侵入": 90, "智能穿戴攻击": 75,
+        "汽车黑客": 70, "远程控制": 65, "电网攻击": 80, "水务攻击": 75,
+        "交通系统": 70, "智慧城市漏洞": 65, "工业控制系统": 80, "scada攻击": 85,
+        "网络暴力": 65, "软暴力": 60, "精神控制": 75, "pua": 70,
+        "职场霸凌": 65, "校园霸凌": 70, "网络敲诈": 75,
+        # English 2026 new
+        "facetime scam": 70, "apple id scam": 75, "brushing scam": 65,
+        "fake investment": 70, "fake customer service": 65, "deepfake ransom": 75,
+        "ai voice scam": 70, "video call scam": 75, "smart wearable": 65,
+        "wearable hack": 70, "implant hack": 90, "car remote hack": 70,
+        "vehicle remote": 70, "power grid attack": 80, "water system": 75,
+        "traffic control": 70, "smart city": 65, "ics attack": 80, "scada": 85,
+        "industrial control": 80, "dam attack": 85, "cyberbullying": 55,
+        "online bullying": 55, "soft violence": 60, "spiritual abuse": 75,
+        "gaslighting": 70, "mobbing": 65, "workplace bullying": 65, "school bullying": 70,
     }
     
     # Chinese social engineering - NEW section
