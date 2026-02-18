@@ -407,6 +407,12 @@ class ThreatAnalyzer:
         "数据泄露": 60, "信息泄露": 55, "隐私侵犯": 55,
         "人肉服务": 65, "炸弹威胁电话": 90, "虚假报警": 75,
         "杀猪盘": 75, "加密货币诈骗": 65, "NFT诈骗": 55,
+        # 2026-02-18 more
+        "human trafficking": 90, "organ trafficking": 95, "child trafficking": 100,
+        "kidnap for ransom": 85, "virtual kidnapping": 80,
+        "sex trafficking": 95, "forced labor": 85, "slavery": 90,
+        "拐卖": 95, "人口贩卖": 95, "器官交易": 95,
+        "绑架勒索": 85, "强迫劳动": 85, "奴役": 90,
     }
     
     # Chinese social engineering - NEW section
