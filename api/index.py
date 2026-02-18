@@ -191,7 +191,12 @@ state = {
 
 def create_response(success: bool, data=None, error: str = None, status: int = 200, headers: dict = None):
     """Create standardized API response"""
-    response = {"success": success, "timestamp": datetime.now().isoformat()}
+    import uuid
+    response = {
+        "success": success,
+        "timestamp": datetime.now().isoformat(),
+        "request_id": str(uuid.uuid4())[:8]
+    }
     if data:
         response["data"] = data
     if error:
