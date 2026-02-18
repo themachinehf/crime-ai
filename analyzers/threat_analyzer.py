@@ -439,6 +439,8 @@ class ThreatAnalyzer:
         "cyber_threat": ["hack", "breach", "ddos", "malware", "ransomware", "cyberattack", "sql injection", "exploit", "backdoor", "phishing"],
         "ai_threat": ["deepfake", "ai attack", "ai-generated", "voice clone", "synthetic media"],
         "mass_casualty": ["mass shooting", "mass stabbing", "vehicle ramming", "crowd attack", "drive by"],
+        "trafficking": ["trafficking", "human trafficking", "organ trafficking", "sex trafficking", "forced labor", "slavery"],
+        "financial_scam": ["scam", "fraud", "phishing", "pig butchering", "rug pull", "fake investment"],
     }
     
     def __init__(self):
