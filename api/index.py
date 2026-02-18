@@ -364,6 +364,16 @@ def rate_limit_handler() -> tuple:
         "window_seconds": rate_limiter._window
     })
 
+def info_handler() -> tuple:
+    """Handle /info endpoint - quick system info"""
+    return create_response(True, {
+        "name": "Crime AI",
+        "version": "2.2.0",
+        "endpoints": len(ROUTES),
+        "uptime": int(time.time() - start_time),
+        "cache": cache.stats()
+    })
+
 def cache_clear_handler() -> tuple:
     """Handle /cache/clear endpoint"""
     cache.clear()
@@ -438,6 +448,7 @@ ROUTES = {
     "/cache/stats": ("GET", lambda _: cache_stats_handler()),
     "/rate-limit": ("GET", lambda _: rate_limit_handler()),
     "/ping": ("GET", lambda _: ping_handler()),
+    "/info": ("GET", lambda _: info_handler()),
 }
 
 def handler(event, context):
