@@ -534,7 +534,7 @@
         <header>
             <div class="logo">
                 <h1>THE MACHINE</h1>
-                <span class="version">V2.1.0 // CRIME PREDICTION SYSTEM</span>
+                <span class="version">V2.2.0 // CRIME PREDICTION SYSTEM</span>
             </div>
             <div class="status-bar">
                 <div class="status-item">
@@ -762,6 +762,15 @@
             while (terminal.children.length > 50) {
                 terminal.removeChild(terminal.firstChild);
             }
+        }
+        
+        // Debounce helper for performance
+        function debounce(fn, delay) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => fn.apply(this, args), delay);
+            };
         }
         
         // Toast notifications

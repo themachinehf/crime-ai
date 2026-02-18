@@ -418,6 +418,19 @@ class ThreatAnalyzer:
         "自杀直播": 95, "自杀录像": 95, "死亡直播": 90,
         "危险物品": 60, "管制刀具": 65, "弓弩": 60, "电击器": 65,
         "催泪弹": 70, "防狼喷雾": 55, "窃听": 55, "偷拍": 50,
+        # 2026-02-19 auto-optimize: NEW emerging threats
+        "wifi jamming": 65, "bluetooth attack": 60, "rfid attack": 65,
+        "nfc attack": 60, "gps spoofing": 75, "location spoof": 70,
+        "smart meter hack": 70, "utility attack": 75,
+        "ev charger hack": 65, "electric vehicle threat": 70,
+        "charging station": 60, "grid attack": 80,
+        # 2026 newest social threats
+        "cancel culture": 45, "online mob": 55, "pile on": 50,
+        "dogpile": 55, "call out": 45, "shame campaign": 60,
+        # Chinese 2026-02-19
+        "WiFi干扰": 65, "蓝牙攻击": 60, "RFID攻击": 65,
+        "GPS欺骗": 75, "智能电表入侵": 70, "充电桩攻击": 65,
+        "电网入侵": 80, "网络暴民": 55, "网暴运动": 60,
     }
     
     # Chinese social engineering - NEW section
@@ -639,6 +652,11 @@ class ThreatAnalyzer:
             (r"(孤单|孤独|寂寞).*死", "emotional", 35, "中文孤独死志"),
             (r"(压力大|崩溃|受够了)", "emotional", 30, "中文压力崩溃"),
             (r"(活着|人生).*没希望", "emotional", 35, "中文绝望"),
+            # 2026-02-19 NEW patterns - infrastructure
+            (r"(wifi|wi-fi).*jamm", "planning", 30, "WiFi干扰计划"),
+            (r"gps.*(spoof|block)", "planning", 35, "GPS干扰计划"),
+            (r"(power|electric).*grid.*attack", "planning", 40, "电网攻击计划"),
+            (r"(water|gas).*meter.*hack", "planning", 35, "公用事业入侵"),
         ]
         
         for pattern, ptype, score, desc in emotion_patterns:

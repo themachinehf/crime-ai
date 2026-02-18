@@ -75,6 +75,10 @@ except ImportError:
                 # Chinese new
                 "空气净化器攻击": 75, "智能家居漏洞": 65, "汽车远程入侵": 70,
                 "无人机集群攻击": 85, "区块链攻击": 65, "Defi攻击": 70,
+                # 2026-02-19 auto-optimize new
+                "WiFi干扰": 65, "蓝牙攻击": 60, "RFID攻击": 65,
+                "GPS欺骗": 75, "智能电表入侵": 70, "充电桩攻击": 65,
+                "电网入侵": 80, "网络暴民": 55, "网暴运动": 60,
             }
         
         def analyze_text(self, text: str) -> Dict:
