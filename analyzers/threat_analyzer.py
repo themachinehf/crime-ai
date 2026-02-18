@@ -513,6 +513,14 @@ class ThreatAnalyzer:
             (r"(boss|manager|ceo).*pay", "targeted", 30, "职场报复威胁"),
             # Chinese targeting patterns
             (r"(老师|同学|同事|老板).*(该|活该|死)", "targeted", 30, "中文目标威胁"),
+            # 2026-02-18 more targeting
+            (r"my (husband|wife|spouse|partner)", "targeted", 30, "配偶目标"),
+            (r"my (father|mother|parent|dad|mom)", "targeted", 25, "父母目标"),
+            (r"my (brother|sister|sibling)", "targeted", 20, "兄弟姐妹目标"),
+            (r"(kids|children|child|son|daughter)", "targeted", 25, "儿童目标"),
+            (r"(kids|children).*deserve", "targeted", 35, "儿童受害意图"),
+            (r"at.*(park|mall|store|church|temple)", "targeted", 20, "公共场所目标"),
+            (r"(random|anyone|anybody).*die", "targeted", 40, "无差别伤害"),
         ]
         
         for pattern, ptype, score, desc in victim_patterns:
@@ -578,6 +586,25 @@ class ThreatAnalyzer:
             (r"(3d|ghost).*print", "planning", 30, "3D打印武器"),
             (r"engineered.*virus", "planning", 45, "工程病毒计划"),
             (r"synthetic.*(biology|dna)", "planning", 40, "合成生物学威胁"),
+            # 2026-02-18 more patterns
+            (r"buy.*(knife|gun|weapon)", "planning", 35, "购买武器意图"),
+            (r"order.*(knife|gun|weapon)", "planning", 35, "订购武器意图"),
+            (r"get.*(knife|gun)", "planning", 30, "获取武器意图"),
+            (r"learn.*(bomb|explosive)", "planning", 40, "学习爆炸物制作"),
+            (r"how to make.*(bomb|poison)", "planning", 45, "制毒制爆学习"),
+            (r"mix.*(chemical|poison)", "planning", 40, "混合化学品"),
+            (r"store.*(weapon|knife)", "planning", 25, "储存武器"),
+            # 2026-02-18 additional emotion patterns
+            (r"(worth|living).*nothing", "emotional", 35, "认为活着没价值"),
+            (r"(everyone|everybody).*hate", "emotional", 30, "认为所有人都可恨"),
+            (r"(painful|hurt).*inside", "emotional", 30, "内心痛苦"),
+            (r"just.*(want|need).*sleep.*forever", "emotional", 40, "想永远沉睡"),
+            (r"(end|finish).*everything", "emotional", 45, "想要结束一切"),
+            (r"(kill|murder).*everyone", "emotional", 50, "想要杀掉所有人"),
+            # Chinese additional emotion
+            (r"(孤单|孤独|寂寞).*死", "emotional", 35, "中文孤独死志"),
+            (r"(压力大|崩溃|受够了)", "emotional", 30, "中文压力崩溃"),
+            (r"(活着|人生).*没希望", "emotional", 35, "中文绝望"),
         ]
         
         for pattern, ptype, score, desc in emotion_patterns:
