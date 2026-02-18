@@ -449,6 +449,7 @@ ROUTES = {
     "/rate-limit": ("GET", lambda _: rate_limit_handler()),
     "/ping": ("GET", lambda _: ping_handler()),
     "/info": ("GET", lambda _: info_handler()),
+    "/time": ("GET", lambda _: create_response(True, {"epoch": int(time.time()), "iso": datetime.now().isoformat()})),
 }
 
 def handler(event, context):
