@@ -438,6 +438,11 @@ class ThreatAnalyzer:
         # Chinese Feb 19 more
         "信号干扰": 65, "手机屏蔽": 60, "物联网入侵": 55,
         "僵尸网络": 60, "勒索软件": 65, "零日漏洞": 85,
+        # 2026-02-19 late emerging
+        "ai war": 80, "algorithmic attack": 75, "automated terror": 85,
+        "chemical attack": 90, "biological attack": 95, "radiological attack": 90,
+        # Chinese late Feb 19
+        "算法攻击": 75, "自动化恐怖": 85, "生化攻击": 95,
     }
     
     # Chinese social engineering - NEW section

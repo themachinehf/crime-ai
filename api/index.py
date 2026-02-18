@@ -86,6 +86,11 @@ except ImportError:
                 # Chinese Feb 19 more
                 "信号干扰": 65, "手机屏蔽": 60, "物联网入侵": 55,
                 "僵尸网络": 60, "勒索软件": 65, "零日漏洞": 85,
+                # 2026-02-19 late
+                "ai war": 80, "algorithmic attack": 75, "automated terror": 85,
+                "chemical attack": 90, "biological attack": 95, "radiological attack": 90,
+                # Chinese late Feb 19
+                "算法攻击": 75, "自动化恐怖": 85, "生化攻击": 95,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -337,14 +342,35 @@ def prediction_handler() -> tuple:
     """Handle /prediction endpoint"""
     import random
     
+    hour = datetime.now().hour
+    # More accurate risk based on time
+    if hour >= 22 or hour <= 5:
+        time_risk = "high"
+    elif hour >= 18 or hour <= 8:
+        time_risk = "elevated"
+    else:
+        time_risk = "moderate"
+    
+    # Day of week risk
+    weekday = datetime.now().weekday()
+    if weekday >= 5:  # Weekend
+        day_risk = "elevated"
+    else:
+        day_risk = "moderate"
+    
+    # Overall risk
+    risk_levels = ["low", "moderate", "elevated", "high"]
+    base_idx = 2 if time_risk in ["elevated", "high"] else 1
+    
     pred = {
-        "citywide_risk": "elevated",
+        "citywide_risk": risk_levels[base_idx],
         "predicted_crimes": random.randint(8, 15),
-        "confidence": "high",
+        "confidence": "high" if hour in range(6, 22) else "moderate",
         "hotspots": ["downtown", "transit_hub", "school_zone"],
         "factors": {
-            "time_of_day": "evening",
+            "time_of_day": "late_night" if hour >= 22 or hour <= 5 else "evening" if hour >= 18 else "day",
             "day_of_week": datetime.now().strftime("%A"),
+            "weekend": weekday >= 5,
             "weather": "clear"
         }
     }
