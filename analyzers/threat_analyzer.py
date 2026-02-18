@@ -443,6 +443,9 @@ class ThreatAnalyzer:
         "chemical attack": 90, "biological attack": 95, "radiological attack": 90,
         # Chinese late Feb 19
         "算法攻击": 75, "自动化恐怖": 85, "生化攻击": 95,
+        # 2026-02-19 MORE emerging
+        "network infiltration": 70, "supply chain poisoning": 80, "library attack": 65,
+        "dependency confusion": 70, "typosquatting": 55, "喝水银": 95,
     }
     
     # Chinese social engineering - NEW section

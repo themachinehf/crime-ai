@@ -1002,11 +1002,17 @@
                 const raw = await response.json();
                 const pred = raw.data || raw;
                 
-                const riskClass = pred.citywide_risk === 'elevated' ? 'elevated' : 'low';
+                const riskClass = pred.citywide_risk === 'elevated' ? 'elevated' : 
+                                 pred.citywide_risk === 'high' ? 'elevated' : 'low';
                 document.getElementById('citywideRisk').textContent = pred.citywide_risk.toUpperCase();
                 document.getElementById('citywideRisk').className = 'prediction-value ' + riskClass;
                 document.getElementById('predictedCrimes').textContent = pred.predicted_crimes;
                 document.getElementById('confidence').textContent = pred.confidence === 'high' ? '87%' : '65%';
+                
+                // Handle new factors if available
+                if (pred.factors) {
+                    log(`Time: ${pred.factors.time_of_day}, Weekend: ${pred.factors.weekend || false}`, 'highlight');
+                }
                 
                 const hotspots = document.getElementById('hotspots');
                 if (pred.hotspots && pred.hotspots.length > 0) {
