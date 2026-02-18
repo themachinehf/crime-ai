@@ -854,7 +854,8 @@
                     throw new Error(`Server error: ${response.status}`);
                 }
                 
-                const data = await response.json();
+                const raw = await response.json();
+                const data = raw.data || raw;
                 displayResult(data);
                 log(`Analyzed: "${text.substring(0, 30)}..." - ${data.analysis.threat_level.toUpperCase()}`, 
                     data.analysis.threat_level === 'low' ? 'highlight' : 'danger');
@@ -929,7 +930,8 @@
             }
             try {
                 const response = await fetch(`${API_BASE}/statistics`);
-                const stats = await response.json();
+                const raw = await response.json();
+                const stats = raw.data || raw;
                 
                 Cache.set('stats', stats, 2);
                 
@@ -950,7 +952,8 @@
         async function loadThreats() {
             try {
                 const response = await fetch(`${API_BASE}/threats?limit=20`);
-                const data = await response.json();
+                const raw = await response.json();
+                const data = raw.data || raw;
                 
                 const feed = document.getElementById('threatFeed');
                 
@@ -986,7 +989,8 @@
         async function loadPrediction() {
             try {
                 const response = await fetch(`${API_BASE}/prediction`);
-                const pred = await response.json();
+                const raw = await response.json();
+                const pred = raw.data || raw;
                 
                 const riskClass = pred.citywide_risk === 'elevated' ? 'elevated' : 'low';
                 document.getElementById('citywideRisk').textContent = pred.citywide_risk.toUpperCase();

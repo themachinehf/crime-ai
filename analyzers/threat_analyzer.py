@@ -387,6 +387,8 @@ class ThreatAnalyzer:
     
     def __init__(self):
         self.threat_keywords = self.VIOLENCE_KEYWORDS.copy()
+        # Merge Chinese social engineering keywords
+        self.threat_keywords.update(self.CHINESE_SOCIAL_ENGINEERING)
     
     def analyze_text(self, text: str) -> Dict:
         """分析文本，返回威胁评估"""
