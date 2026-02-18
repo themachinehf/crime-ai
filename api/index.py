@@ -181,6 +181,7 @@ DEMO_THREATS = [
 ]
 
 # Application state
+start_time = time.time()
 state = {
     "total_analyzed": 0,
     "threats_detected": 0,
@@ -340,7 +341,8 @@ def health_handler() -> tuple:
         "analyzer_available": ANALYZER_AVAILABLE,
         "cache_enabled": True,
         "rate_limiting": True,
-        "version": "2.0.9"
+        "version": "2.1.0",
+        "uptime_seconds": int(time.time() - start_time) if 'start_time' in globals() else 0
     })
 
 def cache_stats_handler() -> tuple:
@@ -359,6 +361,21 @@ def cache_clear_handler() -> tuple:
     """Handle /cache/clear endpoint"""
     cache.clear()
     return create_response(True, {"message": "Cache cleared"})
+
+def version_handler() -> tuple:
+    """Handle /version endpoint"""
+    return create_response(True, {
+        "version": "2.1.0",
+        "api_version": "2.1",
+        "build_date": "2026-02-18",
+        "features": [
+            "threat_analysis",
+            "batch_processing",
+            "caching",
+            "rate_limiting",
+            "pattern_detection"
+        ]
+    })
 
 def batch_analyze_handler(body: dict, client_id: str = "default") -> tuple:
     """Handle /batch-analyze endpoint - analyze multiple texts at once"""
@@ -404,6 +421,7 @@ ROUTES = {
     "/threats": ("GET", lambda body: threats_handler(body.get("limit", 20))),
     "/prediction": ("GET", lambda _: prediction_handler()),
     "/health": ("GET", lambda _: health_handler()),
+    "/version": ("GET", lambda _: version_handler()),
     "/cache/clear": ("POST", lambda _: cache_clear_handler()),
     "/cache/stats": ("GET", lambda _: cache_stats_handler()),
     "/rate-limit": ("GET", lambda _: rate_limit_handler()),

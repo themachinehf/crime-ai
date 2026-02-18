@@ -128,6 +128,28 @@ class ThreatAnalyzer:
         "杀人犯": 95, "凶手": 90, "罪犯": 70, "变态": 65,
         # Chinese emerging
         "电信诈骗": 65, "杀猪盘": 70, "冒充": 55, "钓鱼": 55,
+        
+        # 2026-02-18 auto-optimize - NEW emerging threats
+        "ai agent attack": 75, "autonomous hacking": 80, "self-propagating malware": 85,
+        "social graph attack": 70, "relationship exploit": 65, "family targeting": 75,
+        "clone attack": 75, "identity theft": 65, "passport fraud": 70,
+        "fingerprint hack": 75, "retina scan bypass": 80, "biometric hack": 75,
+        "smart dust": 85, "nanobot": 80, "microscopic weapon": 90,
+        "emp attack": 95, "electromagnetic pulse": 95, "power outage": 60,
+        "brain computer": 65, "neural interface": 70, "mind hack": 80,
+        "thought attack": 85, "cognitive warfare": 75, "memory manipulation": 80,
+        # Chinese 2026-02-18 newest
+        "量子解密": 85, "现在存储以后破解": 90, "AI智能体攻击": 75,
+        "自主黑客": 80, "自传播恶意软件": 85, "社交图谱攻击": 70,
+        "智能灰尘": 85, "纳米机器人": 80, "电磁脉冲": 95,
+        "脑机接口": 65, "神经入侵": 70, "意识攻击": 85,
+        # New attack methods
+        "car attack": 80, "vehicle attack": 80, "truck attack": 85,
+        "ramming attack": 85, "vehicle ramming": 90,
+        "machete": 80, "sword": 70, "acid throwing": 90, "glass attack": 75,
+        # Infrastructure
+        "power grid": 80, "water supply": 75, "food tampering": 80,
+        "airline threat": 85, "maritime threat": 75,
         "伪基站": 60, "GOIP": 60, "嗅探": 55,
         # New keywords - 2026-02-17
         "ai attack": 70, "deepfake": 55, "bioweapon": 90,
@@ -422,6 +444,12 @@ class ThreatAnalyzer:
             (r"tomorrow.*will", "urgency", 15, "明日行动计划"),
             (r"this weekend", "urgency", 10, "周末行动计划"),
             (r"counting down", "urgency", 20, "倒计时威胁"),
+            # NEW: 2026 patterns
+            (r"in.*(hours?|minutes?)", "urgency", 15, "短时间行动意图"),
+            (r"final.*warning", "urgency", 25, "最后警告"),
+            (r"time.*is.*running", "urgency", 20, "时间紧迫"),
+            (r"before.*(midnight|sunrise|sunset)", "urgency", 20, "特定时间窗口"),
+            (r"once.*(in|upon).*time", "urgency", 15, "特定时机"),
             # Additional urgency patterns
             (r"at (\d+)\s*(am|pm)", "urgency", 15, "指定时间行动"),
             (r"in (\d+)\s*hours?", "urgency", 15, "倒计时行动"),

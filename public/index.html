@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE MACHINE | Crime Prediction System</title>
     <meta name="description" content="AI-powered crime prediction and threat analysis system">
+    <meta name="theme-color" content="#0a0a0a">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -496,6 +497,35 @@
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
         ::-webkit-scrollbar-thumb { background: var(--text-dim); }
         ::-webkit-scrollbar-thumb:hover { background: var(--text); }
+        
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-panel);
+            border: 1px solid var(--danger);
+            padding: 15px 20px;
+            color: var(--text);
+            font-size: 12px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            max-width: 300px;
+        }
+        
+        .toast.success { border-color: var(--safe); }
+        .toast.warning { border-color: var(--warning); }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Loading state for buttons */
+        .analyze-btn.loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -503,7 +533,7 @@
         <header>
             <div class="logo">
                 <h1>THE MACHINE</h1>
-                <span class="version">V2.0.9 // CRIME PREDICTION SYSTEM</span>
+                <span class="version">V2.1.0 // CRIME PREDICTION SYSTEM</span>
             </div>
             <div class="status-bar">
                 <div class="status-item">
@@ -733,6 +763,22 @@
             }
         }
         
+        // Toast notifications
+        function showToast(message, type = 'error') {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+        
         // API Base - Improved detection with fallback
         const API_BASE = (() => {
             const host = window.location.hostname;
@@ -779,12 +825,15 @@
         async function analyzeText() {
             const input = document.getElementById('analysisInput');
             const text = input.value.trim();
+            const btn = document.querySelector('.analyze-btn');
             
             if (!text) {
                 log('Please enter text to analyze', 'danger');
+                showToast('Please enter text to analyze', 'warning');
                 return;
             }
             
+            btn.classList.add('loading');
             document.getElementById('loading').classList.add('show');
             document.getElementById('resultBox').classList.remove('show');
             
@@ -809,20 +858,24 @@
                 displayResult(data);
                 log(`Analyzed: "${text.substring(0, 30)}..." - ${data.analysis.threat_level.toUpperCase()}`, 
                     data.analysis.threat_level === 'low' ? 'highlight' : 'danger');
+                showToast('Analysis complete', 'success');
                 
                 document.getElementById('analyzedCount').textContent = 
                     parseInt(document.getElementById('analyzedCount').textContent) + 1;
             } catch (e) {
                 if (e.name === 'AbortError') {
                     log('Analysis timeout - using local fallback', 'danger');
+                    showToast('Using offline mode (timeout)', 'warning');
                 } else {
                     log('Analysis failed: ' + e.message + ' - Using offline mode', 'danger');
+                    showToast('Using offline mode', 'warning');
                 }
                 // Show demo result on error
                 showDemoResult();
+            } finally {
+                btn.classList.remove('loading');
+                document.getElementById('loading').classList.remove('show');
             }
-            
-            document.getElementById('loading').classList.remove('show');
         }
         
         // Demo result fallback
