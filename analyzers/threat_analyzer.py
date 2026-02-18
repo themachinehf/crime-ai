@@ -396,6 +396,17 @@ class ThreatAnalyzer:
         "industrial control": 80, "dam attack": 85, "cyberbullying": 55,
         "online bullying": 55, "soft violence": 60, "spiritual abuse": 75,
         "gaslighting": 70, "mobbing": 65, "workplace bullying": 65, "school bullying": 70,
+        # 2026-02-18 late additional
+        "data breach": 60, "info leak": 55, "privacy violation": 55,
+        "doxxing service": 65, "swatting service": 80, "bomb threat call": 90,
+        "fake emergency call": 75, "hoax threat": 70, "copycat threat": 55,
+        # 2026 financial
+        "pig butchering": 75, "crypto scam": 65, "nft scam": 55,
+        "rug pull": 60, "pump dump": 55, "honeypot": 55,
+        # Chinese late
+        "数据泄露": 60, "信息泄露": 55, "隐私侵犯": 55,
+        "人肉服务": 65, "炸弹威胁电话": 90, "虚假报警": 75,
+        "杀猪盘": 75, "加密货币诈骗": 65, "NFT诈骗": 55,
     }
     
     # Chinese social engineering - NEW section
@@ -491,6 +502,16 @@ class ThreatAnalyzer:
             (r"in (\d+)\s*hours?", "urgency", 15, "倒计时行动"),
             (r"final.*warning", "urgency", 25, "最后警告"),
             (r"time.*is.*running", "urgency", 20, "时间紧迫"),
+            # 2026-02-18 more urgency
+            (r"last.*chance", "urgency", 20, "最后机会"),
+            (r"no.*more.*time", "urgency", 25, "没有时间了"),
+            (r"soon.*happen", "urgency", 20, "即将发生"),
+            (r"waiting.*too long", "urgency", 15, "等待太久"),
+            (r"clock.*ticking", "urgency", 20, "时钟滴答"),
+            # Chinese urgency
+            (r"(最后|最终).*机会", "urgency", 20, "中文最后机会"),
+            (r"没有.*时间", "urgency", 25, "中文没时间"),
+            (r"(马上|立即|立刻).*行动", "urgency", 25, "中文立即行动"),
         ]
         
         for pattern, ptype, score, desc in urgent_patterns:
