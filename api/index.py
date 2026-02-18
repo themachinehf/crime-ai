@@ -364,6 +364,10 @@ def cache_clear_handler() -> tuple:
     cache.clear()
     return create_response(True, {"message": "Cache cleared"})
 
+def ping_handler() -> tuple:
+    """Handle /ping endpoint - lightweight health check"""
+    return create_response(True, {"status": "ok", "timestamp": datetime.now().isoformat()})
+
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
@@ -428,6 +432,7 @@ ROUTES = {
     "/cache/clear": ("POST", lambda _: cache_clear_handler()),
     "/cache/stats": ("GET", lambda _: cache_stats_handler()),
     "/rate-limit": ("GET", lambda _: rate_limit_handler()),
+    "/ping": ("GET", lambda _: ping_handler()),
 }
 
 def handler(event, context):
