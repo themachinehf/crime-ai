@@ -427,10 +427,17 @@ class ThreatAnalyzer:
         # 2026 newest social threats
         "cancel culture": 45, "online mob": 55, "pile on": 50,
         "dogpile": 55, "call out": 45, "shame campaign": 60,
-        # Chinese 2026-02-19
+        # Chinese Feb 19 more
         "WiFi干扰": 65, "蓝牙攻击": 60, "RFID攻击": 65,
         "GPS欺骗": 75, "智能电表入侵": 70, "充电桩攻击": 65,
         "电网入侵": 80, "网络暴民": 55, "网暴运动": 60,
+        # 2026-02-19 MORE emerging
+        "signal jam": 65, "cell jam": 60, "5g attack": 70,
+        "iot infestation": 55, "zombie network": 60, "bot attack": 55,
+        "ransomware gang": 75, "apt attack": 80, "zero day": 85,
+        # Chinese Feb 19 more
+        "信号干扰": 65, "手机屏蔽": 60, "物联网入侵": 55,
+        "僵尸网络": 60, "勒索软件": 65, "零日漏洞": 85,
     }
     
     # Chinese social engineering - NEW section
@@ -657,6 +664,10 @@ class ThreatAnalyzer:
             (r"gps.*(spoof|block)", "planning", 35, "GPS干扰计划"),
             (r"(power|electric).*grid.*attack", "planning", 40, "电网攻击计划"),
             (r"(water|gas).*meter.*hack", "planning", 35, "公用事业入侵"),
+            # 2026-02-19 more patterns
+            (r"(signal|cell).*jamm", "planning", 30, "手机信号干扰"),
+            (r"(zero.?day|0day).*exploit", "planning", 45, "零日漏洞利用"),
+            (r"(apt|advanced.*persistent).*threat", "planning", 40, "高级持续性威胁"),
         ]
         
         for pattern, ptype, score, desc in emotion_patterns:

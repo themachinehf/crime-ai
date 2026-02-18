@@ -79,6 +79,13 @@ except ImportError:
                 "WiFi干扰": 65, "蓝牙攻击": 60, "RFID攻击": 65,
                 "GPS欺骗": 75, "智能电表入侵": 70, "充电桩攻击": 65,
                 "电网入侵": 80, "网络暴民": 55, "网暴运动": 60,
+                # 2026-02-19 MORE emerging
+                "signal jam": 65, "cell jam": 60, "5g attack": 70,
+                "iot infestation": 55, "zombie network": 60, "bot attack": 55,
+                "ransomware gang": 75, "apt attack": 80, "zero day": 85,
+                # Chinese Feb 19 more
+                "信号干扰": 65, "手机屏蔽": 60, "物联网入侵": 55,
+                "僵尸网络": 60, "勒索软件": 65, "零日漏洞": 85,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -392,7 +399,7 @@ def version_handler() -> tuple:
     return create_response(True, {
         "version": "2.2.0",
         "api_version": "2.2",
-        "build_date": "2026-02-18",
+        "build_date": "2026-02-19",
         "features": [
             "threat_analysis",
             "batch_processing",
