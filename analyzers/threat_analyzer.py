@@ -452,6 +452,9 @@ class ThreatAnalyzer:
         # 2026-02-19 mid-day emerging
         "clipboard hijack": 55, "browser hook": 60, "screen capture": 50,
         "keylogger": 65, "form grabber": 60, "web inject": 55,
+        # 2026-02-19 late morning
+        "deepfake campaign": 70, "influence operation": 65, "disinformation bot": 60,
+        "astroturfing": 55, "sock puppet": 50, "fake influencer": 55,
     }
     
     # Chinese social engineering - NEW section
