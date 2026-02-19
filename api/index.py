@@ -91,6 +91,9 @@ except ImportError:
                 "chemical attack": 90, "biological attack": 95, "radiological attack": 90,
                 # Chinese late Feb 19
                 "算法攻击": 75, "自动化恐怖": 85, "生化攻击": 95,
+                # 2026-02-19 latest
+                "smishing": 55, "vishing": 60, "quishing": 65,
+                "proxy hopping": 50, "tor bridge": 45, "onion routing": 50,
             }
         
         def analyze_text(self, text: str) -> Dict:
