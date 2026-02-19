@@ -464,6 +464,9 @@ class ThreatAnalyzer:
         # 2026-02-19 early afternoon
         "loan scam": 55, "predatory lending": 60, "payday loan trap": 65,
         "debt bondage": 70, "wage garnishment fraud": 65, "identity loan": 70,
+        # 2026-02-19 afternoon
+        "ticket fraud": 55, "event scam": 60, "concert fake": 55,
+        "scalping scam": 60, "fake lottery": 65, "prize scam": 60,
     }
     
     # Chinese social engineering - NEW section
