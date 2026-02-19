@@ -142,6 +142,9 @@ except ImportError:
                 # 2026-02-20 midnight
                 "loan shark": 60, "predatory loan": 55, "usury": 65,
                 "wage theft": 70, "unpaid wages": 65, "off the books": 55,
+                # 2026-02-20 early AM
+                "money laundering": 65, "cash smuggling": 70, "structuring": 60,
+                "shell company": 55, "front business": 55, "hidden assets": 60,
             }
         
         def analyze_text(self, text: str) -> Dict:
