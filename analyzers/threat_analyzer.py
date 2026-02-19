@@ -494,6 +494,9 @@ class ThreatAnalyzer:
         # 2026-02-19 final batch
         "counterfeit goods": 55, "knockoff": 50, "fake brand": 55,
         "piracy": 50, "software crack": 55, "license key": 45,
+        # 2026-02-20 midnight
+        "loan shark": 60, "predatory loan": 55, "usury": 65,
+        "wage theft": 70, "unpaid wages": 65, "off the books": 55,
     }
     
     # Chinese social engineering - NEW section
