@@ -100,6 +100,9 @@ except ImportError:
                 # 2026-02-19 late morning
                 "deepfake campaign": 70, "influence operation": 65, "disinformation bot": 60,
                 "astroturfing": 55, "sock puppet": 50, "fake influencer": 55,
+                # 2026-02-19 midday emerging
+                "injury fake": 70, "accident scam": 65, "insurance fraud": 60,
+                "fake disability": 65, "wheelchair fraud": 70, "parasitic injury": 75,
             }
         
         def analyze_text(self, text: str) -> Dict:
