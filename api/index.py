@@ -118,6 +118,9 @@ except ImportError:
                 # 2026-02-19 late afternoon
                 "dating scam": 60, "romance fraud": 65, "military romance scam": 70,
                 "doctor scam": 65, "fake soldier": 60, "overseas lover": 55,
+                # 2026-02-19 evening
+                "inheritance scam": 65, "will fraud": 70, "estate scam": 65,
+                "probate fraud": 70, "death scam": 75, "fake heir": 70,
             }
         
         def analyze_text(self, text: str) -> Dict:
