@@ -148,6 +148,13 @@ except ImportError:
                 # 2026-02-20 late night
                 "tax evasion": 65, "offshore account": 60, "secret bank": 55,
                 "blind trust": 55, " nominee": 50, "straw man": 55,
+                # 2026-02-20 auto-optimize new
+                "ransomware 2.0": 80, "lockfile ransomware": 75,
+                "ai jailbreak service": 70, "prompt injection": 65,
+                "model extraction": 60, "data poisoning": 70,
+                # Chinese Feb 20
+                "数据投毒": 70, "模型提取": 60, "AI越狱服务": 70,
+                "提示词注入": 65, "门禁卡破解": 70,
                 # 2026-02-20 pre-dawn
                 "kidnapping": 85, "abduction": 80, "hostage": 90,
                 "ransom demand": 85, "snatching": 75, "white van": 70,
@@ -445,7 +452,7 @@ def health_handler() -> tuple:
         "cache_stats": cache.stats(),
         "rate_limiting": True,
         "rate_limit_remaining": rate_limiter.get_remaining("health"),
-        "version": "2.2.0",
+        "version": "2.2.1",
         "uptime_seconds": int(time.time() - start_time) if 'start_time' in globals() else 0
     })
 
@@ -483,9 +490,9 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.2.0",
+        "version": "2.2.1",
         "api_version": "2.2",
-        "build_date": "2026-02-19",
+        "build_date": "2026-02-20",
         "features": [
             "threat_analysis",
             "batch_processing",
