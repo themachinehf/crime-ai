@@ -470,6 +470,9 @@ class ThreatAnalyzer:
         # 2026-02-19 late afternoon
         "vetting scam": 55, "background check fraud": 60, "fake background": 65,
         "resume fraud": 60, "degree scam": 65, "fake diploma": 55,
+        # 2026-02-19 late afternoon
+        "dating scam": 60, "romance fraud": 65, "military romance scam": 70,
+        "doctor scam": 65, "fake soldier": 60, "overseas lover": 55,
     }
     
     # Chinese social engineering - NEW section
