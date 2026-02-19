@@ -500,6 +500,9 @@ class ThreatAnalyzer:
         # 2026-02-20 early AM
         "money laundering": 65, "cash smuggling": 70, "structuring": 60,
         "shell company": 55, "front business": 55, "hidden assets": 60,
+        # 2026-02-20 late night
+        "tax evasion": 65, "offshore account": 60, "secret bank": 55,
+        "blind trust": 55, " nominee": 50, "straw man": 55,
     }
     
     # Chinese social engineering - NEW section
