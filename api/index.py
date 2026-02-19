@@ -103,6 +103,9 @@ except ImportError:
                 # 2026-02-19 midday emerging
                 "injury fake": 70, "accident scam": 65, "insurance fraud": 60,
                 "fake disability": 65, "wheelchair fraud": 70, "parasitic injury": 75,
+                # 2026-02-19 afternoon emerging
+                "cryptojacking": 55, "drive-by download": 60, "watering hole": 65,
+                "spear phishing": 60, "whaling attack": 70, " BEC": 65,
             }
         
         def analyze_text(self, text: str) -> Dict:
