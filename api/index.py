@@ -136,6 +136,9 @@ except ImportError:
                 # 2026-02-19 end of day
                 "hit and run": 65, "DUI evasion": 60, "license suspended": 55,
                 "registration fraud": 60, "title washing": 65, "odometer fraud": 70,
+                # 2026-02-19 final batch
+                "counterfeit goods": 55, "knockoff": 50, "fake brand": 55,
+                "piracy": 50, "software crack": 55, "license key": 45,
             }
         
         def analyze_text(self, text: str) -> Dict:
