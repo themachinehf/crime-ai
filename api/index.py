@@ -94,6 +94,9 @@ except ImportError:
                 # 2026-02-19 latest
                 "smishing": 55, "vishing": 60, "quishing": 65,
                 "proxy hopping": 50, "tor bridge": 45, "onion routing": 50,
+                # 2026-02-19 mid-day emerging
+                "clipboard hijack": 55, "browser hook": 60, "screen capture": 50,
+                "keylogger": 65, "form grabber": 60, "web inject": 55,
             }
         
         def analyze_text(self, text: str) -> Dict:
