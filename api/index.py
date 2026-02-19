@@ -148,6 +148,9 @@ except ImportError:
                 # 2026-02-20 late night
                 "tax evasion": 65, "offshore account": 60, "secret bank": 55,
                 "blind trust": 55, " nominee": 50, "straw man": 55,
+                # 2026-02-20 pre-dawn
+                "kidnapping": 85, "abduction": 80, "hostage": 90,
+                "ransom demand": 85, "snatching": 75, "white van": 70,
             }
         
         def analyze_text(self, text: str) -> Dict:
