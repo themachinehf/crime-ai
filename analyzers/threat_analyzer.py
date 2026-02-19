@@ -467,6 +467,9 @@ class ThreatAnalyzer:
         # 2026-02-19 afternoon
         "ticket fraud": 55, "event scam": 60, "concert fake": 55,
         "scalping scam": 60, "fake lottery": 65, "prize scam": 60,
+        # 2026-02-19 late afternoon
+        "vetting scam": 55, "background check fraud": 60, "fake background": 65,
+        "resume fraud": 60, "degree scam": 65, "fake diploma": 55,
     }
     
     # Chinese social engineering - NEW section
