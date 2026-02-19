@@ -127,6 +127,9 @@ except ImportError:
                 # 2026-02-19 night
                 "IRS scam": 65, "tax fraud": 60, "fake tax refund": 65,
                 "identity theft": 60, "ssn scam": 65, "credit freeze fraud": 70,
+                # 2026-02-19 night continued
+                "government grant scam": 60, "business grant fraud": 65, "fake funding": 55,
+                "CEO impersonation": 70, "executive fraud": 65, "wire transfer scam": 70,
             }
         
         def analyze_text(self, text: str) -> Dict:
