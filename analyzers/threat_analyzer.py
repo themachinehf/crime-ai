@@ -485,6 +485,9 @@ class ThreatAnalyzer:
         # 2026-02-19 night continued
         "government grant scam": 60, "business grant fraud": 65, "fake funding": 55,
         "CEO impersonation": 70, "executive fraud": 65, "wire transfer scam": 70,
+        # 2026-02-19 late night
+        "parole violation": 65, "probation breach": 60, "court order violation": 55,
+        "warrant status": 50, "bench warrant": 60, "fugitive": 70,
     }
     
     # Chinese social engineering - NEW section
