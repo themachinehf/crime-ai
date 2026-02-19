@@ -488,6 +488,9 @@ class ThreatAnalyzer:
         # 2026-02-19 late night
         "parole violation": 65, "probation breach": 60, "court order violation": 55,
         "warrant status": 50, "bench warrant": 60, "fugitive": 70,
+        # 2026-02-19 end of day
+        "hit and run": 65, "DUI evasion": 60, "license suspended": 55,
+        "registration fraud": 60, "title washing": 65, "odometer fraud": 70,
     }
     
     # Chinese social engineering - NEW section
