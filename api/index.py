@@ -121,6 +121,9 @@ except ImportError:
                 # 2026-02-19 evening
                 "inheritance scam": 65, "will fraud": 70, "estate scam": 65,
                 "probate fraud": 70, "death scam": 75, "fake heir": 70,
+                # 2026-02-19 early evening
+                "tech support scam": 65, "microsoft scam": 60, "apple scam": 60,
+                "fake antivirus": 65, "browser popup scam": 55, "fake update": 60,
             }
         
         def analyze_text(self, text: str) -> Dict:
