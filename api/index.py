@@ -106,6 +106,9 @@ except ImportError:
                 # 2026-02-19 afternoon emerging
                 "cryptojacking": 55, "drive-by download": 60, "watering hole": 65,
                 "spear phishing": 60, "whaling attack": 70, " BEC": 65,
+                # 2026-02-19 early afternoon
+                "loan scam": 55, "predatory lending": 60, "payday loan trap": 65,
+                "debt bondage": 70, "wage garnishment fraud": 65, "identity loan": 70,
             }
         
         def analyze_text(self, text: str) -> Dict:
