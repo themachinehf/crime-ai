@@ -124,6 +124,9 @@ except ImportError:
                 # 2026-02-19 early evening
                 "tech support scam": 65, "microsoft scam": 60, "apple scam": 60,
                 "fake antivirus": 65, "browser popup scam": 55, "fake update": 60,
+                # 2026-02-19 night
+                "IRS scam": 65, "tax fraud": 60, "fake tax refund": 65,
+                "identity theft": 60, "ssn scam": 65, "credit freeze fraud": 70,
             }
         
         def analyze_text(self, text: str) -> Dict:
