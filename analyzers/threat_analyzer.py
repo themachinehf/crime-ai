@@ -515,6 +515,14 @@ class ThreatAnalyzer:
         "数据投毒": 70, "模型提取": 60, "AI越狱服务": 70,
         "提示词注入": 65, "门禁卡破解": 70, "尾随入侵": 45,
         
+        # 2026-02-21 new emerging threats
+        "supply chain poisoning": 80, "library compromise": 70,
+        "dependency hijack": 75, "npm compromise": 70, "pypi poison": 70,
+        "clone site": 55, "typosquat": 50, "lookalike domain": 55,
+        # Chinese Feb 21
+        "供应链投毒": 80, "依赖劫持": 75, "npm投毒": 70,
+        "钓鱼网站": 55, "钓鱼域名": 55, "假冒网站": 55,
+        
         # 2026-02-20 pre-dawn
         "kidnapping": 85, "abduction": 80, "hostage": 90,
         "ransom demand": 85, "snatching": 75, "white van": 70,
