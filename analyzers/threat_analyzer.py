@@ -542,6 +542,14 @@ class ThreatAnalyzer:
         # Chinese MORE Feb 21
         "AI不雅视频": 80, "深度伪造滥用": 85, "AI换脸犯罪": 80,
         "语音克隆诈骗": 80, "合成身份盗窃": 70,
+        # 2026-02-21 AM emerging
+        "telegram scam": 65, "discord nitro": 60, "steam gift": 55,
+        "paypal dispute fraud": 70, "chargeback fraud": 65, "fake refund": 65,
+        "short link": 50, "url shortener": 45, "qr scam": 60,
+        # Chinese AM Feb 21
+        "电报诈骗": 65, "Discord诈骗": 60, "Steam礼物": 55,
+        "PayPal争议欺诈": 70, "拒付欺诈": 65, "虚假退款": 65,
+        "短链接诈骗": 50, "二维码诈骗": 60,
     }
     
     # Chinese social engineering - NEW section
