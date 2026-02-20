@@ -536,6 +536,12 @@ class ThreatAnalyzer:
         # 2026-02-21 additional
         "augmented reality attack": 75, "ar overlay": 70, "ar hijack": 80,
         "mixed reality threat": 65, "xr assault": 70,
+        # 2026-02-21 MORE emerging
+        "deepfake nsfw": 80, "ai generated abuse": 85, "non-consensual ai": 85,
+        "face swap abuse": 75, "voice clone fraud": 80, "synthetic identity theft": 70,
+        # Chinese MORE Feb 21
+        "AI不雅视频": 80, "深度伪造滥用": 85, "AI换脸犯罪": 80,
+        "语音克隆诈骗": 80, "合成身份盗窃": 70,
     }
     
     # Chinese social engineering - NEW section
@@ -775,6 +781,11 @@ class ThreatAnalyzer:
             # Chinese 2026-02-21 patterns
             (r"(定位|跟踪|监视).*(软件|app|应用)", "surveillance", 35, "中文定位跟踪"),
             (r"(实时|精确).*位置", "surveillance", 30, "中文实时位置"),
+            # 2026-02-21 MORE detection patterns
+            (r"(deepfake|ai.*合成).*(不雅|裸|色情)", "content_abuse", 45, "AI不雅内容威胁"),
+            (r"(face swap|换脸).*(视频|image|图片)", "content_abuse", 35, "换脸滥用"),
+            (r"(voice clone|语音克隆).*(诈骗|敲诈)", "fraud", 40, "语音克隆诈骗"),
+            (r"(non.?consensual|未经同意).*(image|video|photo)", "content_abuse", 45, "未经同意内容"),
         ]
         
         for pattern, ptype, score, desc in emotion_patterns:

@@ -175,6 +175,12 @@ except ImportError:
                 # 2026-02-21 additional
                 "augmented reality attack": 75, "ar overlay": 70, "ar hijack": 80,
                 "mixed reality threat": 65, "xr assault": 70,
+                # 2026-02-21 MORE emerging
+                "deepfake nsfw": 80, "ai generated abuse": 85, "non-consensual ai": 85,
+                "face swap abuse": 75, "voice clone fraud": 80, "synthetic identity theft": 70,
+                # Chinese MORE Feb 21
+                "AI不雅视频": 80, "深度伪造滥用": 85, "AI换脸犯罪": 80,
+                "语音克隆诈骗": 80, "合成身份盗窃": 70,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -507,7 +513,7 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.3.0",
+        "version": "2.3.1",
         "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
