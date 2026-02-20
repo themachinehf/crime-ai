@@ -165,6 +165,16 @@ except ImportError:
                 # 2026-02-20 pre-dawn
                 "kidnapping": 85, "abduction": 80, "hostage": 90,
                 "ransom demand": 85, "snatching": 75, "white van": 70,
+                # 2026-02-21 new emerging
+                "location stalking": 75, "airtag stalking": 70, "find my weapon": 80,
+                "live location": 65, "real-time tracking": 70, "gps tracker": 65,
+                "stalkerware": 80, "spyware app": 75, "creepware": 70,
+                # Chinese Feb 21 new
+                "位置追踪": 75, "定位 stalking": 70, "实时追踪": 65,
+                "跟踪软件": 80, "间谍软件": 75, "偷窥软件": 70,
+                # 2026-02-21 additional
+                "augmented reality attack": 75, "ar overlay": 70, "ar hijack": 80,
+                "mixed reality threat": 65, "xr assault": 70,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -497,8 +507,8 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.2.2",
-        "api_version": "2.2",
+        "version": "2.3.0",
+        "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
             "threat_analysis",

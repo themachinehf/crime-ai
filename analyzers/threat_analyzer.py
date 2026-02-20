@@ -526,6 +526,16 @@ class ThreatAnalyzer:
         # 2026-02-20 pre-dawn
         "kidnapping": 85, "abduction": 80, "hostage": 90,
         "ransom demand": 85, "snatching": 75, "white van": 70,
+        # 2026-02-21 new emerging
+        "location stalking": 75, "airtag stalking": 70, "find my weapon": 80,
+        "live location": 65, "real-time tracking": 70, "gps tracker": 65,
+        "stalkerware": 80, "spyware app": 75, "creepware": 70,
+        # Chinese Feb 21 new
+        "位置追踪": 75, "定位 stalking": 70, "实时追踪": 65,
+        "跟踪软件": 80, "间谍软件": 75, "偷窥软件": 70,
+        # 2026-02-21 additional
+        "augmented reality attack": 75, "ar overlay": 70, "ar hijack": 80,
+        "mixed reality threat": 65, "xr assault": 70,
     }
     
     # Chinese social engineering - NEW section
@@ -756,6 +766,15 @@ class ThreatAnalyzer:
             (r"(signal|cell).*jamm", "planning", 30, "手机信号干扰"),
             (r"(zero.?day|0day).*exploit", "planning", 45, "零日漏洞利用"),
             (r"(apt|advanced.*persistent).*threat", "planning", 40, "高级持续性威胁"),
+            # 2026-02-21 NEW detection patterns
+            (r"(airtag|apple tag|galaxy tag).*track", "surveillance", 35, "AirTag跟踪检测"),
+            (r"(location|gps).*real.?time", "surveillance", 30, "实时位置监控"),
+            (r"(find my|findmy).*(device|friend|person)", "surveillance", 25, "查找功能滥用"),
+            (r"(spy|stalker).*ware", "surveillance", 40, "间谍软件检测"),
+            (r"(augmented|mixed|extended).*reality", "emerging", 30, "AR/VR/MR威胁"),
+            # Chinese 2026-02-21 patterns
+            (r"(定位|跟踪|监视).*(软件|app|应用)", "surveillance", 35, "中文定位跟踪"),
+            (r"(实时|精确).*位置", "surveillance", 30, "中文实时位置"),
         ]
         
         for pattern, ptype, score, desc in emotion_patterns:
