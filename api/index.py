@@ -296,6 +296,19 @@ except ImportError:
                 "假冒筹款": 55, "福利欺诈": 60, "善款滥用": 55,
                 "假航空公司": 65, "航班诈骗": 65, "假酒店": 55,
                 "预订诈骗": 60, "度假诈骗": 65, "分时度假诈骗": 65,
+                # 2026-02-21 4PM emerging
+                "fake tech": 60, "tech support scam": 65, "computer scam": 60,
+                "fake update": 55, "fake driver": 50, "fake crack": 55,
+                "license crack": 50, "serial key": 45, "activator": 50,
+                # 2026-02-21 crypto NEW
+                "fake exchange": 65, "exchange scam": 70, "withdraw scam": 70,
+                "withdrawal freeze": 65, "account ban scam": 60, "kyc scam": 65,
+                "fake wallet": 65, "private key scam": 75, "seed phrase scam": 75,
+                # Chinese 4PM Feb 21
+                "假冒技术支持": 60, "电脑诈骗": 60, "虚假更新": 55,
+                "虚假驱动": 50, "破解软件": 55, "注册码": 45,
+                "假冒交易所": 65, "提现诈骗": 70, "账户冻结": 65,
+                "KYC诈骗": 65, "假钱包": 65, "私钥诈骗": 75,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -628,7 +641,7 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.4.1",
+        "version": "2.4.2",
         "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
