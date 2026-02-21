@@ -606,6 +606,19 @@ class ThreatAnalyzer:
         "浏览器伪造": 50, "设备指纹伪造": 60, "隐身绕过": 45,
         "Cookie盗窃": 55, "会话窃取": 60, "令牌盗窃": 65,
         "Cloudflare绕过": 50, "WAF绕过": 55, "IP轮换": 45,
+        # 2026-02-21 NOON emerging
+        "fake invoice": 60, "invoice fraud": 65, "billing scam": 60,
+        "subscription trap": 55, "auto renew": 50, "hidden charge": 60,
+        "price manipulation": 55, "dynamic pricing fraud": 60, "fake discount": 55,
+        # 2026-02-21 gaming NEW
+        "skin scam": 55, "account sell": 50, "item scam": 55,
+        "boosting scam": 60, "rank boost": 55, "carry service": 55,
+        "account steal": 70, "item theft": 65, "currency duping": 70,
+        # Chinese NOON Feb 21
+        "虚假发票": 60, "账单欺诈": 65, "订阅陷阱": 55,
+        "自动扣费": 50, "隐藏收费": 60, "价格操纵": 55,
+        "游戏皮肤诈骗": 55, "账号交易": 50, "代练诈骗": 60,
+        "账号盗窃": 70, "装备盗窃": 65, "游戏货币复制": 70,
     }
     
     # Chinese social engineering - NEW section
