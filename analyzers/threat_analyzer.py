@@ -767,6 +767,16 @@ class ThreatAnalyzer:
         "杀手": 85, "雇佣杀手": 90, "买凶杀人": 90,
         "刺客": 85, "暗杀服务": 90, "谋杀合约": 95,
         "武器交易": 75, "非法武器": 80, "军火交易": 80, "武器走私": 85,
+        # 2026-02-22 2AM emerging
+        "fake id": 60, "id forgery": 65, "passport forgery": 70,
+        "drivers license fake": 65, "birth certificate": 55, "document fraud": 65,
+        # 2026-02-22 counterfeiting NEW
+        "counterfeit money": 70, "fake bills": 65, "counterfeit coins": 60,
+        "fake designer": 65, "knockoff brand": 55, "fake luxury": 60,
+        # Chinese 2AM Feb 22
+        "假证件": 60, "伪造证件": 65, "护照伪造": 70,
+        "假驾照": 65, "出生证明伪造": 55, "文件欺诈": 65,
+        "假币": 70, "假钞": 65, "假冒名牌": 65, "山寨奢侈品": 60,
     }
     
     # Chinese social engineering - NEW section
