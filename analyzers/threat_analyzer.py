@@ -584,6 +584,17 @@ class ThreatAnalyzer:
         "招聘诈骗": 60, "虚假招聘": 55, "付费培训": 55,
         "刷单诈骗": 60, "点赞诈骗": 55, "虚假实习": 50,
         "粉丝账号入侵": 55, "冒充粉丝": 50, "买粉": 45,
+        # 2026-02-21 10AM emerging
+        "ev charging scam": 60, "fake充电桩": 55, "charging fraud": 60,
+        "parking meter hack": 50, "toll gate hack": 55, "highway hack": 60,
+        "smart meter tamper": 65, "utility theft": 55, "electricity fraud": 60,
+        # 2026-02-21 delivery NEW
+        "food delivery fraud": 55, "fake rider": 50, "order manipulation": 55,
+        "restaurant fake": 60, "ghost kitchen": 55, "fake menu": 50,
+        # Chinese 10AM Feb 21
+        "充电桩诈骗": 60, "停车费破解": 50, "高速破解": 60,
+        "智能电表篡改": 65, "公用事业盗窃": 55, "电费欺诈": 60,
+        "外卖诈骗": 55, "虚假骑手": 50, "餐厅欺诈": 60,
     }
     
     # Chinese social engineering - NEW section
