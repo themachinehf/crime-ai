@@ -757,6 +757,16 @@ class ThreatAnalyzer:
         "合成身份": 70, "假人": 65, "AI生成面孔": 55,
         "虚假照片": 50, "网恋诈骗": 60, "虚假档案": 55,
         "毒品快递": 75, "毒品运送": 75, "藏毒处": 75, "毒窟": 75,
+        # 2026-02-22 1AM emerging
+        "hitman": 85, "contract killer": 90, "murder for hire": 90,
+        "assassin": 85, "hit service": 90, "murder contract": 95,
+        # 2026-02-22 weapons NEW
+        "weapon deal": 75, "gun sale": 70, "illegal arms": 80,
+        "trafficking weapons": 85, "arms deal": 80, "weapon shipment": 85,
+        # Chinese 1AM Feb 22
+        "杀手": 85, "雇佣杀手": 90, "买凶杀人": 90,
+        "刺客": 85, "暗杀服务": 90, "谋杀合约": 95,
+        "武器交易": 75, "非法武器": 80, "军火交易": 80, "武器走私": 85,
     }
     
     # Chinese social engineering - NEW section
