@@ -631,6 +631,19 @@ class ThreatAnalyzer:
         "浏览器劫持": 60, "搜索劫持": 55, "DNS劫持": 65,
         "路由器入侵": 70, "调制解调器破解": 65, "运营商漏洞": 60,
         "虚假抗议": 50, "水军运动": 55, "机器人军队": 60,
+        # 2026-02-21 2PM emerging
+        "fake degree": 55, "diploma mill": 60, "certificate fraud": 55,
+        "fake diploma": 50, "degree scam": 55, "credential fraud": 60,
+        "resume fraud": 55, "experience fake": 50, "fake employment": 55,
+        # 2026-02-21 dating NEW
+        "romance scam": 65, "lonely heart": 55, "love scam": 60,
+        "military romance": 65, "overseas lover": 55, "doctor scam": 60,
+        "sugar daddy scam": 65, "sugar mama": 60, "allowance scam": 55,
+        # Chinese 2PM Feb 21
+        "假学历": 55, "文凭工厂": 60, "证书欺诈": 55,
+        "简历造假": 55, "经验造假": 50, "求职欺诈": 55,
+        "交友诈骗": 65, "杀猪盘": 70, "海外恋人": 55,
+        "军恋诈骗": 65, "医生诈骗": 60, "包养诈骗": 65,
     }
     
     # Chinese social engineering - NEW section
