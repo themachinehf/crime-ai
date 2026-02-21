@@ -322,6 +322,19 @@ except ImportError:
                 "刷好评": 55, "评价操纵": 60, "机器人评论": 50,
                 "保险欺诈": 65, "骗保": 60, "虚假理赔": 60,
                 "骗取保险": 65, "纵火骗保": 75, "财产欺诈": 60,
+                # 2026-02-21 6PM emerging
+                "fake survey": 50, "survey scam": 55, "quiz scam": 50,
+                "fake quiz": 50, "personality test": 45, "psychological manipulation": 65,
+                "phishing quiz": 55, "login quiz": 60, "credential quiz": 60,
+                # 2026-02-21 delivery NEW
+                "fake delivery": 60, "delivery scam": 65, "package scam": 60,
+                "sms delivery": 55, "fake tracking": 55, "reshipping scam": 65,
+                "mule recruitment": 70, "package mule": 65, "reship fraud": 65,
+                # Chinese 6PM Feb 21
+                "虚假调查": 50, "测验诈骗": 50, "心理操纵": 65,
+                "钓鱼测验": 55, "登录测验": 60, "虚假快递": 60,
+                "快递诈骗": 65, "包裹诈骗": 60, "代收诈骗": 65,
+                "招募搬砖": 70, "包裹骡子": 65,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -654,7 +667,7 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.4.3",
+        "version": "2.4.4",
         "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
