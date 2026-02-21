@@ -788,6 +788,12 @@ class ThreatAnalyzer:
         "僵尸网络出租": 65, "垃圾邮件服务": 55, "邮件破解": 65,
         "劳动剥削": 70, "强迫劳动": 85, "奴役": 90,
         "人口贩卖": 95, "器官贩卖": 95, "性贩卖": 95,
+        # 2026-02-22 4AM emerging
+        "digital arrest": 80, "call forwarding": 75, "sim jailbreak": 70,
+        "eSIM bypass": 65, "virtual number": 55, "voip scam": 60,
+        # Chinese 4AM Feb 22
+        "数字逮捕": 80, "呼叫转移": 75, "SIM卡破解": 70,
+        "虚拟号码": 55, "VOIP诈骗": 60,
     }
     
     # Chinese social engineering - NEW section
