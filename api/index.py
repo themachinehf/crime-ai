@@ -258,6 +258,18 @@ except ImportError:
                 "自动扣费": 50, "隐藏收费": 60, "价格操纵": 55,
                 "游戏皮肤诈骗": 55, "账号交易": 50, "代练诈骗": 60,
                 "账号盗窃": 70, "装备盗窃": 65, "游戏货币复制": 70,
+                # 2026-02-21 1PM emerging
+                "fake antivirus": 55, "scareware": 60, "rogue software": 65,
+                "browser hijack": 60, "search hijack": 55, "dns hijack": 65,
+                "router compromise": 70, "modem hack": 65, "isp exploit": 60,
+                # 2026-02-21 social NEW
+                "fake protest": 50, "astro turf": 55, "fake movement": 50,
+                "bot army": 60, "troll army": 55, "influence campaign": 65,
+                # Chinese 1PM Feb 21
+                "虚假杀毒": 55, "恐吓软件": 60, "恶意软件": 65,
+                "浏览器劫持": 60, "搜索劫持": 55, "DNS劫持": 65,
+                "路由器入侵": 70, "调制解调器破解": 65, "运营商漏洞": 60,
+                "虚假抗议": 50, "水军运动": 55, "机器人军队": 60,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -590,7 +602,7 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.3.8",
+        "version": "2.3.9",
         "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
