@@ -385,6 +385,17 @@ except ImportError:
                 "伪装号码": 65, "钓鱼电话": 70, "虚假紧急": 65,
                 "家人紧急诈骗": 75, "祖父母诈骗": 70,
                 "网络诱骗": 85, "在线掠食者": 90, "儿童性剥削": 100,
+                # 2026-02-22 midnight emerging
+                "synthetic identity": 70, "fake person": 65, "made up person": 60,
+                "ai generated face": 55, "fake photo": 50, "stock photo scam": 45,
+                "catfish": 60, "fake profile": 55, "stolen photos": 55,
+                # 2026-02-22 drugs NEW
+                "drug delivery": 75, "drug shipping": 75, "dead drop": 70,
+                "druggie": 50, "stash house": 75, "drug den": 75,
+                # Chinese Feb 22 midnight
+                "合成身份": 70, "假人": 65, "AI生成面孔": 55,
+                "虚假照片": 50, "网恋诈骗": 60, "虚假档案": 55,
+                "毒品快递": 75, "毒品运送": 75, "藏毒处": 75, "毒窟": 75,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -717,7 +728,7 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.4.8",
+        "version": "2.5.0",
         "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
