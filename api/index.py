@@ -309,6 +309,19 @@ except ImportError:
                 "虚假驱动": 50, "破解软件": 55, "注册码": 45,
                 "假冒交易所": 65, "提现诈骗": 70, "账户冻结": 65,
                 "KYC诈骗": 65, "假钱包": 65, "私钥诈骗": 75,
+                # 2026-02-21 5PM emerging
+                "fake news": 50, "disinformation": 55, "misinformation": 50,
+                "fake review": 55, "review manipulation": 60, "fake rating": 55,
+                "bot review": 50, "bought review": 55, "review scam": 55,
+                # 2026-02-21 insurance NEW
+                "fake claim": 60, "insurance fraud": 65, "claim fraud": 60,
+                "accident fraud": 65, "staged accident": 70, "fake injury": 65,
+                "arson fraud": 75, "property fraud": 60, "theft claim": 60,
+                # Chinese 5PM Feb 21
+                "假新闻": 50, "虚假信息": 55, "假评论": 55,
+                "刷好评": 55, "评价操纵": 60, "机器人评论": 50,
+                "保险欺诈": 65, "骗保": 60, "虚假理赔": 60,
+                "骗取保险": 65, "纵火骗保": 75, "财产欺诈": 60,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -641,7 +654,7 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.4.2",
+        "version": "2.4.3",
         "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
