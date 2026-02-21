@@ -561,6 +561,18 @@ class ThreatAnalyzer:
         "跑路": 75, "蜜罐合约": 80, "闪电贷攻击": 85,
         "DeFi漏洞": 80, "预言机操纵": 75, "NFT地板价操纵": 70,
         "肩窥": 45, "尾随": 40, "门禁克隆": 55, "RFID盗刷": 60,
+        # 2026-02-21 LATE morning emerging
+        "data broker": 55, "info broker": 50, "people search": 45,
+        "background check": 50, "skip trace": 55, "address lookup": 45,
+        "phone number search": 45, "reverse lookup": 50, "dox service": 70,
+        # 2026-02-21 infrastructure NEW
+        "traffic light": 55, "smart pole": 50, "edge computing": 45,
+        "5g tower": 60, "cell tower": 55, "base station": 55,
+        "utility pole": 50, "power pole": 55, "telecom cabinet": 50,
+        # Chinese Feb 21 late
+        "数据经纪人": 55, "信息买卖": 50, "人肉搜索": 70,
+        "背景调查": 50, "地址查询": 45, "电话查询": 45,
+        "红绿灯入侵": 55, "智能灯杆": 50, "5G基站": 60,
     }
     
     # Chinese social engineering - NEW section
