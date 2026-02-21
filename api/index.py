@@ -416,6 +416,17 @@ except ImportError:
                 "假证件": 60, "伪造证件": 65, "护照伪造": 70,
                 "假驾照": 65, "出生证明伪造": 55, "文件欺诈": 65,
                 "假币": 70, "假钞": 65, "假冒名牌": 65, "山寨奢侈品": 60,
+                # 2026-02-22 3AM emerging
+                "hacking service": 70, "hacker for hire": 75, "ddos service": 70,
+                "botnet rental": 65, "spam service": 55, "email hack": 65,
+                # 2026-02-22 exploitation NEW
+                "labor exploitation": 70, "forced labor": 85, "slavery": 90,
+                "human trafficking": 95, "organ trafficking": 95, "sex trafficking": 95,
+                # Chinese 3AM Feb 22
+                "黑客服务": 70, "雇佣黑客": 75, "DDoS服务": 70,
+                "僵尸网络出租": 65, "垃圾邮件服务": 55, "邮件破解": 65,
+                "劳动剥削": 70, "强迫劳动": 85, "奴役": 90,
+                "人口贩卖": 95, "器官贩卖": 95, "性贩卖": 95,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -748,7 +759,7 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.5.2",
+        "version": "2.5.3",
         "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
