@@ -734,6 +734,18 @@ class ThreatAnalyzer:
         "投资俱乐部": 55, "推荐诈骗": 60, "矩阵骗局": 65,
         "复仇色情": 75, "图像滥用": 70, "照片泄露": 70,
         "私密照泄露": 75, "敲诈勒索": 75,
+        # 2026-02-21 11PM emerging
+        "deepfake call": 75, "voice deepfake": 80, "ai call scam": 75,
+        "fake caller": 70, "spoofed call": 65, "vishing": 70,
+        "fake emergency": 65, "family emergency scam": 75, "grandparent scam": 70,
+        # 2026-02-21 child safety NEW
+        "grooming": 85, "online predator": 90, "child exploitation": 100,
+        "csam": 100, "live streaming abuse": 95, "sextortion minor": 95,
+        # Chinese 11PM Feb 21
+        "AI语音诈骗": 75, "深度伪造电话": 75, "虚假来电": 70,
+        "伪装号码": 65, "钓鱼电话": 70, "虚假紧急": 65,
+        "家人紧急诈骗": 75, "祖父母诈骗": 70,
+        "网络诱骗": 85, "在线掠食者": 90, "儿童性剥削": 100,
     }
     
     # Chinese social engineering - NEW section
