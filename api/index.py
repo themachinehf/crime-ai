@@ -433,6 +433,12 @@ except ImportError:
                 # Chinese 4AM Feb 22
                 "数字逮捕": 80, "呼叫转移": 75, "SIM卡破解": 70,
                 "虚拟号码": 55, "VOIP诈骗": 60,
+                # 2026-02-22 5AM emerging
+                "qr hijack": 65, "NFC relay": 70, "blueprint theft": 55,
+                "ai training attack": 75, "model corruption": 70, "dataset poisoning": 75,
+                # Chinese 5AM Feb 22
+                "二维码劫持": 65, "NFC中继": 70, "图纸盗窃": 55,
+                "AI训练攻击": 75, "模型损坏": 70, "数据投毒": 75,
             }
         
         def analyze_text(self, text: str) -> Dict:
