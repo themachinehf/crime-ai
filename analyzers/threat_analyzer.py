@@ -573,6 +573,17 @@ class ThreatAnalyzer:
         "数据经纪人": 55, "信息买卖": 50, "人肉搜索": 70,
         "背景调查": 50, "地址查询": 45, "电话查询": 45,
         "红绿灯入侵": 55, "智能灯杆": 50, "5G基站": 60,
+        # 2026-02-21 NEW emerging threats
+        "job offer scam": 60, "fake hiring": 55, "recruitment fraud": 65,
+        "task scam": 55, "刷单": 60, "点赞诈骗": 55,
+        "fake internship": 50, "paid training": 55, "placement fee": 65,
+        # 2026-02-21 social media NEW
+        "fan account hack": 55, "impersonator": 50, "fake fan": 45,
+        "buy followers": 45, "bot followers": 40, "fake engagement": 50,
+        # Chinese Feb 21 NEW
+        "招聘诈骗": 60, "虚假招聘": 55, "付费培训": 55,
+        "刷单诈骗": 60, "点赞诈骗": 55, "虚假实习": 50,
+        "粉丝账号入侵": 55, "冒充粉丝": 50, "买粉": 45,
     }
     
     # Chinese social engineering - NEW section
