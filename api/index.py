@@ -234,6 +234,17 @@ except ImportError:
                 "充电桩诈骗": 60, "停车费破解": 50, "高速破解": 60,
                 "智能电表篡改": 65, "公用事业盗窃": 55, "电费欺诈": 60,
                 "外卖诈骗": 55, "虚假骑手": 50, "餐厅欺诈": 60,
+                # 2026-02-21 11AM emerging
+                "fake browser": 50, "browser spoofing": 55, "ua spoof": 50,
+                "fingerprint spoof": 60, "device spoof": 55, "incognito bypass": 45,
+                "cookie theft": 55, "session theft": 60, "token theft": 65,
+                # 2026-02-21 cloud NEW
+                "cloudflare bypass": 50, "waf bypass": 55, "cdn bypass": 50,
+                "ip rotation": 45, "residential proxy": 50, " datacenter ip": 40,
+                # Chinese 11AM Feb 21
+                "浏览器伪造": 50, "设备指纹伪造": 60, "隐身绕过": 45,
+                "Cookie盗窃": 55, "会话窃取": 60, "令牌盗窃": 65,
+                "Cloudflare绕过": 50, "WAF绕过": 55, "IP轮换": 45,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -566,7 +577,7 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.3.6",
+        "version": "2.3.7",
         "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
