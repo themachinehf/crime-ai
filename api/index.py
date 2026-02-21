@@ -349,6 +349,18 @@ except ImportError:
                 "室友诈骗": 60, "转租欺诈": 55, "虚假房产": 60,
                 "虚假工作": 60, "兼职诈骗": 65, "居家工作": 65,
                 "手工诈骗": 60, "数据录入": 60, "神秘顾客": 55,
+                # 2026-02-21 9PM emerging
+                "bank scam": 65, "atm scam": 60, "card skimmer": 65,
+                "shoulder surf": 50, "pin pad": 55, "cash trapping": 60,
+                "jackpotting": 70, "atm malware": 75, "cash machine hack": 70,
+                # 2026-02-21 identity NEW
+                "identity swap": 65, "name theft": 60, "ssn theft": 65,
+                "credit theft": 65, "tax id theft": 70, "ein theft": 65,
+                # Chinese 9PM Feb 21
+                "银行诈骗": 65, "ATM诈骗": 60, "卡侧录": 65,
+                "肩窥": 50, "密码垫": 55, "现金陷阱": 60,
+                "盗刷": 70, "身份盗窃": 65, "姓名盗窃": 60,
+                "社安号盗窃": 65, "信用盗窃": 65, "税号盗窃": 70,
             }
         
         def analyze_text(self, text: str) -> Dict:
@@ -681,7 +693,7 @@ def ping_handler() -> tuple:
 def version_handler() -> tuple:
     """Handle /version endpoint"""
     return create_response(True, {
-        "version": "2.4.5",
+        "version": "2.4.6",
         "api_version": "2.3",
         "build_date": "2026-02-21",
         "features": [
