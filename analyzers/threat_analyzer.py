@@ -696,6 +696,20 @@ class ThreatAnalyzer:
         "钓鱼测验": 55, "登录测验": 60, "虚假快递": 60,
         "快递诈骗": 65, "包裹诈骗": 60, "代收诈骗": 65,
         "招募搬砖": 70, "包裹骡子": 65,
+        # 2026-02-21 7PM emerging
+        "fake landlord": 65, "rental scam": 60, "deposit scam": 65,
+        "phantom rent": 60, "key money": 55, "application fee": 55,
+        "roommate scam": 60, "sublet fraud": 55, "fake property": 60,
+        # 2026-02-21 employment NEW
+        "fake job": 60, "job scam": 65, "work from home scam": 65,
+        "home job": 55, "assembly scam": 60, "envelope stuffing": 55,
+        "data entry scam": 60, "mystery shopper": 55, "refund scam": 55,
+        # Chinese 7PM Feb 21
+        "假房东": 65, "租房诈骗": 60, "押金诈骗": 65,
+        "租金骗取": 60, "钥匙费": 55, "申请费": 55,
+        "室友诈骗": 60, "转租欺诈": 55, "虚假房产": 60,
+        "虚假工作": 60, "兼职诈骗": 65, "居家工作": 65,
+        "手工诈骗": 60, "数据录入": 60, "神秘顾客": 55,
     }
     
     # Chinese social engineering - NEW section
