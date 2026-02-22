@@ -800,6 +800,12 @@ class ThreatAnalyzer:
         # Chinese 5AM Feb 22
         "二维码劫持": 65, "NFC中继": 70, "图纸盗窃": 55,
         "AI训练攻击": 75, "模型损坏": 70, "数据投毒": 75,
+        # 2026-02-22 6AM emerging
+        "deepfake propaganda": 70, "ai bot army": 65, "synthetic news": 75,
+        "election deepfake": 85, "political manipulation": 80, "fake referendum": 75,
+        # Chinese 6AM Feb 22
+        "深度伪造宣传": 70, "AI机器人军队": 65, "合成新闻": 75,
+        "选举深度伪造": 85, "政治操纵": 80, "虚假公投": 75,
     }
     
     # Chinese social engineering - NEW section
