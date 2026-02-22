@@ -812,6 +812,12 @@ class ThreatAnalyzer:
         # Chinese 7AM Feb 22
         "智能戒指漏洞": 65, "可穿戴数据泄露": 70, "健身追踪器泄露": 60,
         "智能眼镜破解": 70, "AR隐形眼镜": 75, "植入式RFID": 80,
+        # 2026-02-22 8AM emerging
+        "space debris attack": 75, "satellite collision": 80, "orbital jamming": 85,
+        "astroweapon": 90, "moon mining crime": 60, "asteroid redirect": 85,
+        # Chinese 8AM Feb 22
+        "太空碎片攻击": 75, "卫星碰撞": 80, "轨道干扰": 85,
+        "天基武器": 90, "月球采矿犯罪": 60, "小行星变轨": 85,
     }
     
     # Chinese social engineering - NEW section
