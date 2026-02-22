@@ -866,6 +866,12 @@ class ThreatAnalyzer:
         # Chinese 4PM Feb 22
         "AI伴侣虐待": 75, "机器人伴侣": 70, "性爱机器人破解": 80,
         "伴侣AI操纵": 75, "情感依赖": 65, "AI诱骗": 80,
+        # 2026-02-22 5PM emerging
+        "gene drive attack": 85, "synthetic biology threat": 90, "designer pathogen": 95,
+        "biohack attack": 85, " CRISPR attack": 80, "engineered pest": 75,
+        # Chinese 5PM Feb 22
+        "基因驱动攻击": 85, "合成生物学威胁": 90, "设计病原体": 95,
+        "生物黑客攻击": 85, "CRISPR攻击": 80, "工程害虫": 75,
     }
     
     # Chinese social engineering - NEW section
