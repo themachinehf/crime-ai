@@ -824,6 +824,12 @@ class ThreatAnalyzer:
         # Chinese 9AM Feb 22
         "神经植入物破解": 85, "脑机接口入侵": 90, "读心术攻击": 95,
         "认知入侵": 80, "记忆提取": 90, "神经数据盗窃": 85,
+        # 2026-02-22 10AM emerging
+        "quantum sabotage": 85, "entanglement attack": 90, "post-quantum break": 95,
+        "dna database breach": 80, "genetic privacy": 75, "bioinformatics theft": 85,
+        # Chinese 10AM Feb 22
+        "量子破坏": 85, "量子纠缠攻击": 90, "后量子破解": 95,
+        "DNA数据库泄露": 80, "基因隐私": 75, "生物信息盗窃": 85,
     }
     
     # Chinese social engineering - NEW section
