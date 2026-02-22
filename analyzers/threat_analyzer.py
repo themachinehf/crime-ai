@@ -878,6 +878,12 @@ class ThreatAnalyzer:
         # Chinese 6PM Feb 22
         "远程办公欺诈": 65, "居家办公诈骗": 60, "家庭办公室盗窃": 55,
         "虚拟办公犯罪": 70, "数字游民诈骗": 65, "联合办公入侵": 75,
+        # 2026-02-22 7PM emerging
+        "ai copyright theft": 70, "training data theft": 75, "model distillation attack": 80,
+        "neural network theft": 75, "ip theft ai": 70, "patent侵权ai": 80,
+        # Chinese 7PM Feb 22
+        "AI版权盗窃": 70, "训练数据盗窃": 75, "模型蒸馏攻击": 80,
+        "神经网络盗窃": 75, "AI知识产权盗窃": 70, "专利侵权AI": 80,
     }
     
     # Chinese social engineering - NEW section
