@@ -806,6 +806,12 @@ class ThreatAnalyzer:
         # Chinese 6AM Feb 22
         "深度伪造宣传": 70, "AI机器人军队": 65, "合成新闻": 75,
         "选举深度伪造": 85, "政治操纵": 80, "虚假公投": 75,
+        # 2026-02-22 7AM emerging
+        "smart ring exploit": 65, "wearable data": 70, "fitness tracker leak": 60,
+        "smart glasses hack": 70, "ar contact lens": 75, "implantable rfid": 80,
+        # Chinese 7AM Feb 22
+        "智能戒指漏洞": 65, "可穿戴数据泄露": 70, "健身追踪器泄露": 60,
+        "智能眼镜破解": 70, "AR隐形眼镜": 75, "植入式RFID": 80,
     }
     
     # Chinese social engineering - NEW section
