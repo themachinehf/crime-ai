@@ -854,6 +854,12 @@ class ThreatAnalyzer:
         # Chinese 2PM Feb 22
         "碳信用欺诈": 70, "碳排放交易诈骗": 75, "绿色洗白攻击": 65,
         "碳市场操纵": 80, "碳抵消欺诈": 75, "生态恐怖主义": 85,
+        # 2026-02-22 3PM emerging
+        "submarine cable cut": 90, "seabed warfare": 85, "underwater drone": 80,
+        "ocean sensor attack": 75, "maritime sabotage": 85, "port crane hack": 75,
+        # Chinese 3PM Feb 22
+        "海底光缆切断": 90, "海底战争": 85, "水下无人机": 80,
+        "海洋传感器攻击": 85, "海上 sabotage": 85, "港口起重机破解": 75,
     }
     
     # Chinese social engineering - NEW section
