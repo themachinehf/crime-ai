@@ -511,6 +511,12 @@ except ImportError:
                 # Chinese 5PM Feb 22
                 "基因驱动攻击": 85, "合成生物学威胁": 90, "设计病原体": 95,
                 "生物黑客攻击": 85, "CRISPR攻击": 80, "工程害虫": 75,
+                # 2026-02-22 6PM emerging
+                "remote work fraud": 65, "wfh scam": 60, "home office theft": 55,
+                "virtual office crime": 70, "digital nomad scam": 65, "coworking盗": 75,
+                # Chinese 6PM Feb 22
+                "远程办公欺诈": 65, "居家办公诈骗": 60, "家庭办公室盗窃": 55,
+                "虚拟办公犯罪": 70, "数字游民诈骗": 65, "联合办公入侵": 75,
             }
         
         def analyze_text(self, text: str) -> Dict:
