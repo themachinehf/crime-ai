@@ -830,6 +830,12 @@ class ThreatAnalyzer:
         # Chinese 10AM Feb 22
         "量子破坏": 85, "量子纠缠攻击": 90, "后量子破解": 95,
         "DNA数据库泄露": 80, "基因隐私": 75, "生物信息盗窃": 85,
+        # 2026-02-22 11AM emerging
+        "ai judge bias": 70, "algorithmic discrimination": 75, "automated injustice": 80,
+        "surveillance capitalism": 65, "data broker threat": 70, "reputation attack": 75,
+        # Chinese 11AM Feb 22
+        "AI法官偏见": 70, "算法歧视": 75, "自动化不公": 80,
+        "监控资本主义": 65, "数据经纪人威胁": 70, "名誉攻击": 75,
     }
     
     # Chinese social engineering - NEW section
