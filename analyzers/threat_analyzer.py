@@ -818,6 +818,12 @@ class ThreatAnalyzer:
         # Chinese 8AM Feb 22
         "太空碎片攻击": 75, "卫星碰撞": 80, "轨道干扰": 85,
         "天基武器": 90, "月球采矿犯罪": 60, "小行星变轨": 85,
+        # 2026-02-22 9AM emerging
+        "neural implant hack": 85, "brain computer breach": 90, "mind reading attack": 95,
+        "cognitive intrusion": 80, "memory extraction": 90, "neurodata theft": 85,
+        # Chinese 9AM Feb 22
+        "神经植入物破解": 85, "脑机接口入侵": 90, "读心术攻击": 95,
+        "认知入侵": 80, "记忆提取": 90, "神经数据盗窃": 85,
     }
     
     # Chinese social engineering - NEW section
