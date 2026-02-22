@@ -848,6 +848,12 @@ class ThreatAnalyzer:
         # Chinese 1PM Feb 22
         "元宇宙犯罪": 75, "虚拟财产盗窃": 70, "化身劫持": 80,
         "NFT绑架": 85, "数字绑架": 80, "虚拟人质": 75,
+        # 2026-02-22 2PM emerging
+        "carbon credit fraud": 70, "emissions trading scam": 75, "greenwashing attack": 65,
+        "carbon market manipulation": 80, "offset fraud": 75, "eco-terrorism": 85,
+        # Chinese 2PM Feb 22
+        "碳信用欺诈": 70, "碳排放交易诈骗": 75, "绿色洗白攻击": 65,
+        "碳市场操纵": 80, "碳抵消欺诈": 75, "生态恐怖主义": 85,
     }
     
     # Chinese social engineering - NEW section
