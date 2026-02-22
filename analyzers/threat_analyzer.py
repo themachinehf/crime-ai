@@ -842,6 +842,12 @@ class ThreatAnalyzer:
         # Chinese 12PM Feb 22
         "飞机无人机破解": 80, "无人机劫持": 85, "无人机集群攻击": 90,
         "载人无人机": 75, "飞行汽车威胁": 80, "垂直起降场攻击": 75,
+        # 2026-02-22 1PM emerging
+        "metaverse crime": 75, "virtual property theft": 70, "avatar hijack": 80,
+        "nft kidnapping": 85, "digital kidnapping": 80, "virtual hostage": 75,
+        # Chinese 1PM Feb 22
+        "元宇宙犯罪": 75, "虚拟财产盗窃": 70, "化身劫持": 80,
+        "NFT绑架": 85, "数字绑架": 80, "虚拟人质": 75,
     }
     
     # Chinese social engineering - NEW section
