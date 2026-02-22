@@ -836,6 +836,12 @@ class ThreatAnalyzer:
         # Chinese 11AM Feb 22
         "AI法官偏见": 70, "算法歧视": 75, "自动化不公": 80,
         "监控资本主义": 65, "数据经纪人威胁": 70, "名誉攻击": 75,
+        # 2026-02-22 12PM emerging
+        "aircraft drone hack": 80, "uav hijack": 85, "drone swarm attack": 90,
+        "passenger drone": 75, "flying car threat": 80, "vertiport attack": 75,
+        # Chinese 12PM Feb 22
+        "飞机无人机破解": 80, "无人机劫持": 85, "无人机集群攻击": 90,
+        "载人无人机": 75, "飞行汽车威胁": 80, "垂直起降场攻击": 75,
     }
     
     # Chinese social engineering - NEW section
