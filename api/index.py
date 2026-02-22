@@ -529,6 +529,12 @@ except ImportError:
                 # Chinese 8PM Feb 22
                 "AI武器检测": 85, "自主武器": 90, "杀手机器人": 95,
                 "军事AI": 80, "战斗无人机": 85, "集群战争": 90,
+                # 2026-02-22 9PM emerging
+                "neuro link hack": 85, "brainwave theft": 80, "thought data breach": 90,
+                "memory backup hack": 85, "consciousness theft": 95, "mind upload theft": 90,
+                # Chinese 9PM Feb 22
+                "神经链接破解": 85, "脑波盗窃": 80, "思维数据泄露": 90,
+                "记忆备份入侵": 85, "意识盗窃": 95, "思维上传盗窃": 90,
             }
         
         def analyze_text(self, text: str) -> Dict:
