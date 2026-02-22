@@ -499,6 +499,12 @@ except ImportError:
                 # Chinese 3PM Feb 22
                 "海底光缆切断": 90, "海底战争": 85, "水下无人机": 80,
                 "海洋传感器攻击": 85, "海上 sabotage": 85, "港口起重机破解": 75,
+                # 2026-02-22 4PM emerging
+                "ai companion abuse": 75, "robot companion": 70, "sex robot hack": 80,
+                "companion ai manipulation": 75, "emotional dependency": 65, "ai grooming": 80,
+                # Chinese 4PM Feb 22
+                "AI伴侣虐待": 75, "机器人伴侣": 70, "性爱机器人破解": 80,
+                "伴侣AI操纵": 75, "情感依赖": 65, "AI诱骗": 80,
             }
         
         def analyze_text(self, text: str) -> Dict:
